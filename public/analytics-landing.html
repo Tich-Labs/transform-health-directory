@@ -95,19 +95,20 @@
 
     /* ── Map card ── */
     .map-canvas {
-      flex: 1; background: var(--surface); border: 1.5px dashed var(--border);
+      flex: 1; background: #dde8f0; border: 1.5px solid var(--border);
       border-radius: var(--radius-sm); position: relative; overflow: hidden;
       min-height: 320px;
     }
+    .map-canvas > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
     /* Heat blobs */
     .heat-blob {
-      position: absolute; border-radius: 50%;
+      position: absolute; border-radius: 50%; z-index: 1;
       filter: blur(48px); mix-blend-mode: multiply; pointer-events: none;
     }
 
     /* Map pins */
-    .map-pin { position: absolute; cursor: pointer; }
+    .map-pin { position: absolute; z-index: 2; cursor: pointer; }
     .map-pin .dot {
       width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff;
       box-shadow: 0 2px 6px rgba(0,0,0,0.25);
@@ -131,7 +132,7 @@
 
     /* Map legend */
     .map-legend {
-      position: absolute; bottom: 12px; left: 14px;
+      position: absolute; bottom: 12px; left: 14px; z-index: 3;
       display: flex; gap: 14px;
     }
     .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; color: var(--muted); }
@@ -499,58 +500,7 @@
         <a class="voices-cta" href="wireframe-directory.html">Explore Directory →</a>
       </div>
 
-      <div class="voices-grid">
-
-        <!-- Neema K. Lugangira -->
-        <div class="vcard">
-          <div class="vcard-avatar" style="background:var(--pink);">NL</div>
-          <div class="vcard-name">Neema K. Lugangira</div>
-          <div class="vcard-role">Member of Parliament · Tanzania</div>
-          <div class="vcard-desc">Government of Tanzania — championing digital health legislation at the highest level of national policy.</div>
-          <div class="vcard-tags">
-            <span class="vcard-tag">Digital Health Policy</span>
-          </div>
-          <a class="vcard-link" href="https://www.linkedin.com/in/neemalugangira/" target="_blank">↗ LinkedIn</a>
-        </div>
-
-        <!-- Carol Kamasaka -->
-        <div class="vcard">
-          <div class="vcard-avatar" style="background:var(--teal);">CK</div>
-          <div class="vcard-name">Carol Kamasaka</div>
-          <div class="vcard-role">Digital Health Specialist · Uganda</div>
-          <div class="vcard-desc">President, Uganda Health Informatics Association — advancing national health information systems across East Africa.</div>
-          <div class="vcard-tags">
-            <span class="vcard-tag">Health Informatics</span>
-          </div>
-          <a class="vcard-link" href="https://www.linkedin.com/in/carolkamasaka/" target="_blank">↗ LinkedIn</a>
-        </div>
-
-        <!-- Assiatou Kama Niang -->
-        <div class="vcard">
-          <div class="vcard-avatar" style="background:var(--orange);">AK</div>
-          <div class="vcard-name">Assiatou Kama Niang</div>
-          <div class="vcard-role">Co-Founder & Exec Director · West Africa</div>
-          <div class="vcard-desc">Community Innovation Hub — grassroots innovation and advocacy driving health equity from the ground up.</div>
-          <div class="vcard-tags">
-            <span class="vcard-tag">Innovation</span>
-            <span class="vcard-tag">Advocacy</span>
-          </div>
-          <a class="vcard-link" href="https://www.linkedin.com/in/assiatou-kama-niang-2410b2a7/" target="_blank">↗ LinkedIn</a>
-        </div>
-
-        <!-- Mou Nandi -->
-        <div class="vcard">
-          <div class="vcard-avatar" style="background:var(--cobalt); opacity:0.7;">MN</div>
-          <div class="vcard-name">Mou Nandi</div>
-          <div class="vcard-role">Co-Founder & CEO · India</div>
-          <div class="vcard-desc">Monere — building digital health innovations that centre women's access to care across South Asia.</div>
-          <div class="vcard-tags">
-            <span class="vcard-tag">DH Innovation</span>
-          </div>
-          <a class="vcard-link" href="https://www.linkedin.com/in/mounandi/" target="_blank">↗ LinkedIn</a>
-        </div>
-
-      </div>
+      <div class="voices-grid" id="featuredGrid"></div>
     </div>
 
     <!-- Footer note -->
