@@ -1,1 +1,1523 @@
-<!-- Copied from transform_health_directory/wireframe-admin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe B — Admin UI · Transform Health</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,800;1,500;1,800&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: #1a1a1a;
+  background: #e8ecf0;
+}
+
+/* ── Brand tokens ── */
+:root {
+  --cobalt:  #02598E;
+  --pink:    #F85A8E;
+  --green:   #00DE2C;
+  --orange:  #F97A1A;
+  --honey:   #FFDE2C;
+  --teal:    #008C8F;
+  --body:    #1a1a1a;
+  --muted:   #6b7280;
+  --border:  #e0e4ea;
+  --surface: #f8f9fb;
+  --sidebar-bg: #0f1f2e;
+  --sidebar-hover: rgba(255,255,255,0.06);
+  --sidebar-active: rgba(255,255,255,0.1);
+  --radius:    10px;
+  --radius-sm: 6px;
+  --radius-pill: 999px;
+  --approved: #059669;
+  --rejected: #dc2626;
+  --pending:  #d97706;
+}
+
+/* ═══════════════════════════════════════
+   WIREFRAME CHROME (meta layer — fixed)
+═══════════════════════════════════════ */
+.wf-chrome {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; flex-direction: column;
+}
+.wf-topbar {
+  background: #0a0f14;
+  padding: 9px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.wf-topbar h1 { font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; }
+.wf-topbar .wf-meta { font-size: 10px; color: #6b7280; white-space: nowrap; }
+.wf-badge { font-size: 9px; font-weight: 800; background: var(--teal); color: #fff; border-radius: var(--radius-pill); padding: 2px 8px; white-space: nowrap; }
+
+.wf-tabs {
+  background: #fff; border-bottom: 2px solid var(--border);
+  display: flex; overflow-x: auto; scrollbar-width: none;
+}
+.wf-tabs::-webkit-scrollbar { display: none; }
+.wf-tab {
+  padding: 11px 22px; font-size: 11px; font-weight: 800;
+  font-family: 'Montserrat', sans-serif; color: var(--muted);
+  background: transparent; border: none; cursor: pointer;
+  border-bottom: 3px solid transparent; margin-bottom: -2px;
+  white-space: nowrap; transition: color 0.15s;
+}
+.wf-tab:hover { color: #374151; }
+.wf-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+.wf-tab .scope { font-size: 9px; font-weight: 500; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 1px 7px; color: var(--muted); margin-left: 4px; }
+
+.wf-offset { height: 82px; }
+
+/* ═══════════════════════════════════════
+   PAGES
+═══════════════════════════════════════ */
+.page { display: none; min-height: calc(100vh - 82px); }
+.page.active { display: flex; flex-direction: column; }
+
+/* ═══════════════════════════════════════
+   ADMIN SHELL — fills full viewport
+═══════════════════════════════════════ */
+.admin-shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  flex: 1;
+  min-height: calc(100vh - 82px);
+  background: #fff;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  background: var(--sidebar-bg);
+  display: flex; flex-direction: column;
+  position: sticky; top: 82px;
+  height: calc(100vh - 82px);
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 18px 16px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0;
+}
+.sidebar-logo {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); border: 1.5px dashed rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 800; color: rgba(255,255,255,0.5);
+  flex-shrink: 0;
+}
+.sidebar-name { font-size: 12px; font-weight: 800; color: #fff; }
+.sidebar-role { font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 500; margin-top: 1px; }
+
+.nav-group { padding: 10px 0; flex-shrink: 0; }
+.nav-group-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.25); padding: 6px 16px 4px;
+}
+.nav-item {
+  padding: 10px 16px; font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.5);
+  display: flex; align-items: center; gap: 10px;
+  border-left: 3px solid transparent; cursor: pointer;
+  transition: all 0.15s; user-select: none;
+}
+.nav-item:hover { color: rgba(255,255,255,0.85); background: var(--sidebar-hover); }
+.nav-item.active { color: #fff; background: var(--sidebar-active); border-left-color: var(--pink); }
+.nav-item .icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; font-size: 9px; font-weight: 800;
+  border-radius: var(--radius-pill); padding: 2px 7px; color: #fff;
+  flex-shrink: 0;
+}
+.badge-orange { background: var(--pending); }
+.badge-green  { background: var(--approved); }
+.badge-red    { background: var(--rejected); }
+
+.sidebar-footer {
+  margin-top: auto; padding: 12px 0;
+  border-top: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
+}
+
+/* ─── Content area ─── */
+.content {
+  padding: 28px 36px;
+  background: var(--surface);
+  overflow-y: auto;
+  min-height: calc(100vh - 82px);
+}
+.content-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 24px; gap: 16px;
+}
+.content-title { font-size: 22px; font-weight: 800; color: var(--cobalt); line-height: 1.2; }
+.content-sub { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+/* ─── Stat cards ─── */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+.stat-card {
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 20px 18px;
+  text-align: center; border-top-width: 3px;
+}
+.stat-card .num { font-size: 36px; font-weight: 800; line-height: 1; }
+.stat-card .lbl { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-top: 6px; }
+.stat-card .sub { font-size: 10px; color: var(--muted); margin-top: 6px; font-weight: 500; }
+
+/* ─── Section label ─── */
+.section-label {
+  font-size: 11px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--cobalt);
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.section-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+}
+
+/* ─── Table ─── */
+.table-wrap { background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  background: var(--surface); padding: 12px 16px;
+  font-size: 10px; font-weight: 800; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  text-align: left; border-bottom: 1.5px solid var(--border);
+}
+tbody td {
+  padding: 12px 16px; font-size: 12px; color: var(--body);
+  border-bottom: 1px solid var(--border); font-weight: 500;
+  vertical-align: middle;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: #fafbfc; }
+
+/* ─── Status chips ─── */
+.status {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 800; border-radius: var(--radius-pill);
+  padding: 3px 10px;
+}
+.status-pending  { background: #fff7ed; color: var(--pending); }
+.status-approved { background: #ecfdf5; color: var(--approved); }
+.status-rejected { background: #fef2f2; color: var(--rejected); }
+.status .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+
+/* ─── Buttons ─── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  border-radius: var(--radius-pill); font-size: 11px; font-weight: 800;
+  padding: 7px 16px; cursor: pointer; border: none; font-family: 'Montserrat', sans-serif;
+  transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.88; }
+.btn-approve { background: var(--approved); color: #fff; }
+.btn-reject  { background: var(--rejected); color: #fff; }
+.btn-pending { background: var(--pending);  color: #fff; }
+.btn-secondary { background: #fff; color: var(--body); border: 1.5px solid var(--border); }
+.btn-primary   { background: var(--cobalt); color: #fff; }
+.btn-sm { padding: 5px 12px; font-size: 10px; }
+
+/* ─── Toggle ─── */
+.toggle {
+  width: 38px; height: 22px; border-radius: var(--radius-pill);
+  display: flex; align-items: center; padding: 3px; cursor: pointer; flex-shrink: 0;
+  transition: background 0.2s;
+}
+.toggle.off { background: #d1d5db; justify-content: flex-start; }
+.toggle.on  { background: var(--pink); justify-content: flex-end; }
+.toggle-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+/* ─── Modal ─── */
+.modal-backdrop {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 300; align-items: center; justify-content: center;
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  background: #fff; border-radius: var(--radius); width: 100%; max-width: 480px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto;
+}
+.modal-header {
+  padding: 20px 24px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-header h3 { font-size: 16px; font-weight: 800; color: var(--cobalt); }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--surface);
+  border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--muted); cursor: pointer;
+}
+.modal-body { padding: 24px; }
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block; font-size: 10px; font-weight: 800; color: var(--cobalt);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+}
+.form-input {
+  width: 100%; height: 44px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--surface); padding: 0 14px;
+  font-family: 'Montserrat', sans-serif; font-size: 12px;
+}
+.form-textarea {
+  width: 100%; height: 80px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--surface); padding: 12px 14px;
+  font-family: 'Montserrat', sans-serif; font-size: 12px; resize: none;
+}
+.modal-footer {
+  padding: 16px 24px; border-top: 1px solid var(--border);
+  display: flex; gap: 12px; justify-content: flex-end;
+}
+
+/* ─── Card type badge ─── */
+.card-type {
+  font-size: 9px; font-weight: 800; border-radius: var(--radius-pill); padding: 3px 9px;
+  display: inline-block;
+}
+.card-slim { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+.card-full { background: #fde8f1; color: var(--pink); border: 1px solid #f9a8c9; }
+
+/* ─── Annotation strip ─── */
+.anno-strip {
+  background: #fffbe6; border-top: 1.5px solid #e6c800;
+  padding: 14px 36px;
+}
+.anno-strip h4 {
+  font-size: 10px; font-weight: 800; color: #92710a;
+  text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
+}
+.anno-strip ul { margin-left: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 32px; }
+.anno-strip li { font-size: 11px; color: #555; line-height: 1.8; font-weight: 500; }
+
+/* ═══════════════════════════════════════
+   PAGE 1 — LOGIN (centred, full viewport)
+═══════════════════════════════════════ */
+.login-page {
+  flex: 1; min-height: calc(100vh - 82px);
+  background: var(--sidebar-bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.login-card {
+  background: #fff; border-radius: var(--radius);
+  padding: 48px 52px; width: 100%; max-width: 420px;
+  text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.login-logo {
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+}
+.login-logo img { width: 120px; height: auto; }
+.login-card h2 { font-size: 20px; font-weight: 800; color: var(--cobalt); margin-bottom: 4px; }
+.login-card p { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+.login-field { text-align: left; margin-bottom: 16px; }
+.login-field label { font-size: 10px; font-weight: 800; color: var(--cobalt); text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 6px; }
+.login-input {
+  width: 100%; height: 44px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--surface);
+  display: flex; align-items: center; padding: 0 16px;
+  font-size: 20px; color: #9ca3af; letter-spacing: 0.2em;
+}
+.login-btn {
+  width: 100%; height: 44px; background: var(--cobalt); color: #fff;
+  border: none; border-radius: var(--radius-pill); font-size: 14px;
+  font-weight: 800; cursor: pointer; font-family: 'Montserrat', sans-serif;
+}
+.login-help { font-size: 10px; color: var(--muted); margin-top: 16px; line-height: 1.7; }
+.login-help a { color: var(--cobalt); font-weight: 800; }
+
+/* ═══════════════════════════════════════
+   DECISION BAR
+═══════════════════════════════════════ */
+.decision-bar {
+  background: #fffbe6; border: 1.5px solid #e6c800; border-radius: var(--radius);
+  padding: 14px 20px; margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.decision-bar .info-title { font-size: 13px; font-weight: 800; color: #555; }
+.decision-bar .info-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ═══════════════════════════════════════
+   PROFILE PREVIEW CARD
+═══════════════════════════════════════ */
+.preview-wrap {
+  background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 28px; display: flex; gap: 28px; margin-bottom: 16px;
+}
+.preview-avatar {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: #e0eaf4; border: 2px dashed #a0bcd4;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--muted); text-align: center;
+  font-weight: 500; flex-shrink: 0;
+}
+.preview-name { font-size: 22px; font-weight: 800; color: var(--cobalt); margin-bottom: 4px; }
+.preview-role { font-size: 13px; color: var(--body); font-weight: 500; margin-bottom: 2px; }
+.preview-org  { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+.preview-bio {
+  font-size: 12px; color: var(--body); line-height: 1.8; font-weight: 500;
+  background: var(--surface); border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px;
+}
+.preview-fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 16px; font-size: 12px; color: var(--body); }
+.preview-fields strong { color: var(--cobalt); font-weight: 800; }
+.preview-admin-row {
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--muted); display: flex; gap: 24px;
+}
+.preview-admin-row strong { color: var(--cobalt); font-weight: 800; }
+.note-field {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 14px; height: 60px; width: 100%;
+  font-size: 11px; color: #9ca3af; font-family: 'Montserrat', sans-serif;
+}
+
+/* ═══════════════════════════════════════
+   FLOW PAGE
+═══════════════════════════════════════ */
+.flow-page {
+  flex: 1; background: var(--surface);
+  padding: 32px; overflow-y: auto;
+  min-height: calc(100vh - 82px);
+}
+.flow-title {
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--cobalt); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.flow-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.flow-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0; margin-bottom: 24px; }
+.flow-node {
+  border-radius: var(--radius-sm); padding: 12px 20px;
+  text-align: center; line-height: 1.7; font-size: 12px; font-weight: 800; color: #fff;
+  white-space: nowrap;
+}
+.flow-node small { display: block; font-size: 9px; font-weight: 500; opacity: 0.7; margin-top: 2px; }
+.flow-arrow { color: var(--muted); padding: 0 8px; font-size: 18px; }
+.code-block {
+  background: #1a1a2e; color: #6ee7b7; font-family: 'Courier New', monospace;
+  font-size: 11px; line-height: 2.2; border-radius: var(--radius);
+  padding: 20px 24px; overflow-x: auto; margin-top: 8px;
+}
+
+@media (max-width: 900px) {
+  .admin-shell { grid-template-columns: 1fr; }
+  .sidebar { position: relative; height: auto; flex-direction: row; flex-wrap: wrap; padding: 8px; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .anno-strip ul { grid-template-columns: 1fr; }
+  .preview-fields { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     WIREFRAME CHROME
+═══════════════════════════════════════ -->
+<div class="wf-chrome">
+  <div class="wf-topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <h1>Wireframe B — Admin UI (Gatekeeper Dashboard)</h1>
+      <span style="font-size:10px;color:#6b7280;">Password-protected React app · 18 May 2026</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="wf-meta">v0.1 · 20 Apr 2026</span>
+      <span class="wf-badge">WIREFRAME</span>
+    </div>
+  </div>
+  <div class="wf-tabs">
+    <button class="wf-tab active" onclick="show('p1',this)">1 — Login</button>
+    <button class="wf-tab" onclick="show('p2',this)">2 — Dashboard</button>
+    <button class="wf-tab" onclick="show('p3',this)">3 — Pending</button>
+    <button class="wf-tab" onclick="show('p4',this)">4 — Submission</button>
+    <button class="wf-tab" onclick="show('p5',this)">5 — Live Profiles</button>
+    <button class="wf-tab" onclick="show('p6',this)">6 — Invited</button>
+    <button class="wf-tab" onclick="show('p7',this)">7 — Declined</button>
+    <button class="wf-tab" onclick="show('pX',this)">8 — Rejected</button>
+    <button class="wf-tab" onclick="show('pY',this)">9 — Featured</button>
+    <button class="wf-tab" onclick="show('p8',this)">10 — Admin Flow</button>
+    <button class="wf-tab" style="margin-left:auto;background:var(--cobalt);color:#fff;border-radius:var(--radius-pill);padding:6px 14px;" onclick="window.open('wireframe-directory.html','_blank')">← Directory</button>
+  </div>
+</div>
+<div class="wf-offset"></div>
+
+
+<!-- ═══════════════════════════════════════
+     PAGE 1 — LOGIN
+═══════════════════════════════════════ -->
+<div id="p1" class="page active">
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-logo"><img src="./TH-Logo-Tag Top-FC.png" alt="Transform Health" style="width:120px;height:auto;"/></div>
+      <h2>Leaders Directory</h2>
+      <p>Admin access only · Transform Health team</p>
+      <div class="login-field">
+        <label>Admin Password</label>
+        <div class="login-input">••••••••••</div>
+      </div>
+      <button class="login-btn">Sign In →</button>
+      <div class="login-help">
+        Forgot password? Contact the directory administrator.<br>
+        <a>naijeria@mamatech.co.ke</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="anno-strip">
+    <h4>Screen 1 — Notes</h4>
+    <ul>
+      <li>Single shared password — no individual accounts needed at this scale</li>
+      <li>Session stored in localStorage · sidebar sign-out button clears it</li>
+      <li>Growth path: swap to Google OAuth — one config change, no rebuild needed</li>
+      <li>Admin URL is separate from the public directory — not linked from WordPress</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PAGE 2 — DASHBOARD OVERVIEW
+═══════════════════════════════════════ -->
+<div id="p2" class="page">
+  <div class="admin-shell">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo"><img src="th-logo.png" alt="TH" style="width:28px;height:28px;object-fit:contain;border-radius:4px;background:#fff;padding:2px;"/></div>
+        <div>
+          <div class="sidebar-name">TH Admin</div>
+          <div class="sidebar-role">Gatekeeper</div>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Overview</div>
+        <div class="nav-item" onclick="show('p2',this)"><span class="icon">⊞</span> Dashboard</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Submissions</div>
+        <div class="nav-item" onclick="show('p3',this)"><span class="icon">⏳</span> Pending <span class="nav-badge badge-orange">7</span></div>
+        <div class="nav-item" onclick="show('p5',this)"><span class="icon">✓</span> Live Profiles <span class="nav-badge badge-green">80</span></div>
+        <div class="nav-item" onclick="show('pX',this)"><span class="icon">✕</span> Rejected <span class="nav-badge badge-red">3</span></div>
+        <div class="nav-item" onclick="show('pY',this)"><span class="icon">★</span> Featured</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Nominations</div>
+        <div class="nav-item" onclick="show('p6',this)"><span class="icon">📨</span> Invited <span class="nav-badge" style="background:#6366f1;">4</span></div>
+        <div class="nav-item" onclick="show('p7',this)"><span class="icon">✕</span> Declined <span class="nav-badge badge-red">1</span></div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="nav-item" onclick="window.open('wireframe-directory.html','_blank')"><span class="icon">↗</span> View Directory</div>
+        <div class="nav-item" onclick="alert('Signed out!')"><span class="icon">⬚</span> Sign Out</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="content-header">
+        <div>
+          <div class="content-title">Dashboard</div>
+          <div class="content-sub">Last refreshed: just now · Data source: Google Sheets</div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card" style="border-top-color:var(--pending);">
+          <div class="num" style="color:var(--pending);">7</div>
+          <div class="lbl">Pending Review</div>
+          <button class="btn btn-pending" style="width:100%;margin-top:12px;">Review now →</button>
+        </div>
+        <div class="stat-card" style="border-top-color:var(--approved);">
+          <div class="num" style="color:var(--approved);">80</div>
+          <div class="lbl">Live Profiles</div>
+          <div class="sub">Visible in directory</div>
+        </div>
+        <div class="stat-card" style="border-top-color:var(--rejected);">
+          <div class="num" style="color:var(--rejected);">3</div>
+          <div class="lbl">Rejected</div>
+          <div class="sub">Not published</div>
+        </div>
+        <div class="stat-card" style="border-top-color:var(--pink);">
+          <div class="num" style="color:var(--pink);">5</div>
+          <div class="lbl">Featured</div>
+          <div class="sub">Via Sheet checkbox</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-label">Recent Submissions</div>
+        <span style="font-size:11px;color:var(--cobalt);font-weight:800;cursor:pointer;">View all pending →</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Organisation</th><th>Country</th><th>Submitted</th><th>Status</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Priya Sharma</strong></td>
+              <td>India Health Ministry</td><td>India</td>
+              <td style="color:var(--muted);">2h ago</td>
+              <td><span class="status status-pending"><span class="dot" style="background:var(--pending);"></span>Pending</span></td>
+              <td><div style="display:flex;gap:6px;"><span class="btn btn-approve btn-sm">✓ Approve</span><span class="btn btn-reject btn-sm">✕ Reject</span></div></td>
+            </tr>
+            <tr>
+              <td><strong>Zara Ali</strong></td>
+              <td>UNICEF MENA</td><td>Lebanon</td>
+              <td style="color:var(--muted);">5h ago</td>
+              <td><span class="status status-pending"><span class="dot" style="background:var(--pending);"></span>Pending</span></td>
+              <td><div style="display:flex;gap:6px;"><span class="btn btn-approve btn-sm">✓ Approve</span><span class="btn btn-reject btn-sm">✕ Reject</span></div></td>
+            </tr>
+            <tr>
+              <td><strong>Nomsa Dube</strong></td>
+              <td>Africa CDC</td><td>South Africa</td>
+              <td style="color:var(--muted);">1d ago</td>
+              <td><span class="status status-approved"><span class="dot" style="background:var(--approved);"></span>Approved</span></td>
+              <td><span class="btn btn-secondary btn-sm">View →</span></td>
+            </tr>
+            <tr>
+              <td><strong>Chen Wei</strong></td>
+              <td>WHO Western Pacific</td><td>Philippines</td>
+              <td style="color:var(--muted);">2d ago</td>
+              <td><span class="status status-rejected"><span class="dot" style="background:var(--rejected);"></span>Rejected</span></td>
+              <td><span class="btn btn-secondary btn-sm">View →</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="anno-strip">
+    <h4>Screen 2 — Notes</h4>
+    <ul>
+      <li>Dashboard is the first screen after login — live counts from Google Sheets + last 4–5 submissions</li>
+      <li>"Review now" badge pulses when pending count &gt; 0 — visual urgency cue</li>
+      <li>All counts pull live from Sheets — pending tab row count, live tab row count, etc.</li>
+      <li>Sidebar is sticky — stays in place as content area scrolls on long lists</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PAGE 3 — PENDING QUEUE
+═══════════════════════════════════════ -->
+<div id="p3" class="page">
+  <div class="admin-shell">
+
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo"><img src="th-logo.png" alt="TH" style="width:28px;height:28px;object-fit:contain;border-radius:4px;background:#fff;padding:2px;"/></div>
+        <div><div class="sidebar-name">TH Admin</div><div class="sidebar-role">Gatekeeper</div></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Overview</div>
+        <div class="nav-item" onclick="show('p2',this)"><span class="icon">⊞</span> Dashboard</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Submissions</div>
+        <div class="nav-item active" onclick="show('p3',this)"><span class="icon">⏳</span> Pending <span class="nav-badge badge-orange">7</span></div>
+        <div class="nav-item" onclick="show('p5',this)"><span class="icon">✓</span> Live Profiles <span class="nav-badge badge-green">80</span></div>
+        <div class="nav-item" onclick="show('pX',this)"><span class="icon">✕</span> Rejected <span class="nav-badge badge-red">3</span></div>
+        <div class="nav-item" onclick="show('pY',this)"><span class="icon">★</span> Featured</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Nominations</div>
+        <div class="nav-item" onclick="show('p6',this)"><span class="icon">📨</span> Invited <span class="nav-badge" style="background:#6366f1;">4</span></div>
+        <div class="nav-item" onclick="show('p7',this)"><span class="icon">✕</span> Declined <span class="nav-badge badge-red">1</span></div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="nav-item" onclick="window.open('wireframe-directory.html','_blank')"><span class="icon">↗</span> View Directory</div>
+        <div class="nav-item" onclick="alert('Signed out!')"><span class="icon">⬚</span> Sign Out</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="content-header">
+        <div>
+          <div class="content-title">Pending Review</div>
+          <div class="content-sub">7 submissions awaiting approval</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <span class="btn btn-approve">✓ Approve selected</span>
+          <span class="btn btn-reject">✕ Reject selected</span>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36px;"><input type="checkbox" disabled></th>
+              <th>Name</th><th>Role</th><th>Country</th><th>Expertise</th><th>Submitted</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox" disabled></td>
+              <td><strong>Priya Sharma</strong></td>
+              <td style="color:var(--muted);">Health Policy Advisor</td>
+              <td>India</td>
+              <td><span class="status" style="background:#e0eaf4;color:var(--cobalt);padding:3px 10px;">Policy</span></td>
+              <td style="color:var(--muted);font-size:11px;">Apr 20, 10:14</td>
+              <td><div style="display:flex;gap:6px;">
+                <span class="btn btn-secondary btn-sm">Preview</span>
+                <span class="btn btn-approve btn-sm">✓</span>
+                <span class="btn btn-reject btn-sm">✕</span>
+              </div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" disabled></td>
+              <td><strong>Zara Ali</strong></td>
+              <td style="color:var(--muted);">Regional Director</td>
+              <td>Lebanon</td>
+              <td><span class="status" style="background:#fde8f1;color:var(--pink);padding:3px 10px;">Child Health</span></td>
+              <td style="color:var(--muted);font-size:11px;">Apr 20, 07:32</td>
+              <td><div style="display:flex;gap:6px;">
+                <span class="btn btn-secondary btn-sm">Preview</span>
+                <span class="btn btn-approve btn-sm">✓</span>
+                <span class="btn btn-reject btn-sm">✕</span>
+              </div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" disabled></td>
+              <td><strong>Amelia Torres</strong></td>
+              <td style="color:var(--muted);">Programme Officer</td>
+              <td>Mexico</td>
+              <td><span class="status" style="background:#e0f0f0;color:var(--teal);padding:3px 10px;">Digital Health</span></td>
+              <td style="color:var(--muted);font-size:11px;">Apr 19, 15:00</td>
+              <td><div style="display:flex;gap:6px;">
+                <span class="btn btn-secondary btn-sm">Preview</span>
+                <span class="btn btn-approve btn-sm">✓</span>
+                <span class="btn btn-reject btn-sm">✕</span>
+              </div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" disabled></td>
+              <td><strong>Mei Lin</strong></td>
+              <td style="color:var(--muted);">Research Coordinator</td>
+              <td>Singapore</td>
+              <td><span class="status" style="background:#fef0e0;color:var(--orange);padding:3px 10px;">Research</span></td>
+              <td style="color:var(--muted);font-size:11px;">Apr 19, 09:15</td>
+              <td><div style="display:flex;gap:6px;">
+                <span class="btn btn-secondary btn-sm">Preview</span>
+                <span class="btn btn-approve btn-sm">✓</span>
+                <span class="btn btn-reject btn-sm">✕</span>
+              </div></td>
+            </tr>
+            <tr style="background:#fafbfc;">
+              <td colspan="7" style="text-align:center;color:#9ca3af;font-size:11px;padding:14px;">3 more pending submissions…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:14px;padding:12px 16px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:var(--radius-sm);font-size:11px;color:#0369a1;line-height:1.8;">
+        <strong>Approve</strong> → row moves from Sheet "Pending" → "Live" tab · profile appears in directory on next API fetch<br>
+        <strong>Reject</strong> → row moves to Sheet "Rejected" tab · confirm with TH team whether a rejection notification email is needed
+      </div>
+    </div>
+  </div>
+
+  <div class="anno-strip">
+    <h4>Screen 3 — Notes</h4>
+    <ul>
+      <li><strong>Approve:</strong> Moves row from "Pending" → "Live" in Google Sheets · directory reflects within seconds</li>
+      <li><strong>Reject:</strong> Moves to "Rejected" tab · confirm with team whether automated rejection email is in scope</li>
+      <li><strong>Preview:</strong> Opens Screen 4 — admin reads the full bio before deciding</li>
+      <li><strong>Bulk select:</strong> Checkboxes allow batch approve/reject — useful when multiple submissions arrive at once</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PAGE 4 — SUBMISSION DETAIL
+═══════════════════════════════════════ -->
+<div id="p4" class="page">
+  <div class="admin-shell">
+
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo"><img src="th-logo.png" alt="TH" style="width:28px;height:28px;object-fit:contain;border-radius:4px;background:#fff;padding:2px;"/></div>
+        <div><div class="sidebar-name">TH Admin</div><div class="sidebar-role">Gatekeeper</div></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Overview</div>
+        <div class="nav-item" onclick="show('p2',this)"><span class="icon">⊞</span> Dashboard</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Submissions</div>
+        <div class="nav-item active" onclick="show('p3',this)"><span class="icon">⏳</span> Pending <span class="nav-badge badge-orange">7</span></div>
+        <div class="nav-item" onclick="show('p5',this)"><span class="icon">✓</span> Live Profiles <span class="nav-badge badge-green">80</span></div>
+        <div class="nav-item" onclick="show('pX',this)"><span class="icon">✕</span> Rejected <span class="nav-badge badge-red">3</span></div>
+        <div class="nav-item" onclick="show('pY',this)"><span class="icon">★</span> Featured</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Nominations</div>
+        <div class="nav-item" onclick="show('p6',this)"><span class="icon">📨</span> Invited <span class="nav-badge" style="background:#6366f1;">4</span></div>
+        <div class="nav-item" onclick="show('p7',this)"><span class="icon">✕</span> Declined <span class="nav-badge badge-red">1</span></div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="nav-item" onclick="window.open('wireframe-directory.html','_blank')"><span class="icon">↗</span> View Directory</div>
+        <div class="nav-item" onclick="alert('Signed out!')"><span class="icon">⬚</span> Sign Out</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">
+        <span style="color:var(--cobalt);font-weight:800;cursor:pointer;" onclick="show('p3',this)">← Pending queue</span> &nbsp;/&nbsp; Priya Sharma
+      </div>
+
+      <div class="decision-bar">
+        <div>
+          <div class="info-title">Review this submission</div>
+          <div class="info-sub">Submitted Apr 20, 10:14 · Pending for 3 hours</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <span class="btn btn-reject" style="padding:10px 24px;">✕ &nbsp;Reject</span>
+          <span class="btn btn-approve" style="padding:10px 24px;">✓ &nbsp;Approve &amp; Publish</span>
+        </div>
+      </div>
+
+      <div class="preview-wrap">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:110px;">
+          <div class="preview-avatar">Photo<br>or<br>initials</div>
+          <div style="font-size:9px;color:var(--muted);text-align:center;">As will appear<br>in directory</div>
+          <div style="font-size:10px;font-weight:800;color:var(--cobalt);">LinkedIn ↗</div>
+        </div>
+        <div style="flex:1;">
+          <div class="preview-name">Priya Sharma</div>
+          <div class="preview-role">Health Policy Advisor</div>
+          <div class="preview-org">India Health Ministry · India</div>
+          <div class="preview-bio">
+            Bio as submitted via Google Form — approximately 150 words describing the leader's work, focus areas, and geographic scope. This is the exact text that will appear on the public full profile card if approved by the Transform Health admin team.
+          </div>
+          <div class="preview-fields">
+            <div><strong>Country:</strong> India</div>
+            <div><strong>Region:</strong> South Asia</div>
+            <div><strong>Sector:</strong> Government</div>
+            <div><strong>Experience:</strong> 8 years</div>
+            <div><strong>Expertise:</strong> Policy, Research</div>
+            <div><strong>Scope:</strong> National</div>
+          </div>
+          <div class="preview-admin-row">
+            <span><strong>Email (admin only):</strong> priya@indiahealth.gov.in</span>
+            <span><strong>LinkedIn:</strong> <span style="color:var(--cobalt);">linkedin.com/in/priyasharma ↗</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">
+          Internal note (optional · stored in Sheet · never shown publicly)
+        </div>
+        <div class="note-field">Add a note about this decision…</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="anno-strip">
+    <h4>Screen 4 — Notes</h4>
+    <ul>
+      <li>"Approve &amp; Publish" moves the row to Sheet "Live" — profile appears in directory on next API fetch</li>
+      <li>Internal note is optional — stored in a hidden Sheet column, never surfaced publicly</li>
+      <li>Email shown here for admin reference only — for contacting leader if needed, never public</li>
+      <li>Prev / Next nav (not shown) lets admin step through the queue without returning to the list</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PAGE 5 — LIVE PROFILES
+═══════════════════════════════════════ -->
+<div id="p5" class="page">
+  <div class="admin-shell">
+
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo"><img src="th-logo.png" alt="TH" style="width:28px;height:28px;object-fit:contain;border-radius:4px;background:#fff;padding:2px;"/></div>
+        <div><div class="sidebar-name">TH Admin</div><div class="sidebar-role">Gatekeeper</div></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Overview</div>
+        <div class="nav-item" onclick="show('p2',this)"><span class="icon">⊞</span> Dashboard</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Submissions</div>
+        <div class="nav-item" onclick="show('p3',this)"><span class="icon">⏳</span> Pending <span class="nav-badge badge-orange">7</span></div>
+        <div class="nav-item active" onclick="show('p5',this)"><span class="icon">✓</span> Live Profiles <span class="nav-badge badge-green">80</span></div>
+        <div class="nav-item" onclick="show('pX',this)"><span class="icon">✕</span> Rejected <span class="nav-badge badge-red">3</span></div>
+        <div class="nav-item" onclick="show('pY',this)"><span class="icon">★</span> Featured</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Nominations</div>
+        <div class="nav-item" onclick="show('p6',this)"><span class="icon">📨</span> Invited <span class="nav-badge" style="background:#6366f1;">4</span></div>
+        <div class="nav-item" onclick="show('p7',this)"><span class="icon">✕</span> Declined <span class="nav-badge badge-red">1</span></div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="nav-item" onclick="window.open('wireframe-directory.html','_blank')"><span class="icon">↗</span> View Directory</div>
+        <div class="nav-item" onclick="alert('Signed out!')"><span class="icon">⬚</span> Sign Out</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="content-header">
+        <div>
+          <div class="content-title">Live Profiles</div>
+          <div class="content-sub">80 profiles published in directory</div>
+        </div>
+        <div style="height:40px;padding:0 16px;border:1.5px solid var(--border);border-radius:var(--radius-pill);background:#fff;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;font-weight:500;">
+          ⌕ &nbsp;Search profiles…
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Role</th><th>Country</th><th>Card Type</th><th>Featured ★</th><th>Published</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Amara Nwosu</strong></td>
+              <td style="color:var(--muted);">Sr. Health Policy Advisor</td>
+              <td>Kenya</td>
+              <td><span class="card-type card-slim">Slim</span></td>
+              <td><div class="toggle off"><div class="toggle-thumb"></div></div></td>
+              <td style="color:var(--muted);font-size:11px;">Existing</td>
+            </tr>
+            <tr>
+              <td><strong>Fatima Khalil</strong></td>
+              <td style="color:var(--muted);">Director, Digital Health</td>
+              <td>Jordan</td>
+              <td><span class="card-type card-full">Full</span></td>
+              <td><div class="toggle on"><div class="toggle-thumb"></div></div></td>
+              <td style="color:var(--muted);font-size:11px;">Apr 18</td>
+            </tr>
+            <tr>
+              <td><strong>Maya Rajan</strong></td>
+              <td style="color:var(--muted);">Programme Manager</td>
+              <td>India</td>
+              <td><span class="card-type card-slim">Slim</span></td>
+              <td><div class="toggle off"><div class="toggle-thumb"></div></div></td>
+              <td style="color:var(--muted);font-size:11px;">Existing</td>
+            </tr>
+            <tr>
+              <td><strong>Luciana Barbosa</strong></td>
+              <td style="color:var(--muted);">Chief Medical Officer</td>
+              <td>Brazil</td>
+              <td><span class="card-type card-slim">Slim</span></td>
+              <td><div class="toggle on"><div class="toggle-thumb"></div></div></td>
+              <td style="color:var(--muted);font-size:11px;">Existing</td>
+            </tr>
+            <tr style="background:#fafbfc;">
+              <td colspan="6" style="text-align:center;color:#9ca3af;font-size:11px;padding:14px;">76 more live profiles…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:14px;padding:12px 16px;background:#fffbe6;border:1px solid #e6c800;border-radius:var(--radius-sm);font-size:11px;color:#6b5a00;line-height:1.8;">
+        <strong>Featured toggle</strong> writes directly to the "Featured" checkbox column in Google Sheets — reflected in the public directory on next API fetch. Max 6 featured leaders recommended.<br>
+        <strong>Profile edits</strong> are made directly in Google Sheets by the TH team — this view is approve / reject / feature only.
+      </div>
+    </div>
+  </div>
+
+  <div class="anno-strip">
+    <h4>Screen 5 — Notes</h4>
+    <ul>
+      <li><strong>Slim card:</strong> Existing 80 profiles — Name, Role, Org, Expertise tags, LinkedIn only</li>
+      <li><strong>Full card:</strong> New form submissions — adds bio, country, scope, experience (18 May)</li>
+      <li><strong>Featured toggle:</strong> Writes to Sheet "Featured" column — no code deploy required to change featured leaders</li>
+      <li>Profile content editing is done in Google Sheets by the TH team — admin UI is read + approve + feature only</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PAGE 6 — NOMINATIONS: INVITED
+═══════════════════════════════════════ -->
+<div id="p6" class="page">
+  <div class="admin-shell">
+
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo"><img src="th-logo.png" alt="TH" style="width:28px;height:28px;object-fit:contain;border-radius:4px;background:#fff;padding:2px;"/></div>
+        <div><div class="sidebar-name">TH Admin</div><div class="sidebar-role">Gatekeeper</div></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Overview</div>
+        <div class="nav-item" onclick="show('p2',this)"><span class="icon">⊞</span> Dashboard</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Submissions</div>
+        <div class="nav-item" onclick="show('p3',this)"><span class="icon">⏳</span> Pending <span class="nav-badge badge-orange">7</span></div>
+        <div class="nav-item" onclick="show('p5',this)"><span class="icon">✓</span> Live Profiles <span class="nav-badge badge-green">80</span></div>
+        <div class="nav-item" onclick="show('pX',this)"><span class="icon">✕</span> Rejected <span class="nav-badge badge-red">3</span></div>
+        <div class="nav-item" onclick="show('pY',this)"><span class="icon">★</span> Featured</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Nominations</div>
+        <div class="nav-item active" onclick="show('p6',this)"><span class="icon">📨</span> Invited <span class="nav-badge" style="background:#6366f1;">4</span></div>
+        <div class="nav-item" onclick="show('p7',this)"><span class="icon">✕</span> Declined <span class="nav-badge badge-red">1</span></div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="nav-item" onclick="window.open('wireframe-directory.html','_blank')"><span class="icon">↗</span> View Directory</div>
+        <div class="nav-item" onclick="alert('Signed out!')"><span class="icon">⬚</span> Sign Out</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="content-header">
+        <div>
+          <div class="content-title">Invited Nominations</div>
+          <div class="content-sub">4 nominees have been sent an invitation to self-submit · awaiting their response</div>
+        </div>
+        <span class="btn btn-primary" style="height:40px;padding:0 20px;font-size:12px;" onclick="document.getElementById('inviteModal').classList.add('show')">+ Send new invite</span>
+      </div>
+
+      <div style="margin-bottom:16px;padding:12px 16px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:var(--radius-sm);font-size:11px;color:#3730a3;line-height:1.8;">
+        <strong>How it works:</strong> When someone nominates another person, this table receives the profile link. The admin reviews the nomination and sends a personalised invitation email — the nominee then self-submits via the nomination form. Once they submit, their profile moves into the <strong>Pending</strong> queue for review.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nominee</th>
+              <th>Profile Link</th>
+              <th>Nominated by</th>
+              <th>Invite sent</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Dr. Amara Diallo</strong><div style="font-size:10px;color:var(--muted);margin-top:2px;">pulled from profile</div></td>
+              <td><a style="color:var(--cobalt);font-size:11px;font-weight:800;">linkedin.com/in/amaradiallo ↗</a></td>
+              <td style="font-size:11px;color:var(--muted);">sara@who.int</td>
+              <td style="font-size:11px;color:var(--muted);">Apr 18, 2026</td>
+              <td><span class="status" style="background:#eef2ff;color:#6366f1;"><span class="dot" style="background:#6366f1;"></span>Awaiting</span></td>
+              <td><div style="display:flex;gap:6px;">
+                <span class="btn btn-secondary btn-sm">Resend invite</span>
+                <span class="btn btn-reject btn-sm">Decline</span>
+              </div></td>
+            </tr>
+            <tr>
+              <td><strong>Prof. Yemi Okonkwo</strong><div style="font-size:10px;color:var(--muted);margin-top:2px;">pulled from profile</div></td>
+              <td><a style="color:var(--cobalt);font-size:11px;font-weight:800;">twitter.com/yemiokonkwo ↗</a></td>
+              <td style="font-size:11px;color:var(--muted);">ndifanji@transformhealth.org</td>
+              <td style="font-size:11px;color:var(--muted);">Apr 17, 2026</td>
+              <td><span class="status" style="background:#eef2ff;color:#6366f1;"><span class="dot" style="background:#6366f1;"></span>Awaiting</span></td>
+              <td><div style="display:flex;gap:6px;">
+                <span class="btn btn-secondary btn-sm">Resend invite</span>
+                <span class="btn btn-reject btn-sm">Decline</span>
+              </div></td>
+            </tr>
+            <tr>
+              <td><strong>Fatou Camara</strong><div style="font-size:10px;color:var(--muted);margin-top:2px;">pulled from profile</div></td>
+              <td><a style="color:var(--cobalt);font-size:11px;font-weight:800;">fatoucamara.org ↗</a></td>
+              <td style="font-size:11px;color:var(--muted);">tejas@transformhealth.org</td>
+              <td style="font-size:11px;color:var(--muted);">Apr 15, 2026</td>
+              <td><span class="status status-approved"><span class="dot" style="background:var(--approved);"></span>Submitted</span></td>
+              <td><span class="btn btn-secondary btn-sm">View submission →</span></td>
+            </tr>
+            <tr>
+              <td><strong>Dr. Rania Hassan</strong><div style="font-size:10px;color:var(--muted);margin-top:2px;">pulled from profile</div></td>
+              <td><a style="color:var(--cobalt);font-size:11px;font-weight:800;">researchgate.net/rania-hassan ↗</a></td>
+              <td style="font-size:11px;color:var(--muted);">amara@gdhub.org</td>
+              <td style="font-size:11px;color:var(--muted);">Apr 12, 2026</td>
+              <td><span class="status" style="background:#fff7ed;color:#d97706;"><span class="dot" style="background:#d97706;"></span>No response</span></td>
+              <td><div style="display:flex;gap:6px;">
+                <span class="btn btn-secondary btn-sm">Resend invite</span>
+                <span class="btn btn-reject btn-sm">Decline</span>
+              </div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="anno-strip">
+    <h4>Screen 6 — Nominations: Invited · notes</h4>
+    <ul>
+      <li><strong>Source:</strong> Each row originates from a "I am nominating someone else" submission — only a profile link is captured</li>
+      <li><strong>Awaiting:</strong> Admin sent invite, no response yet · <strong>Submitted:</strong> Nominee completed their own form → now in Pending queue</li>
+      <li><strong>No response:</strong> Invite sent 7+ days ago with no action — auto-flag or manual resend</li>
+      <li><strong>Decline:</strong> Admin chooses not to pursue this nomination → moves to Declined tab with optional note</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PAGE 7 — NOMINATIONS: DECLINED
+═══════════════════════════════════════ -->
+<div id="p7" class="page">
+  <div class="admin-shell">
+
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo"><img src="th-logo.png" alt="TH" style="width:28px;height:28px;object-fit:contain;border-radius:4px;background:#fff;padding:2px;"/></div>
+        <div><div class="sidebar-name">TH Admin</div><div class="sidebar-role">Gatekeeper</div></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Overview</div>
+        <div class="nav-item" onclick="show('p2',this)"><span class="icon">⊞</span> Dashboard</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Submissions</div>
+        <div class="nav-item" onclick="show('p3',this)"><span class="icon">⏳</span> Pending <span class="nav-badge badge-orange">7</span></div>
+        <div class="nav-item" onclick="show('p5',this)"><span class="icon">✓</span> Live Profiles <span class="nav-badge badge-green">80</span></div>
+        <div class="nav-item" onclick="show('pX',this)"><span class="icon">✕</span> Rejected <span class="nav-badge badge-red">3</span></div>
+        <div class="nav-item" onclick="show('pY',this)"><span class="icon">★</span> Featured</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Nominations</div>
+        <div class="nav-item" onclick="show('p6',this)"><span class="icon">📨</span> Invited <span class="nav-badge" style="background:#6366f1;">4</span></div>
+        <div class="nav-item active" onclick="show('p7',this)"><span class="icon">✕</span> Declined <span class="nav-badge badge-red">1</span></div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="nav-item" onclick="window.open('wireframe-directory.html','_blank')"><span class="icon">↗</span> View Directory</div>
+        <div class="nav-item" onclick="alert('Signed out!')"><span class="icon">⬚</span> Sign Out</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="content-header">
+        <div>
+          <div class="content-title">Declined Nominations</div>
+          <div class="content-sub">1 nomination not taken forward · retained for audit trail</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;padding:12px 16px;background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-sm);font-size:11px;color:#991b1b;line-height:1.8;">
+        Declined nominations are kept for record-keeping only. They are never shown publicly. An admin can reinstate a nomination back to Invited at any time.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nominee</th>
+              <th>Profile Link</th>
+              <th>Nominated by</th>
+              <th>Declined on</th>
+              <th>Reason / Note</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Jane Mbeki</strong></td>
+              <td><a style="color:var(--cobalt);font-size:11px;font-weight:800;">linkedin.com/in/janembeki ↗</a></td>
+              <td style="font-size:11px;color:var(--muted);">contact@ngo.org</td>
+              <td style="font-size:11px;color:var(--muted);">Apr 10, 2026</td>
+              <td style="font-size:11px;color:var(--muted);font-style:italic;">Nominee requested not to be included</td>
+              <td><span class="btn btn-secondary btn-sm">Reinstate →</span></td>
+            </tr>
+            <tr style="background:#fafbfc;">
+              <td colspan="6" style="text-align:center;color:#9ca3af;font-size:11px;padding:14px;">No further declined nominations</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="anno-strip">
+    <h4>Screen 7 — Nominations: Declined · notes</h4>
+    <ul>
+      <li>Declined by admin (nomination not suitable) or by nominee (opted out after receiving invite)</li>
+      <li><strong>Reinstate:</strong> Moves the nomination back to the Invited queue — admin can resend invite</li>
+      <li>Reason / Note column is admin-only · written at time of decline · stored in Sheet, never public</li>
+      <li>No bulk actions needed at this scale — single reinstate button per row is sufficient</li>
+    </ul>
+</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PAGE X — REJECTED
+═════════════════════════════════════════ -->
+<div id="pX" class="page">
+  <div class="admin-shell">
+
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo"><img src="th-logo.png" alt="TH" style="width:28px;height:28px;object-fit:contain;border-radius:4px;background:#fff;padding:2px;"/></div>
+        <div><div class="sidebar-name">TH Admin</div><div class="sidebar-role">Gatekeeper</div></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Overview</div>
+        <div class="nav-item" onclick="show('p2',this)"><span class="icon">⊞</span> Dashboard</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Submissions</div>
+        <div class="nav-item" onclick="show('p3',this)"><span class="icon">⏳</span> Pending <span class="nav-badge badge-orange">7</span></div>
+        <div class="nav-item" onclick="show('p5',this)"><span class="icon">✓</span> Live Profiles <span class="nav-badge badge-green">80</span></div>
+        <div class="nav-item active" onclick="show('pX',this)"><span class="icon">✕</span> Rejected <span class="nav-badge badge-red">3</span></div>
+        <div class="nav-item" onclick="show('pY',this)"><span class="icon">★</span> Featured</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Nominations</div>
+        <div class="nav-item" onclick="show('p6',this)"><span class="icon">📨</span> Invited <span class="nav-badge" style="background:#6366f1;">4</span></div>
+        <div class="nav-item" onclick="show('p7',this)"><span class="icon">✕</span> Declined <span class="nav-badge badge-red">1</span></div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="nav-item" onclick="window.open('wireframe-directory.html','_blank')"><span class="icon">↗</span> View Directory</div>
+        <div class="nav-item" onclick="alert('Signed out!')"><span class="icon">⬚</span> Sign Out</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="content-header">
+        <div>
+          <div class="content-title">Rejected Submissions</div>
+          <div class="content-sub">3 submissions declined · audit trail only</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;padding:12px 16px;background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-sm);font-size:11px;color:#991b1b;line-height:1.8;">
+        Rejected submissions are kept for record-keeping only. They are never shown publicly. A rejected submission can be reinstated back to the Pending queue.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Role</th><th>Country</th><th>Rejected on</th><th>Reason / Note</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Chen Wei</strong></td>
+              <td style="color:var(--muted);">Health Data Analyst</td>
+              <td>Philippines</td>
+              <td style="color:var(--muted);font-size:11px;">Apr 18, 2026</td>
+              <td style="font-size:11px;color:var(--muted);font-style:italic;">Incomplete submission</td>
+              <td><span class="btn btn-secondary btn-sm">Reinstate →</span></td>
+            </tr>
+            <tr>
+              <td><strong>Marcus Ochieng</strong></td>
+              <td style="color:var(--muted);">Program Coordinator</td>
+              <td>Kenya</td>
+              <td style="color:var(--muted);font-size:11px;">Apr 15, 2026</td>
+              <td style="font-size:11px;color:var(--muted);font-style:italic;">Does not meet criteria</td>
+              <td><span class="btn btn-secondary btn-sm">Reinstate →</span></td>
+            </tr>
+            <tr>
+              <td><strong>Anonymous #3</strong></td>
+              <td style="color:var(--muted);">—</td>
+              <td>—</td>
+              <td style="color:var(--muted);font-size:11px;">Apr 10, 2026</td>
+              <td style="font-size:11px;color:var(--muted);font-style:italic;">Spam / Invalid</td>
+              <td><span class="btn btn-secondary btn-sm">Reinstate →</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="anno-strip">
+    <h4>Screen X — Rejected · notes</h4>
+    <ul>
+      <li>Rejected submissions are kept for audit trail — not served to public directory</li>
+      <li><strong>Reinstate:</strong> Moves the row back to "Pending" queue — admin can re-review</li>
+      <li>Reason / Note is captured at time of rejection — stored in Sheets, never public</li>
+      <li>No bulk actions needed at this scale</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PAGE Y — FEATURED
+═════════════════════════════════════════ -->
+<div id="pY" class="page">
+  <div class="admin-shell">
+
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo"><img src="th-logo.png" alt="TH" style="width:28px;height:28px;object-fit:contain;border-radius:4px;background:#fff;padding:2px;"/></div>
+        <div><div class="sidebar-name">TH Admin</div><div class="sidebar-role">Gatekeeper</div></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Overview</div>
+        <div class="nav-item" onclick="show('p2',this)"><span class="icon">⊞</span> Dashboard</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Submissions</div>
+        <div class="nav-item" onclick="show('p3',this)"><span class="icon">⏳</span> Pending <span class="nav-badge badge-orange">7</span></div>
+        <div class="nav-item" onclick="show('p5',this)"><span class="icon">✓</span> Live Profiles <span class="nav-badge badge-green">80</span></div>
+        <div class="nav-item" onclick="show('pX',this)"><span class="icon">✕</span> Rejected <span class="nav-badge badge-red">3</span></div>
+        <div class="nav-item active" onclick="show('pY',this)"><span class="icon">★</span> Featured</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Nominations</div>
+        <div class="nav-item" onclick="show('p6',this)"><span class="icon">📨</span> Invited <span class="nav-badge" style="background:#6366f1;">4</span></div>
+        <div class="nav-item" onclick="show('p7',this)"><span class="icon">✕</span> Declined <span class="nav-badge badge-red">1</span></div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="nav-item" onclick="window.open('wireframe-directory.html','_blank')"><span class="icon">↗</span> View Directory</div>
+        <div class="nav-item" onclick="alert('Signed out!')"><span class="icon">⬚</span> Sign Out</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="content-header">
+        <div>
+          <div class="content-title">Featured Profiles</div>
+          <div class="content-sub">5 leaders highlighted on the homepage · max 6 recommended</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Featured</th><th>Name</th><th>Role</th><th>Country</th><th>Card Type</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="toggle on"><div class="toggle-thumb"></div></div></td>
+              <td><strong>Fatima Khalil</strong></td>
+              <td style="color:var(--muted);">Director, Digital Health</td>
+              <td>Jordan</td>
+              <td><span class="card-type card-full">Full</span></td>
+              <td><span class="btn btn-secondary btn-sm">Unfeature</span></td>
+            </tr>
+            <tr>
+              <td><div class="toggle on"><div class="toggle-thumb"></div></div></td>
+              <td><strong>Luciana Barbosa</strong></td>
+              <td style="color:var(--muted);">Chief Medical Officer</td>
+              <td>Brazil</td>
+              <td><span class="card-type card-slim">Slim</span></td>
+              <td><span class="btn btn-secondary btn-sm">Unfeature</span></td>
+            </tr>
+            <tr>
+              <td><div class="toggle on"><div class="toggle-thumb"></div></div></td>
+              <td><strong>Dr. James Ochieng</strong></td>
+              <td style="color:var(--muted);">Regional Director</td>
+              <td>Kenya</td>
+              <td><span class="card-type card-full">Full</span></td>
+              <td><span class="btn btn-secondary btn-sm">Unfeature</span></td>
+            </tr>
+            <tr>
+              <td><div class="toggle on"><div class="toggle-thumb"></div></div></td>
+              <td><strong>Maya Rajan</strong></td>
+              <td style="color:var(--muted);">Programme Manager</td>
+              <td>India</td>
+              <td><span class="card-type card-slim">Slim</span></td>
+              <td><span class="btn btn-secondary btn-sm">Unfeature</span></td>
+            </tr>
+            <tr>
+              <td><div class="toggle on"><div class="toggle-thumb"></div></div></td>
+              <td><strong>Amara Nwosu</strong></td>
+              <td style="color:var(--muted);">Sr. Health Policy Advisor</td>
+              <td>Kenya</td>
+              <td><span class="card-type card-slim">Slim</span></td>
+              <td><span class="btn btn-secondary btn-sm">Unfeature</span></td>
+            </tr>
+            <tr style="background:#fafbfc;">
+              <td colspan="6" style="text-align:center;color:#9ca3af;font-size:11px;padding:14px;">75 more live profiles (unfeatured)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:14px;padding:12px 16px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:var(--radius-sm);font-size:11px;color:#0369a1;line-height:1.8;">
+        <strong>Featured toggle</strong> controls which profiles appear on the directory homepage. Max 6 recommended to maintain visual balance.
+      </div>
+    </div>
+  </div>
+
+  <div class="anno-strip">
+    <h4>Screen Y — Featured · notes</h4>
+    <ul>
+      <li>Featured profiles appear on the public directory homepage</li>
+      <li><strong>Toggle on:</strong> Sets "Featured" checkbox in Sheets — appears on next API fetch</li>
+      <li><strong>Unfeature:</strong> Removes from homepage — profile remains in live directory</li>
+      <li>Max 6 recommended for visual balance</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PAGE 8 — ADMIN FLOW
+═════════════════════════════════════════ -->
+<div id="p8" class="page">
+  <div class="flow-page">
+
+    <!-- ── Self-submission flow ── -->
+    <div>
+      <div class="flow-title">Self-Submission Flow</div>
+      <div class="flow-row">
+        <div class="flow-node" style="background:var(--cobalt);">Bespoke Form<small>transformhealthcoalition.org<br>/leaders/submit</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#334;">Apps Script<small>Confirmation email<br>"Update profile" link</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--pending);">Sheets DB<small>"Pending" tab<br>row written</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--teal);">Admin UI<small>TH reviews<br>approve / reject</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--approved);">Sheets DB<small>"Live" tab</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--pink);">Public Directory<small>React app<br>GitHub Pages</small></div>
+      </div>
+    </div>
+
+    <!-- ── Nomination flow ── -->
+    <div>
+      <div class="flow-title">Nomination Flow</div>
+      <div class="flow-row">
+        <div class="flow-node" style="background:var(--cobalt);">Bespoke Form<small>"Nominating someone else"<br>profile link only</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#334;">Sheets DB<small>"Nominations" tab<br>row written</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#6366f1;">Admin UI<small>Nominations → Invited<br>admin sends invite</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#334;">Email to Nominee<small>Personalised invite<br>+ form link</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--cobalt);">Nominee self-submits<small>Full profile via<br>bespoke form</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--pending);">Sheets DB<small>"Pending" tab<br>joins normal queue</small></div>
+      </div>
+    </div>
+
+    <!-- ── Directory read flow ── -->
+    <div>
+      <div class="flow-title">Directory & Outreach Dashboard — Data Pull</div>
+      <div class="flow-row">
+        <div class="flow-node" style="background:var(--approved);">Sheets DB<small>"Live" tab</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#334;">Sheets API<small>Live fetch<br>no build step</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--pink);">Public Directory<small>React · GitHub Pages<br>iframe → WordPress</small></div>
+        <div style="font-size:11px;color:var(--muted);padding:0 12px;">&amp;</div>
+        <div class="flow-node" style="background:var(--teal);">Outreach Dashboard<small>Internal · same API pull<br>filters by status / region</small></div>
+      </div>
+    </div>
+
+    <!-- ── Route map ── -->
+    <div>
+      <div class="flow-title">Admin UI — Route Map</div>
+      <div class="code-block">
+/login                  → Screen 1 — Password gate<br>
+/dashboard              → Screen 2 — Overview · counts from all Sheets tabs<br>
+/pending                → Screen 3 — Self-submission queue · approve / reject<br>
+/pending/:id            → Screen 4 — Submission detail · full profile preview<br>
+/live                   → Screen 5 — Live profiles · featured toggle<br>
+/nominations/invited    → Screen 6 — Invited nominations · resend / decline<br>
+/nominations/declined   → Screen 7 — Declined nominations · reinstate<br>
+/rejected               → Rejected submissions (same layout as /live)
+      </div>
+    </div>
+
+    <!-- ── Sheets DB structure ── -->
+    <div style="margin-top:8px;">
+      <div class="flow-title">Google Sheets DB — Tab Structure</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+        <div style="background:#fff;border:1.5px solid var(--border);border-top:3px solid var(--pending);border-radius:var(--radius);padding:16px;">
+          <div style="font-size:12px;font-weight:800;color:var(--pending);margin-bottom:6px;">Pending</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.8;">New self-submissions from the bespoke form. Each row awaits admin approve / reject.</div>
+        </div>
+        <div style="background:#fff;border:1.5px solid var(--border);border-top:3px solid var(--approved);border-radius:var(--radius);padding:16px;">
+          <div style="font-size:12px;font-weight:800;color:var(--approved);margin-bottom:6px;">Live</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.8;">Approved profiles. Served via Sheets API to the public directory and the Outreach Dashboard.</div>
+        </div>
+        <div style="background:#fff;border:1.5px solid var(--border);border-top:3px solid var(--rejected);border-radius:var(--radius);padding:16px;">
+          <div style="font-size:12px;font-weight:800;color:var(--rejected);margin-bottom:6px;">Rejected</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.8;">Declined submissions. Audit trail only. Not served publicly. Admin can reinstate.</div>
+        </div>
+        <div style="background:#fff;border:1.5px solid var(--border);border-top:3px solid #6366f1;border-radius:var(--radius);padding:16px;">
+          <div style="font-size:12px;font-weight:800;color:#6366f1;margin-bottom:6px;">Nominations</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.8;">Inbound "nominate someone" submissions. Stores profile link + nominator email. Admin manages invite status here.</div>
+        </div>
+        <div style="background:#fff;border:1.5px solid var(--border);border-top:3px solid var(--teal);border-radius:var(--radius);padding:16px;">
+          <div style="font-size:12px;font-weight:800;color:var(--teal);margin-bottom:6px;">Outreach</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.8;">Internal-only tab. Tracks outreach activity, invite history, follow-up status. Feeds the Outreach Dashboard view.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+  function show(id, btn) {
+    if (!id) return;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    var page = document.getElementById(id);
+    if (page) {
+      page.classList.add('active');
+    }
+    if (btn) {
+      if (btn.classList.contains('wf-tab')) {
+        document.querySelectorAll('.wf-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateSidebar(id);
+      } else if (btn.classList.contains('nav-item')) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        btn.classList.add('active');
+      }
+    } else {
+      updateSidebar(id);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function updateSidebar(pageId) {
+    var map = {p2:'Dashboard',p3:'Pending',p5:'Live',pX:'Rejected',pY:'Featured',p6:'Invited',p7:'Declined'};
+    var label = map[pageId];
+    if (!label) return;
+    document.querySelectorAll('.nav-item').forEach(function(n) {
+      n.classList.remove('active');
+      if (n.textContent.indexOf(label) !== -1) n.classList.add('active');
+    });
+  }
+</script>
+
+<!-- Invite Modal -->
+<div id="inviteModal" class="modal-backdrop" onclick="if(event.target === this) this.classList.remove('show')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Send Invitation</h3>
+      <div class="modal-close" onclick="document.getElementById('inviteModal').classList.remove('show')">×</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Nominee Name</label>
+        <input type="text" class="form-input" placeholder="Dr. Jane Smith">
+      </div>
+      <div class="form-group">
+        <label>Profile Link</label>
+        <input type="text" class="form-input" placeholder="linkedin.com/in/janesmith">
+      </div>
+      <div class="form-group">
+        <label>Nominee Email (optional)</label>
+        <input type="email" class="form-input" placeholder="jane@organisation.org">
+      </div>
+      <div class="form-group">
+        <label>Personalized Message</label>
+        <textarea class="form-textarea" placeholder="Add a personal message..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="document.getElementById('inviteModal').classList.remove('show')">Cancel</button>
+      <button class="btn btn-primary" onclick="alert('Invitation sent!'); document.getElementById('inviteModal').classList.remove('show')">Send Invitation</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
