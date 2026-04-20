@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaders Directory Platform</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #f7f9fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .logo {
+            width: 320px;
+            max-width: 80vw;
+            margin-bottom: 40px;
+        }
+        .animated-text {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1a3c6b;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .animated-text:hover {
+            color: #e67e22;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .bounce {
+            animation: bounce 0.8s;
+        }
+    </style>
+</head>
+<body>
+    <img src="TH-Logo-Tag Top-FC.png" alt="Transform Health Logo" class="logo">
+    <div id="animatedText" class="animated-text">Database</div>
+    <script>
+        const animatedText = document.getElementById('animatedText');
+        animatedText.addEventListener('click', () => {
+            animatedText.classList.add('bounce');
+            setTimeout(() => {
+                window.location.href = 'wireframe-directory.html';
+            }, 800);
+        });
+        animatedText.addEventListener('animationend', () => {
+            animatedText.classList.remove('bounce');
+        });
+    </script>
+</body>
+</html>

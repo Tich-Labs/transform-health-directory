@@ -1,0 +1,1506 @@
+ls<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe A — Public Directory · Transform Health</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,800;1,500;1,800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 13px; color: #1a1a1a; background: #e8ecf0; }
+
+:root {
+  --cobalt:  #02598E; --pink: #F85A8E; --green: #00DE2C;
+  --orange:  #F97A1A; --honey: #FFDE2C; --teal: #008C8F;
+  --body: #1a1a1a; --muted: #6b7280; --border: #e0e4ea;
+  --surface: #f8f9fb; --radius: 10px; --radius-sm: 6px; --radius-pill: 999px;
+}
+
+/* ── Wireframe chrome ── */
+.wf-chrome { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; flex-direction: column; }
+.wf-topbar { background: #0f1923; padding: 9px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.wf-topbar h1 { font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; }
+.wf-badge { font-size: 9px; font-weight: 800; background: var(--pink); color: #fff; border-radius: var(--radius-pill); padding: 2px 9px; }
+.wf-tabs { background: #fff; border-bottom: 2px solid var(--border); display: flex; overflow-x: auto; scrollbar-width: none; }
+.wf-tabs::-webkit-scrollbar { display: none; }
+.wf-tab {
+  padding: 11px 24px; font-size: 11px; font-weight: 800; font-family: 'Montserrat', sans-serif;
+  color: var(--muted); background: transparent; border: none; cursor: pointer;
+  border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; transition: color 0.15s;
+}
+.wf-tab:hover { color: #374151; }
+.wf-tab.active { color: var(--cobalt); border-bottom-color: var(--cobalt); }
+.wf-tab .scope { font-size: 9px; font-weight: 500; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 1px 7px; color: var(--muted); margin-left: 4px; }
+.wf-offset { height: 82px; }
+
+/* ── Pages ── */
+.page { display: none; }
+.page.active { display: flex; flex-direction: column; min-height: calc(100vh - 82px); }
+
+/* ── App shell ── */
+.app-shell { flex: 1; display: flex; flex-direction: column; background: #fff; }
+.app-navbar {
+  background: #fff; border-bottom: 1px solid var(--border);
+  padding: 0 32px; display: flex; align-items: center; justify-content: space-between;
+  height: 60px; flex-shrink: 0; position: sticky; top: 82px; z-index: 10;
+}
+.app-logo { width: 140px; height: 36px; background: var(--surface); border: 1.5px dashed var(--border); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--muted); letter-spacing: 0.1em; }
+.nav-link { padding: 8px 16px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 800; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+.nav-link.active { background: var(--cobalt); color: #fff; }
+
+/* ── Stats bar ── */
+.stats-bar { background: var(--cobalt); display: grid; grid-template-columns: repeat(3, 1fr); }
+.stat-cell { padding: 22px 32px; text-align: center; border-right: 1px solid rgba(255,255,255,0.15); }
+.stat-cell:last-child { border-right: none; }
+.stat-num { font-size: 48px; font-weight: 800; color: #fff; line-height: 1; letter-spacing: -1px; transition: all 0.3s; }
+.stat-lbl { font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 6px; }
+.stat-sub { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 3px; font-weight: 500; }
+.stats-notice { background: #fffbe6; border-bottom: 1px solid #e6c800; padding: 7px 32px; font-size: 11px; color: #6b5a00; font-weight: 500; }
+
+/* ── Filter row ── */
+.filter-row {
+  background: #fff; border-bottom: 1px solid var(--border);
+  padding: 14px 32px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  position: sticky; top: 142px; z-index: 9;
+}
+.search-box {
+  flex: 1; min-width: 240px; max-width: 360px;
+  height: 40px; border: 1.5px solid var(--border); border-radius: var(--radius-pill);
+  background: var(--surface); display: flex; align-items: center;
+  padding: 0 16px; gap: 8px; font-size: 12px; font-weight: 500; color: var(--muted);
+  font-family: 'Montserrat', sans-serif;
+}
+.search-box input {
+  border: none; background: transparent; font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 500; color: var(--body); outline: none; flex: 1;
+}
+.search-box input::placeholder { color: var(--muted); }
+.filter-select {
+  height: 40px; padding: 0 14px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill); background: #fff;
+  font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 800;
+  color: var(--body); cursor: pointer; outline: none; appearance: none;
+  padding-right: 30px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+}
+.filter-select:focus { border-color: var(--cobalt); }
+.featured-toggle {
+  height: 40px; padding: 0 18px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill); background: #fff;
+  display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800;
+  color: var(--muted); cursor: pointer; user-select: none; transition: all 0.15s;
+}
+.featured-toggle.on { border-color: var(--pink); color: var(--pink); background: #fff5f8; }
+.featured-toggle .check { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; }
+.featured-toggle.on .check { background: var(--pink); border-color: var(--pink); color: #fff; }
+.clear-btn {
+  height: 40px; padding: 0 16px; border: 1.5px dashed var(--border);
+  border-radius: var(--radius-pill); background: transparent;
+  color: var(--muted); font-size: 12px; font-weight: 800; cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+}
+.result-count { font-size: 12px; color: var(--muted); font-weight: 500; margin-left: auto; }
+
+/* ── Body layout ── */
+.body-layout { display: grid; grid-template-columns: 1fr 310px; flex: 1; }
+
+/* ── Profile grid ── */
+.grid-area { padding: 24px 32px; border-right: 1px solid var(--border); overflow-y: auto; }
+.grid-area-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cobalt); }
+.profile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.no-results { grid-column: 1/-1; text-align: center; padding: 48px; color: var(--muted); }
+.no-results span { font-size: 32px; display: block; margin-bottom: 10px; }
+
+/* ── Profile card ── */
+.pcard {
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 16px 14px; background: #fff; cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s; position: relative;
+}
+.pcard:hover { box-shadow: 0 4px 16px rgba(2,89,142,0.12); border-color: var(--cobalt); }
+.pcard.featured { border: 2px solid var(--pink); }
+.featured-badge {
+  font-size: 8px; font-weight: 800; background: var(--pink); color: #fff;
+  border-radius: var(--radius-pill); padding: 2px 8px; display: inline-block;
+  margin-bottom: 8px; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; margin-bottom: 10px; flex-shrink: 0;
+}
+.pcard h3 { font-size: 12px; font-weight: 800; color: var(--cobalt); margin-bottom: 3px; line-height: 1.35; }
+.pcard .role { font-size: 10px; color: var(--body); font-weight: 500; margin-bottom: 2px; line-height: 1.4; }
+.pcard .org { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.4; }
+.pcard .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.pcard .tag { font-size: 9px; font-weight: 800; border-radius: var(--radius-pill); padding: 3px 9px; }
+.pcard .linkedin { font-size: 10px; font-weight: 800; color: var(--cobalt); }
+.pcard .card-hint { font-size: 8px; color: #bbb; font-style: italic; margin-top: 4px; }
+.claim-btn {
+  display: block; width: 100%; margin-top: 10px;
+  padding: 7px 0; border-radius: var(--radius-pill);
+  border: 1.5px solid #0077b5; background: #f0f8ff;
+  color: #0077b5; font-size: 9px; font-weight: 800;
+  text-align: center; cursor: pointer; font-family: 'Montserrat', sans-serif;
+  letter-spacing: 0.04em; transition: background 0.15s;
+}
+.claim-btn:hover { background: #dbeafe; }
+.li-connect-box {
+  background: #f0f8ff; border: 2px solid #0077b5; border-radius: var(--radius);
+  padding: 18px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px;
+}
+.li-connect-box .li-logo {
+  width: 40px; height: 40px; border-radius: 8px; background: #0077b5;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0; font-family: serif;
+}
+.li-connect-btn {
+  height: 40px; padding: 0 22px; background: #0077b5; color: #fff;
+  border: none; border-radius: var(--radius-pill); font-size: 12px; font-weight: 800;
+  cursor: pointer; font-family: 'Montserrat', sans-serif; white-space: nowrap;
+}
+.li-pulled-badge {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800;
+  color: #0077b5; background: #dbeafe; border-radius: var(--radius-pill); padding: 3px 10px;
+}
+
+/* ── Pagination ── */
+.pagination { display: flex; align-items: center; gap: 6px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.pg-btn { min-width: 34px; height: 34px; padding: 0 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--muted); cursor: pointer; font-family: 'Montserrat', sans-serif; transition: all 0.15s; }
+.pg-btn:hover { border-color: var(--cobalt); color: var(--cobalt); }
+.pg-btn.active { background: var(--cobalt); color: #fff; border-color: var(--cobalt); }
+.pg-btn.disabled { opacity: 0.35; cursor: default; pointer-events: none; }
+
+/* ── Sidebar ── */
+.sidebar { background: var(--surface); border-left: 1px solid var(--border); padding: 20px 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+.chart-title { font-size: 12px; font-weight: 800; color: var(--cobalt); margin-bottom: 6px; }
+.chart-sub { font-size: 9px; color: var(--muted); margin-top: 4px; }
+.map-box { background: linear-gradient(135deg, #d4e8f7 0%, #c0d8ef 100%); border: 1.5px dashed #a0bcd4; border-radius: var(--radius); height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }
+.map-box .map-label { font-size: 12px; font-weight: 800; color: var(--cobalt); }
+.map-box .map-sub { font-size: 10px; color: var(--muted); line-height: 1.5; }
+.bar-chart { display: flex; align-items: flex-end; gap: 5px; height: 96px; background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.bar-fill { border-radius: 3px 3px 0 0; width: 100%; transition: height 0.4s; }
+.bar-lbl { font-size: 7px; color: var(--muted); font-weight: 800; text-align: center; }
+.pie-chart { display: flex; align-items: center; gap: 12px; background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px; }
+.pie { width: 70px; height: 70px; border-radius: 50%; flex-shrink: 0; background: conic-gradient(var(--cobalt) 0 137deg, var(--pink) 137deg 210deg, var(--teal) 210deg 262deg, var(--orange) 262deg 310deg, var(--honey) 310deg 360deg); }
+.legend { display: flex; flex-direction: column; gap: 4px; }
+.legend-row { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--body); font-weight: 500; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── Expertise bar (live from data) ── */
+.expertise-bars { display: flex; flex-direction: column; gap: 6px; background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px; }
+.exp-row { display: flex; align-items: center; gap: 8px; }
+.exp-label { font-size: 9px; font-weight: 800; color: var(--muted); min-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exp-bar-wrap { flex: 1; height: 8px; background: var(--surface); border-radius: var(--radius-pill); overflow: hidden; }
+.exp-bar-fill { height: 100%; border-radius: var(--radius-pill); background: var(--cobalt); transition: width 0.4s; }
+.exp-count { font-size: 9px; font-weight: 800; color: var(--cobalt); min-width: 20px; text-align: right; }
+
+/* ── App footer ── */
+.app-footer { background: var(--surface); border-top: 1px solid var(--border); padding: 12px 32px; display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: var(--muted); }
+.iframe-code { background: #1a1a2e; color: #6ee7b7; font-family: 'Courier New', monospace; font-size: 10px; padding: 6px 12px; border-radius: var(--radius-sm); }
+
+/* ── Annotation strip ── */
+.anno-strip { background: #fffbe6; border-top: 1.5px solid #e6c800; padding: 14px 32px; }
+.anno-strip h4 { font-size: 10px; font-weight: 800; color: #92710a; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+.anno-strip ul { margin-left: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 32px; }
+.anno-strip li { font-size: 11px; color: #555; line-height: 1.8; font-weight: 500; }
+
+/* ── Pages 2-4 shared ── */
+.modal-backdrop { flex: 1; background: rgba(2,89,142,0.08); display: flex; align-items: center; justify-content: center; padding: 40px; position: relative; }
+.modal-bg-hint { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #bbb; pointer-events: none; }
+.modal-card { background: #fff; border-radius: var(--radius); border: 1.5px solid var(--border); padding: 36px; max-width: 680px; width: 100%; display: flex; gap: 28px; position: relative; z-index: 1; box-shadow: 0 8px 40px rgba(0,0,0,0.16); }
+.modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: var(--surface); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); cursor: pointer; }
+.modal-avatar { width: 96px; height: 96px; border-radius: 50%; background: #e0eaf4; border: 2px dashed #a0bcd4; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--muted); text-align: center; font-weight: 500; flex-shrink: 0; }
+
+.form-page { flex: 1; background: var(--surface); display: flex; justify-content: center; padding: 40px 24px; overflow-y: auto; }
+.form-card { background: #fff; border-radius: var(--radius); border: 1.5px solid var(--border); padding: 40px 48px; width: 100%; max-width: 720px; }
+.form-card h2 { font-size: 24px; font-weight: 800; color: var(--cobalt); margin-bottom: 4px; }
+.consent-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 20px; }
+.consent-box h3 { font-size: 12px; font-weight: 800; color: var(--cobalt); margin-bottom: 8px; }
+.consent-btn { height: 36px; padding: 0 20px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 800; border: 1.5px solid var(--border); background: #fff; color: var(--muted); cursor: pointer; font-family: 'Montserrat', sans-serif; }
+.consent-btn.yes { background: var(--cobalt); color: #fff; border-color: var(--cobalt); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-field { display: flex; flex-direction: column; gap: 5px; }
+.form-field.full { grid-column: 1/-1; }
+.form-field label { font-size: 10px; font-weight: 800; color: var(--cobalt); text-transform: uppercase; letter-spacing: 0.06em; }
+.form-input { height: 40px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
+.form-textarea { height: 80px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
+.form-submit { margin-top: 22px; height: 44px; padding: 0 32px; background: var(--cobalt); color: #fff; border: none; border-radius: var(--radius-pill); font-size: 14px; font-weight: 800; cursor: pointer; font-family: 'Montserrat', sans-serif; }
+
+/* ── Bespoke branching form ── */
+.share-bar {
+  background: #f0f7ff; border: 1.5px solid #bfdbfe; border-radius: var(--radius-sm);
+  padding: 9px 14px; margin-bottom: 22px; display: flex; align-items: center; gap: 10px;
+  font-size: 11px; color: #1d4ed8; font-weight: 800;
+}
+.share-bar .url-pill {
+  font-family: 'Courier New', monospace; font-size: 10px; background: #dbeafe;
+  padding: 3px 10px; border-radius: var(--radius-pill); color: #1d4ed8;
+}
+.share-bar .copy-btn {
+  margin-left: auto; font-size: 10px; font-weight: 800; color: #1d4ed8;
+  background: #bfdbfe; border: none; border-radius: var(--radius-pill);
+  padding: 4px 12px; cursor: pointer; font-family: 'Montserrat', sans-serif;
+}
+
+.step-indicator {
+  display: flex; align-items: center; margin-bottom: 28px; gap: 0;
+}
+.step-dot-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.step-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; border: 2px solid var(--border);
+  background: #fff; color: var(--muted); transition: all 0.2s; flex-shrink: 0;
+}
+.step-dot.done  { background: var(--cobalt); border-color: var(--cobalt); color: #fff; }
+.step-dot.active{ background: var(--pink);   border-color: var(--pink);   color: #fff; }
+.step-dot-label { font-size: 8px; font-weight: 800; color: var(--muted); text-align: center; max-width: 52px; line-height: 1.3; white-space: nowrap; }
+.step-dot.active + .step-dot-label,
+.step-dot-wrap.active .step-dot-label { color: var(--pink); }
+.step-connector { flex: 1; height: 2px; background: var(--border); margin: 0 4px; margin-bottom: 14px; min-width: 14px; }
+.step-connector.done { background: var(--cobalt); }
+
+.form-step { display: none; }
+.form-step.active { display: block; }
+
+.branch-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.branch-card {
+  border: 2px solid var(--border); border-radius: var(--radius); padding: 20px 18px;
+  cursor: pointer; transition: all 0.15s; background: #fff; text-align: center;
+  user-select: none;
+}
+.branch-card:hover { border-color: var(--cobalt); box-shadow: 0 2px 10px rgba(2,89,142,0.1); }
+.branch-card.selected { border-color: var(--cobalt); background: #f0f7ff; }
+.branch-card .bc-icon { font-size: 28px; margin-bottom: 8px; }
+.branch-card .bc-title { font-size: 13px; font-weight: 800; color: var(--cobalt); margin-bottom: 4px; }
+.branch-card .bc-sub { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+.branch-tag {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800;
+  padding: 4px 12px; border-radius: var(--radius-pill); margin-bottom: 16px;
+}
+.branch-tag.self { background: #e0eaf4; color: var(--cobalt); }
+.branch-tag.nominate { background: #fde8f1; color: var(--pink); }
+
+.consent-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+.consent-opt {
+  border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 14px 18px;
+  cursor: pointer; font-size: 13px; font-weight: 800; color: var(--muted);
+  text-align: center; transition: all 0.15s; background: #fff; user-select: none;
+}
+.consent-opt:hover { border-color: var(--cobalt); }
+.consent-opt.yes.selected { border-color: var(--cobalt); background: #f0f7ff; color: var(--cobalt); }
+.consent-opt.no.selected  { border-color: #dc2626; background: #fef2f2; color: #dc2626; }
+
+.form-section-title {
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--cobalt); margin-bottom: 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 8px;
+}
+.form-section-title .s-num {
+  width: 22px; height: 22px; border-radius: 50%; background: var(--cobalt); color: #fff;
+  font-size: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.exp-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.exp-opt {
+  border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px;
+  font-size: 12px; font-weight: 800; color: var(--muted); cursor: pointer;
+  text-align: center; transition: all 0.15s; background: #fff; user-select: none;
+}
+.exp-opt:hover { border-color: var(--cobalt); color: var(--cobalt); }
+.exp-opt.selected { border-color: var(--cobalt); background: #f0f7ff; color: var(--cobalt); }
+
+.expertise-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+.etag {
+  border: 2px solid var(--border); border-radius: var(--radius-pill); padding: 6px 14px;
+  font-size: 11px; font-weight: 800; color: var(--muted); cursor: pointer;
+  transition: all 0.15s; background: #fff; user-select: none;
+}
+.etag:hover { border-color: var(--cobalt); color: var(--cobalt); }
+.etag.selected { border-color: var(--cobalt); background: var(--cobalt); color: #fff; }
+.etag.maxed { opacity: 0.45; cursor: not-allowed; }
+.etag-hint { font-size: 10px; color: var(--muted); font-weight: 500; margin-bottom: 12px; }
+
+.geo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+.geo-opt {
+  border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px;
+  font-size: 11px; font-weight: 800; color: var(--muted); cursor: pointer;
+  transition: all 0.15s; background: #fff; user-select: none; display: flex; align-items: center; gap: 8px;
+}
+.geo-opt:hover { border-color: var(--teal); color: var(--teal); }
+.geo-opt.selected { border-color: var(--teal); background: #e0f0f0; color: var(--teal); }
+.geo-check { width: 16px; height: 16px; border-radius: 3px; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+
+.form-nav-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border);
+}
+.nav-back {
+  height: 40px; padding: 0 22px; border: 2px solid var(--border);
+  border-radius: var(--radius-pill); background: #fff; font-size: 12px; font-weight: 800;
+  color: var(--muted); cursor: pointer; font-family: 'Montserrat', sans-serif; transition: all 0.15s;
+}
+.nav-back:hover { border-color: var(--cobalt); color: var(--cobalt); }
+.nav-next {
+  height: 44px; padding: 0 32px; background: var(--cobalt); color: #fff;
+  border: none; border-radius: var(--radius-pill); font-size: 14px; font-weight: 800;
+  cursor: pointer; font-family: 'Montserrat', sans-serif; transition: opacity 0.15s;
+}
+.nav-next:hover { opacity: 0.88; }
+.nav-next.pink { background: var(--pink); }
+.step-count { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+.thank-you-screen { text-align: center; padding: 20px 0 10px; }
+.thank-you-screen .ty-globe { font-size: 52px; margin-bottom: 16px; }
+.thank-you-screen h2 { font-size: 22px; font-weight: 800; color: var(--cobalt); margin-bottom: 12px; line-height: 1.3; }
+.thank-you-screen p { font-size: 13px; color: var(--muted); line-height: 1.8; margin-bottom: 20px; max-width: 480px; margin-left: auto; margin-right: auto; }
+.ty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+.ty-btn {
+  height: 42px; padding: 0 24px; border-radius: var(--radius-pill);
+  font-size: 12px; font-weight: 800; cursor: pointer; font-family: 'Montserrat', sans-serif; border: none;
+}
+.ty-btn.primary { background: var(--cobalt); color: #fff; }
+.ty-btn.secondary { background: #fff; color: var(--cobalt); border: 2px solid var(--cobalt); }
+.email-note {
+  background: #fffbe6; border: 1px solid #e6c800; border-radius: var(--radius-sm);
+  padding: 12px 16px; font-size: 11px; color: #6b5a00; line-height: 1.8; margin-top: 16px; text-align: left;
+}
+
+.declined-screen { text-align: center; padding: 20px 0; }
+.declined-screen .dc-icon { font-size: 40px; margin-bottom: 14px; }
+.declined-screen h3 { font-size: 18px; font-weight: 800; color: var(--muted); margin-bottom: 8px; }
+.declined-screen p { font-size: 12px; color: var(--muted); line-height: 1.8; }
+
+.pub-row {
+  display: grid; grid-template-columns: 140px 1fr 1fr 32px; gap: 8px; align-items: center;
+}
+.pub-type-select {
+  height: 40px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 800; color: var(--body); padding: 0 10px;
+  outline: none; appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
+}
+.pub-type-select:focus { border-color: var(--cobalt); }
+.pub-link-input {
+  height: 40px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); font-family: 'Montserrat', sans-serif;
+  font-size: 12px; color: var(--body); padding: 0 12px; outline: none; width: 100%;
+}
+.pub-link-input:focus { border-color: var(--cobalt); }
+.pub-remove {
+  width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #fca5a5;
+  background: #fef2f2; color: #dc2626; font-size: 16px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; font-family: 'Montserrat', sans-serif; font-weight: 800;
+}
+.pub-remove:hover { background: #fee2e2; }
+
+.country-dropdown {
+  display: none; margin-top: 8px;
+  height: 40px; width: 100%; border: 1.5px solid var(--teal);
+  border-radius: var(--radius-sm); background: #e0f0f0;
+  font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 800;
+  color: var(--teal); padding: 0 12px; outline: none;
+}
+.country-dropdown.visible { display: block; }
+
+.flow-page { flex: 1; background: var(--surface); padding: 32px; overflow-y: auto; }
+.flow-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: var(--cobalt); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.flow-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.flow-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0; margin-bottom: 24px; }
+.flow-node { border-radius: var(--radius-sm); padding: 12px 20px; text-align: center; line-height: 1.7; font-size: 12px; font-weight: 800; color: #fff; white-space: nowrap; }
+.flow-node small { display: block; font-size: 9px; font-weight: 500; opacity: 0.7; margin-top: 2px; }
+.flow-arrow { color: var(--muted); padding: 0 8px; font-size: 18px; }
+.code-block { background: #1a1a2e; color: #6ee7b7; font-family: 'Courier New', monospace; font-size: 11px; line-height: 2.2; border-radius: var(--radius); padding: 20px 24px; overflow-x: auto; margin-top: 8px; }
+
+@media (max-width: 960px) {
+  .body-layout { grid-template-columns: 1fr; }
+  .sidebar { border-left: none; border-top: 1px solid var(--border); }
+}
+@media (max-width: 640px) {
+  .app-navbar { padding: 0 16px; }
+  .filter-row { padding: 12px 16px; }
+  .grid-area { padding: 16px; }
+  .stats-bar { grid-template-columns: 1fr; }
+  .stat-cell { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.15); }
+  .stat-num { font-size: 36px; }
+  .anno-strip ul { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Wireframe chrome ── -->
+<div class="wf-chrome">
+  <div class="wf-topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <h1>Wireframe A — Public Directory</h1>
+      <span style="font-size:10px;color:#6b7280;">81 real leaders from Google Sheet · GitHub Pages → iframe on transformhealthcoalition.org</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:10px;color:#6b7280;">v0.2 · 20 Apr 2026</span>
+      <span class="wf-badge">WIREFRAME</span>
+    </div>
+  </div>
+  <div class="wf-tabs">
+    <button class="wf-tab active" onclick="show('p1',this)">1 — Directory Landing <span class="scope">27 Apr · live data</span></button>
+    <button class="wf-tab" onclick="show('p2',this)">2 — Full Profile Card <span class="scope">18 May</span></button>
+    <button class="wf-tab" onclick="show('p3',this)">3 — Bespoke Form (branching) <span class="scope">18 May</span></button>
+    <button class="wf-tab" onclick="show('p4',this)">4 — App Flow</button>
+  </div>
+</div>
+<div class="wf-offset"></div>
+
+
+<!-- ══════════════════════════════════
+     PAGE 1 — DIRECTORY (LIVE DATA)
+══════════════════════════════════ -->
+<div id="p1" class="page active">
+  <div class="app-shell">
+
+    <div class="app-navbar">
+      <div class="app-logo">TH LOGO</div>
+      <div style="display:flex;gap:8px;">
+        <span class="nav-link active">Directory</span>
+        <span class="nav-link">About</span>
+        <span class="nav-link" onclick="show('p3', document.querySelectorAll('.wf-tab')[2])" style="cursor:pointer;">Submit Profile</span>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-cell">
+        <div class="stat-num" id="statLeaders">81</div>
+        <div class="stat-lbl">Leaders</div>
+        <div class="stat-sub">updates live with filters</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" id="statCountries">—</div>
+        <div class="stat-lbl">Countries</div>
+        <div class="stat-sub">added via new form · TBC</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" id="statExpertise">15</div>
+        <div class="stat-lbl">Expertise Areas</div>
+        <div class="stat-sub">updates live with filters</div>
+      </div>
+    </div>
+    <div class="stats-notice">
+      ★ Stats, profile grid, world map, and expertise chart all share React state — all update simultaneously on any filter change &nbsp;·&nbsp; Country data not yet in existing 80 profiles — will be collected via new Google Form
+    </div>
+
+    <div class="filter-row">
+      <div class="search-box">
+        <span>⌕</span>
+        <input type="text" id="searchInput" placeholder="Search name, organisation, role…" oninput="applyFilters()">
+      </div>
+      <select class="filter-select" id="expertiseFilter" onchange="applyFilters()">
+        <option value="">All Expertise</option>
+      </select>
+      <div class="featured-toggle" id="featuredToggle" onclick="toggleFeatured()">
+        <span class="check" id="featuredCheck"></span>
+        ★ Featured only
+      </div>
+      <button class="clear-btn" onclick="clearFilters()">Clear ×</button>
+      <span class="result-count" id="resultCount">Showing 81 of 81 leaders</span>
+    </div>
+
+    <div class="body-layout" style="flex:1;">
+
+      <div class="grid-area">
+        <div class="grid-area-header">
+          <div class="section-label">Profile Grid — Real Data from Google Sheet</div>
+        </div>
+        <div class="profile-grid" id="profileGrid"></div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+
+      <div class="sidebar">
+        <div>
+          <div class="chart-title">World Map</div>
+          <div class="map-box">
+            <div class="map-label">React Simple Maps</div>
+            <div class="map-sub">Click a country to filter<br>the directory · Dot size = leaders per country</div>
+            <div style="display:flex;gap:5px;margin-top:4px;">
+              <span style="width:7px;height:7px;border-radius:50%;background:var(--pink);display:inline-block;"></span>
+              <span style="width:13px;height:13px;border-radius:50%;background:var(--cobalt);display:inline-block;"></span>
+              <span style="width:6px;height:6px;border-radius:50%;background:var(--orange);display:inline-block;"></span>
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--teal);display:inline-block;"></span>
+            </div>
+          </div>
+          <div class="chart-sub">Country data available once new form goes live (18 May)</div>
+        </div>
+
+        <div>
+          <div class="chart-title">Expertise Breakdown</div>
+          <div class="expertise-bars" id="expertiseBars"></div>
+          <div class="chart-sub">Recharts · reacts to all filters in real time</div>
+        </div>
+
+        <div>
+          <div class="chart-title">Organisation Types</div>
+          <div class="pie-chart">
+            <div class="pie"></div>
+            <div class="legend">
+              <div class="legend-row"><div class="legend-dot" style="background:var(--cobalt);"></div>Foundations 28%</div>
+              <div class="legend-row"><div class="legend-dot" style="background:var(--pink);"></div>NGO / Advocacy 22%</div>
+              <div class="legend-row"><div class="legend-dot" style="background:var(--teal);"></div>Int'l Orgs 20%</div>
+              <div class="legend-row"><div class="legend-dot" style="background:var(--orange);"></div>Government 15%</div>
+              <div class="legend-row"><div class="legend-dot" style="background:var(--honey);"></div>Other 15%</div>
+            </div>
+          </div>
+          <div class="chart-sub">Derived from Affiliation field · confirm V1 chart stories by 25 Apr</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="app-footer">
+      <span>Transform Health Leaders Directory · 81 leaders from Google Sheet · Data via Sheets API</span>
+      <code class="iframe-code">&lt;iframe src="https://[org].github.io/leaders" width="100%" height="800" /&gt;</code>
+    </div>
+
+  </div>
+
+  <div class="anno-strip">
+    <h4>Screen 1 — Real data · open items</h4>
+    <ul>
+      <li><strong>81 leaders loaded</strong> from Google Sheet CSV — search, filter, and pagination all live</li>
+      <li><strong>Countries missing</strong> from existing profiles — will be collected via new Google Form (18 May)</li>
+      <li><strong>Expertise filter</strong> built from real Specialisation values in the Sheet</li>
+      <li><strong>Featured:</strong> Controlled by a checkbox column in Sheet — toggle pink border with no code change</li>
+      <li><strong>LinkedIn:</strong> Current Sheet has placeholder text — real URLs needed from TH team</li>
+      <li><strong>Charts:</strong> Confirm 2–3 data stories with Tejas + Ndifanji by 25 Apr (V1 open)</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     PAGE 2 — FULL PROFILE CARD
+══════════════════════════════════ -->
+<div id="p2" class="page">
+  <div class="app-shell" style="flex:1;">
+    <div class="app-navbar">
+      <div class="app-logo">TH LOGO</div>
+      <div style="display:flex;gap:8px;"><span class="nav-link" onclick="show('p1', document.querySelectorAll('.wf-tab')[0])" style="cursor:pointer;">Directory</span><span class="nav-link">About</span><span class="nav-link active" onclick="show('p3', document.querySelectorAll('.wf-tab')[2])" style="cursor:pointer;">Submit Profile</span></div>
+    </div>
+    <div class="modal-backdrop">
+      <div class="modal-bg-hint">[ Directory grid visible behind overlay — dimmed ]</div>
+      <div class="modal-card">
+        <div class="modal-close">×</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:110px;">
+          <div class="modal-avatar" style="font-size:24px;font-weight:800;color:var(--cobalt);background:#e0eaf4;">MF</div>
+          <div style="font-size:9px;color:var(--muted);text-align:center;">Photo or initials</div>
+          <div style="font-size:10px;font-weight:800;color:var(--cobalt);">LinkedIn ↗</div>
+          <div style="font-size:8px;font-weight:800;background:var(--pink);color:#fff;border-radius:20px;padding:3px 10px;">★ FEATURED</div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:22px;font-weight:800;color:var(--cobalt);margin-bottom:4px;">Mathilde Forslund</div>
+          <div style="font-size:13px;color:var(--body);margin-bottom:2px;">Chief Executive Officer</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Transform Health</div>
+          <div style="font-size:12px;color:var(--body);line-height:1.8;background:var(--surface);border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;">
+            Bio (~150 words) — available for new form submissions only. Existing 81 profiles display slim cards. The re-consent and bio enrichment process for existing leaders is the responsibility of the Transform Health team.
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:12px;color:var(--body);">
+            <div><strong style="color:var(--cobalt);">Country:</strong> Sweden</div>
+            <div><strong style="color:var(--cobalt);">Region:</strong> Europe</div>
+            <div><strong style="color:var(--cobalt);">Sector:</strong> Advocacy</div>
+            <div><strong style="color:var(--cobalt);">Experience:</strong> 15+ years</div>
+            <div><strong style="color:var(--cobalt);">Expertise:</strong> Digital health advocacy</div>
+            <div><strong style="color:var(--cobalt);">Scope:</strong> Global</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="anno-strip">
+    <h4>Screen 2 — Notes</h4>
+    <ul>
+      <li>Full card only for new Google Form submissions (18 May) — bio, country, scope, experience</li>
+      <li>Existing 81 remain slim cards until TH team completes re-consent outreach</li>
+      <li>Email stored in Sheet but never shown publicly — admin reference only</li>
+      <li>Modal opens on card click · close button or click-outside dismisses</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     PAGE 3 — BESPOKE BRANCHING FORM
+══════════════════════════════════ -->
+<div id="p3" class="page">
+  <div class="app-shell" style="flex:1;">
+    <div class="app-navbar">
+      <div class="app-logo">TH LOGO</div>
+      <div style="display:flex;gap:8px;"><span class="nav-link" onclick="show('p1', document.querySelectorAll('.wf-tab')[0])" style="cursor:pointer;">Directory</span><span class="nav-link">About</span><span class="nav-link active">Submit / Nominate</span></div>
+    </div>
+
+    <div class="form-page">
+      <div class="form-card" style="max-width:740px;">
+
+        <!-- Shareable URL bar -->
+        <div class="share-bar">
+          <span>🔗 Socially shareable URL</span>
+          <span class="url-pill">transformhealthcoalition.org/leaders/submit</span>
+          <span style="font-size:10px;color:#1d4ed8;font-weight:500;">OG image + description auto-generated for WhatsApp / Twitter / LinkedIn share preview</span>
+          <button class="copy-btn">Copy link</button>
+        </div>
+
+        <!-- Progress steps -->
+        <div class="step-indicator">
+          <div class="step-dot-wrap"><div class="step-dot active" id="sd0">1</div><div class="step-dot-label">Start</div></div>
+          <div class="step-connector" id="sc01"></div>
+          <div class="step-dot-wrap"><div class="step-dot" id="sd1">2</div><div class="step-dot-label">Consent</div></div>
+          <div class="step-connector" id="sc12"></div>
+          <div class="step-dot-wrap"><div class="step-dot" id="sd2">3</div><div class="step-dot-label">Basic Info</div></div>
+          <div class="step-connector" id="sc23"></div>
+          <div class="step-dot-wrap"><div class="step-dot" id="sd3">4</div><div class="step-dot-label">Profile</div></div>
+          <div class="step-connector" id="sc34"></div>
+          <div class="step-dot-wrap"><div class="step-dot" id="sd4">5</div><div class="step-dot-label">Links</div></div>
+          <div class="step-connector" id="sc45"></div>
+          <div class="step-dot-wrap"><div class="step-dot" id="sd5">✓</div><div class="step-dot-label">Done</div></div>
+        </div>
+
+        <!-- ─── STEP 0: Entry branch ─── -->
+        <div id="step-0" class="form-step active">
+          <h2 style="font-size:22px;font-weight:800;color:var(--cobalt);margin-bottom:8px;">Women Leaders in Digital Health Database</h2>
+          <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:18px;font-size:12px;color:var(--body);line-height:1.8;">
+            Transform Health is building a global database of women leaders in digital health to increase visibility, representation, and engagement in leadership, policy, and technical spaces. This is in efforts to take forward recommendations from the Transform Health policy brief <em>"Establishing Gender Equitable Foundations for Digital Health Transformation to Advance Universal Health Coverage"</em> launched in 2024 to mainstream gender in digital health through increasing the number of women in leadership and decision-making roles.<br><br>
+            Information submitted through this form may be featured in a publicly accessible database. By consenting, you agree that your profile information including your name, role, organisation, biography, and relevant links may be publicly displayed. <strong>Your email address will not be publicly displayed.</strong>
+          </div>
+
+          <div style="font-size:12px;color:var(--body);margin-bottom:16px;line-height:1.9;">
+            You can:<br>
+            &nbsp;&nbsp;• <strong>Submit your profile</strong> (add yourself to the database)<br>
+            &nbsp;&nbsp;• <strong>Nominate another woman leader</strong><br>
+            <span style="font-size:11px;color:var(--muted);">⏱️ This form takes 3–5 minutes.</span>
+          </div>
+
+          <div style="font-size:11px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Are you adding yourself to the database or nominating someone else? *</div>
+          <div class="branch-cards">
+            <div class="branch-card" id="bc-self" onclick="selectBranch('self')">
+              <div class="bc-icon">👤</div>
+              <div class="bc-title">I am nominating myself</div>
+              <div class="bc-sub">Submit your own profile to the database</div>
+            </div>
+            <div class="branch-card" id="bc-nominate" onclick="selectBranch('nominate')">
+              <div class="bc-icon">🌟</div>
+              <div class="bc-title">I am nominating someone else</div>
+              <div class="bc-sub">Nominate another woman leader you know</div>
+            </div>
+          </div>
+
+          <!-- Nominate: profile link field (hidden until selected) -->
+          <div id="nominate-link-field" style="display:none;margin-bottom:16px;">
+            <label style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:6px;">Please add the public profile link to the person you are nominating *</label>
+            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:500;">e.g. LinkedIn URL or professional website</div>
+            <div style="height:40px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);display:flex;align-items:center;padding:0 14px;font-size:12px;color:#9ca3af;">https://linkedin.com/in/…</div>
+          </div>
+
+          <div class="form-nav-row" style="justify-content:flex-end;border-top:none;padding-top:0;margin-top:16px;">
+            <button class="nav-next" id="step0-btn" onclick="handleStep0Continue()">Continue →</button>
+          </div>
+        </div>
+
+        <!-- ─── STEP 1: Consent ─── -->
+        <div id="step-1" class="form-step">
+          <div id="branch-tag-consent" class="branch-tag self">👤 Adding myself</div>
+          <div class="form-section-title"><span class="s-num">1</span> Consent &amp; Permissions</div>
+
+          <div class="consent-box" style="margin-bottom:16px;">
+            <h3 style="font-size:12px;font-weight:800;color:var(--cobalt);margin-bottom:8px;">Do you consent to your information being included in the Transform Health Women Leaders Database?</h3>
+            <p style="font-size:11px;color:var(--body);line-height:1.7;margin-bottom:14px;">Your name, role, organisation, areas of expertise, bio, and LinkedIn will be <strong>publicly visible</strong>. Your email address will <strong>never</strong> be published and is used only for follow-up and profile updates.</p>
+            <div class="consent-choice">
+              <div class="consent-opt yes" id="consent-yes" onclick="selectConsent('yes')">✓ &nbsp;Yes, I consent</div>
+              <div class="consent-opt no"  id="consent-no"  onclick="selectConsent('no')">✕ &nbsp;No</div>
+            </div>
+          </div>
+
+          <div class="form-nav-row">
+            <button class="nav-back" onclick="goStep(0)">← Back</button>
+            <span class="step-count">Step 2 of 6</span>
+            <button class="nav-next" onclick="handleConsent()">Continue →</button>
+          </div>
+        </div>
+
+        <!-- ─── STEP 1b: Consent declined ─── -->
+        <div id="step-consent-no" class="form-step">
+          <div class="declined-screen">
+            <div class="dc-icon">🙏</div>
+            <h3 style="font-size:18px;font-weight:800;color:var(--muted);">Thank you. We cannot proceed without consent.</h3>
+            <p style="font-size:12px;color:var(--muted);line-height:1.8;margin-top:10px;">If you change your mind, you're welcome to return and submit anytime.</p>
+            <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;">
+              <button class="nav-back" onclick="goStepDirect('step-1')">← Go back</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── STEP 2: Basic Information ─── -->
+        <div id="step-2" class="form-step">
+          <div id="branch-tag-basic" class="branch-tag self">👤 Nominating myself</div>
+          <div class="form-section-title"><span class="s-num">2</span> Basic Information</div>
+
+          <!-- LinkedIn connect -->
+          <div class="li-connect-box">
+            <div class="li-logo">in</div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:800;color:#0077b5;margin-bottom:3px;">Import from LinkedIn</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.6;">Connect your LinkedIn account to auto-fill your name, photo, role, organisation, and bio. You can edit anything before submitting.</div>
+            </div>
+            <button class="li-connect-btn" onclick="simulateLinkedInPull()">Connect with LinkedIn</button>
+          </div>
+          <div id="li-pulled-confirm" style="display:none;margin-bottom:14px;">
+            <span class="li-pulled-badge">✓ LinkedIn data imported — review and edit below</span>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:16px;font-weight:500;">Or fill in manually below.</div>
+
+          <div class="form-grid" style="margin-bottom:16px;">
+            <div class="form-field full">
+              <label>Full Name *</label>
+              <div class="form-input"></div>
+            </div>
+            <div class="form-field full">
+              <label>Email Address * <span style="font-weight:500;text-transform:none;font-size:9px;">(used for follow-up &amp; profile updates · never published)</span></label>
+              <div class="form-input"></div>
+            </div>
+            <div class="form-field full">
+              <label>Profile Photo <span style="font-weight:500;text-transform:none;font-size:9px;">JPEG or PNG · optional</span></label>
+              <div style="height:72px;border:2px dashed var(--border);border-radius:var(--radius-sm);background:var(--surface);display:flex;align-items:center;justify-content:center;gap:10px;">
+                <span style="font-size:20px;">📷</span>
+                <span style="font-size:11px;color:var(--muted);font-weight:500;">Drop image here or click to browse</span>
+              </div>
+            </div>
+            <div class="form-field full">
+              <label>Country of Residence *</label>
+              <select class="filter-select" style="width:100%;height:40px;border-radius:var(--radius-sm);">
+                <option>Select country…</option>
+                <option>Kenya</option><option>Nigeria</option><option>South Africa</option>
+                <option>India</option><option>United Kingdom</option><option>United States</option>
+                <option>Brazil</option><option>Sweden</option><option>Lebanon</option>
+                <option>Singapore</option><option>Other…</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Organisation / Institution</label>
+              <div class="form-input"></div>
+            </div>
+            <div class="form-field">
+              <label>Current Role / Title</label>
+              <div class="form-input"></div>
+            </div>
+          </div>
+
+          <div class="form-nav-row">
+            <button class="nav-back" onclick="goStep(1)">← Back</button>
+            <span class="step-count">Step 3 of 6</span>
+            <button class="nav-next" onclick="goStep(3)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- ─── STEP 3: Professional Profile ─── -->
+        <div id="step-3" class="form-step">
+          <div id="branch-tag-prof" class="branch-tag self">👤 Adding myself</div>
+          <div class="form-section-title"><span class="s-num">3</span> Professional Profile</div>
+
+          <div style="margin-bottom:18px;">
+            <div style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Years of experience in digital health or related fields *</div>
+            <div class="exp-choice">
+              <div class="exp-opt" onclick="selectExp(this)">0–2 years</div>
+              <div class="exp-opt" onclick="selectExp(this)">3–7 years</div>
+              <div class="exp-opt" onclick="selectExp(this)">8–15 years</div>
+              <div class="exp-opt" onclick="selectExp(this)">15+ years</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:18px;">
+            <div style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Areas of expertise * <span style="font-size:9px;font-weight:500;text-transform:none;">(select up to 3)</span></div>
+            <div class="etag-hint" id="etagHint">0 of 3 selected</div>
+            <div class="expertise-tags">
+              <div class="etag" onclick="selectEtag(this)">Digital health implementation</div>
+              <div class="etag" onclick="selectEtag(this)">Health data governance</div>
+              <div class="etag" onclick="selectEtag(this)">Artificial Intelligence / Data science</div>
+              <div class="etag" onclick="selectEtag(this)">Health systems strengthening</div>
+              <div class="etag" onclick="selectEtag(this)">Policy and regulation</div>
+              <div class="etag" onclick="selectEtag(this)">Gender and health equity</div>
+              <div class="etag" onclick="selectEtag(this)">Research and academia</div>
+              <div class="etag" onclick="selectEtag(this)">Advocacy and civil society</div>
+              <div class="etag" onclick="selectEtag(this)">Private sector / innovation</div>
+              <div class="etag" onclick="selectEtag(this)" id="etag-other">Other (please specify)</div>
+            </div>
+            <input id="other-expertise-input" type="text" placeholder="Please specify…" style="display:none;margin-top:8px;width:100%;height:38px;border:1.5px solid var(--cobalt);border-radius:var(--radius-sm);padding:0 14px;font-family:'Montserrat',sans-serif;font-size:12px;background:#f0f7ff;outline:none;">
+          </div>
+
+          <div style="margin-bottom:18px;">
+            <div style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Geographic scope of work * <span style="font-size:9px;font-weight:500;text-transform:none;">(select all that apply)</span></div>
+            <div class="geo-grid">
+              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>East Asia and Pacific</div>
+              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>Europe and Central Asia</div>
+              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>Latin America and the Caribbean</div>
+              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>Middle East and North Africa</div>
+              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>North America</div>
+              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>South Asia</div>
+              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>Sub-Saharan Africa</div>
+              <div class="geo-opt" id="geo-national" onclick="selectGeo(this, true)"><div class="geo-check"></div>National</div>
+            </div>
+            <select class="country-dropdown" id="nationalCountry">
+              <option>Select your country…</option>
+              <option>Kenya</option><option>Nigeria</option><option>South Africa</option>
+              <option>India</option><option>United Kingdom</option><option>United States</option>
+              <option>Brazil</option><option>Sweden</option><option>Other…</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:4px;">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
+              <div style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;">Short professional bio * <span style="font-size:9px;font-weight:500;text-transform:none;">(100–150 characters)</span></div>
+              <span id="bioWordCount" style="font-size:10px;font-weight:800;color:var(--muted);">0 / 150 chars</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:500;line-height:1.6;">Since this is a public database, submissions may be lightly edited for clarity or length.</div>
+            <textarea id="bioTextarea" oninput="updateWordCount()" maxlength="150" style="height:80px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);width:100%;padding:10px 14px;font-family:'Montserrat',sans-serif;font-size:12px;resize:none;" placeholder="One punchy sentence about your work and impact (100–150 characters)…"></textarea>
+            <div id="bioWarning" style="display:none;font-size:10px;color:#d97706;font-weight:800;margin-top:4px;">⚠ Aim for at least 100 characters for a complete bio.</div>
+          </div>
+
+          <div class="form-nav-row">
+            <button class="nav-back" onclick="goStep(2)">← Back</button>
+            <span class="step-count">Step 4 of 6</span>
+            <button class="nav-next" onclick="goStep(4)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- ─── STEP 4: Visibility & Links ─── -->
+        <div id="step-4" class="form-step">
+          <div id="branch-tag-links" class="branch-tag self">👤 Adding myself</div>
+          <div class="form-section-title"><span class="s-num">4</span> Visibility &amp; Links</div>
+
+          <div class="form-grid" style="margin-bottom:16px;">
+            <div class="form-field full">
+              <label>LinkedIn profile or professional website</label>
+              <div style="height:40px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);display:flex;align-items:center;padding:0 14px;font-size:12px;color:#9ca3af;">https://…</div>
+            </div>
+            <div class="form-field full">
+              <label>Notable publications, projects, or achievements <span style="font-weight:500;text-transform:none;font-size:9px;">(optional · max 3)</span></label>
+              <div id="pub-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+              <button id="pub-add-btn" onclick="addPubRow()" style="margin-top:8px;display:flex;align-items:center;gap:7px;height:36px;padding:0 16px;border:2px dashed var(--cobalt);border-radius:var(--radius-pill);background:#f0f7ff;color:var(--cobalt);font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;width:fit-content;">
+                <span style="font-size:18px;line-height:1;">+</span> Add item
+              </button>
+              <div style="font-size:10px;color:var(--muted);margin-top:6px;font-weight:500;" id="pub-hint">0 of 3 added</div>
+            </div>
+          </div>
+
+          <div class="form-nav-row">
+            <button class="nav-back" onclick="goStep(3)">← Back</button>
+            <span class="step-count">Step 5 of 6</span>
+            <button class="nav-next pink" onclick="goStep(5)">Submit Profile →</button>
+          </div>
+        </div>
+
+        <!-- ─── STEP 5: Thank You ─── -->
+        <div id="step-5" class="form-step">
+          <div class="thank-you-screen">
+            <div class="ty-globe">🌍</div>
+            <h2>Thank you for contributing to the Transform Health Women Leaders in Digital Health Database 🌍</h2>
+            <p>Your submission helps advance gender equity and representation in digital health leadership.</p>
+            <div class="email-note">
+              <strong style="color:var(--cobalt);">📧 Confirmation email sent to your inbox</strong><br><br>
+              Your email includes:<br>
+              • <strong>"Update your profile anytime here"</strong> — a direct link to edit your submission<br>
+              • A <strong>follow-up survey</strong> link to share additional feedback<br><br>
+              <span style="color:var(--muted);">The Transform Health team will review your profile before it goes live in the database.</span>
+            </div>
+            <div class="ty-actions">
+              <button class="ty-btn primary" onclick="show('p1', document.querySelectorAll('.wf-tab')[0])">View the directory →</button>
+              <button class="ty-btn secondary">Share this form 🔗</button>
+            </div>
+            <div style="font-size:10px;color:var(--muted);margin-top:20px;line-height:1.7;">On submit: Apps Script triggers confirmation email → row enters Sheet "Pending" tab → Transform Health team reviews before publishing.</div>
+          </div>
+        </div>
+
+      </div><!-- /form-card -->
+    </div><!-- /form-page -->
+  </div><!-- /app-shell -->
+
+  <div class="anno-strip">
+    <h4>Screen 3 — Bespoke branching form · open items</h4>
+    <ul>
+      <li><strong>Entry branch:</strong> "Adding myself" vs "Nominating someone else" — second path collects a public profile link before proceeding to consent</li>
+      <li><strong>Consent gate:</strong> "No" → polite end screen; "Yes" → unlocks all profile sections sequentially</li>
+      <li><strong>Expertise tags:</strong> Max 3 selections enforced client-side; remaining tags grey out once limit reached</li>
+      <li><strong>Geographic scope:</strong> "National" selection reveals a country dropdown — all other regions are multi-select checkboxes</li>
+      <li><strong>Shareable URL:</strong> OG meta tags (title, description, image) auto-generated so WhatsApp / Twitter / LinkedIn previews render correctly</li>
+      <li><strong>Auto-email trigger:</strong> Apps Script sends confirmation with "update profile" link + follow-up survey link on submit</li>
+      <li><strong>Profile image:</strong> JPEG/PNG upload → stored in Google Drive · admin approves before it goes live</li>
+      <li><strong>Bio word count:</strong> Real-time counter enforces 100–150 word soft cap with a warning, not a hard block</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     PAGE 4 — APP FLOW
+══════════════════════════════════ -->
+<div id="p4" class="page">
+  <div class="app-shell" style="flex:1;">
+    <div class="app-navbar">
+      <div class="app-logo">TH LOGO</div>
+      <div style="display:flex;gap:8px;"><span class="nav-link active">Directory</span><span class="nav-link">About</span><span class="nav-link" onclick="show('p3', document.querySelectorAll('.wf-tab')[2])" style="cursor:pointer;">Submit Profile</span></div>
+    </div>
+    <div class="flow-page">
+
+      <div class="flow-title">Flow 1 — Self-nomination</div>
+      <div class="flow-row">
+        <div class="flow-node" style="background:var(--cobalt);">Bespoke Form<small>Submit / Nominate</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#0077b5;">LinkedIn OAuth<small>Connect with LinkedIn<br>pulls photo, role, bio</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#334;">Apps Script<small>Confirm email<br>+ update link</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--pending);">Sheets "Pending"<small>Row written</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--teal);">Admin UI<small>Reviews &amp; approves</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#059669;">Sheets "Live"<small>Full card in directory</small></div>
+      </div>
+
+      <div class="flow-title">Flow 2 — Nominate someone else</div>
+      <div class="flow-row">
+        <div class="flow-node" style="background:var(--cobalt);">Bespoke Form<small>Profile link only</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#6366f1;">Sheets "Nominations"<small>Row written</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--teal);">Admin UI<small>Invited tab<br>sends invite email</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#0077b5;">Nominee LinkedIn OAuth<small>Consents + connects<br>pulls everything</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--pending);">Sheets "Pending"<small>Joins normal queue</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#059669;">Sheets "Live"<small>Full card in directory</small></div>
+      </div>
+
+      <div class="flow-title">Flow 3 — Existing 81 leaders (Claim your profile)</div>
+      <div class="flow-row">
+        <div class="flow-node" style="background:#334;">Slim card<small>TH manually added<br>photo + basic info</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--cobalt);">"Claim your profile"<small>Button on slim card</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#0077b5;">LinkedIn OAuth<small>Connects + pulls<br>bio + updated info</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#059669;">Sheets "Live" updated<small>Slim → Full card<br>no re-approval needed</small></div>
+      </div>
+
+      <div class="flow-title">Data pull — Sheets DB → Directory + Outreach Dashboard</div>
+      <div class="flow-row">
+        <div class="flow-node" style="background:#059669;">Sheets "Live" tab</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#334;">Sheets API<small>Live fetch · no build step</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--pink);">Public Directory<small>React · GitHub Pages<br>iframe → WordPress</small></div>
+        <div style="font-size:11px;color:var(--muted);padding:0 8px;">&amp;</div>
+        <div class="flow-node" style="background:var(--teal);">Outreach Dashboard<small>Internal · same API<br>filters by status / region</small></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     DATA + LOGIC
+══════════════════════════════════ -->
+<script>
+// ── Real data from Google Sheet CSV ──────────────────────────────
+const LEADERS = [
+  { id:1,  name:"Adele Waugaman",              role:"Senior Program Officer, AI Innovations Advocacy",                          org:"Gates Foundation",                                                    expertise:"AI",                                        linkedin:"https://www.linkedin.com/in/waugaman/" },
+  { id:2,  name:"Aferdita Bytyqi",             role:"Executive Director and Founding Member",                                   org:"Digital Transformations for Health Lab",                               expertise:"Health systems strengthening",               linkedin:"https://www.linkedin.com/in/aferditabytyqi/" },
+  { id:3,  name:"Agnès Couffinhal",            role:"Global Program Lead for Health Financing",                                 org:"The World Bank",                                                      expertise:"Health financing",                           linkedin:"https://www.linkedin.com/in/agn%C3%A8s-couffinhal-4409764b/" },
+  { id:4,  name:"Agnes Soucat",                role:"Director Health and Social Protection",                                    org:"AFD - Agence Française de Développement",                             expertise:"Health financing",                           linkedin:"https://www.linkedin.com/in/agnes-soucat-md-mph-ph-d-a9024413/" },
+  { id:5,  name:"Ana Estela Haddad",           role:"Secretary of Information and Digital Health",                              org:"Ministry of Health, Brazil",                                          expertise:"Digital health",                             linkedin:"https://www.linkedin.com/in/ana-estela-haddad-34989644/" },
+  { id:6,  name:"Anaita Singh",                role:"Senior Officer, Digital Health Innovation & AI",                           org:"Gates Foundation, India Country Office",                               expertise:"AI",                                        linkedin:"https://www.linkedin.com/in/anaitasingh/" },
+  { id:7,  name:"Andrea Martina Studer",       role:"Chief Executive Officer",                                                  org:"Fondation Botnar",                                                    expertise:"Digital health philanthropy",                linkedin:"https://www.linkedin.com/in/andrea-studer-953835a7/" },
+  { id:8,  name:"Angela Nzioki",               role:"Vice President Enterprise Services & Kenya MD",                            org:"Kasha Global, Inc.",                                                  expertise:"Digital health strategy",                    linkedin:"https://www.linkedin.com/in/angelanzioki/" },
+  { id:9,  name:"Angélica Baptista Silva",        role:"Member of ISfTeH - WoW",                                              org:"International Society for Telemedicine & eHealth",              expertise:"Research",                        linkedin:"https://www.linkedin.com/in/angelicabaptista/" },
+  { id:10, name:"Ann Aerts",                      role:"Head",                                                                org:"Novartis Foundation",                                           expertise:"Digital health advocacy",          linkedin:"https://www.linkedin.com/in/ann-aerts-87321516/" },
+  { id:11, name:"Anne Forsyth",                   role:"Director, Clinical Applications and Decision Support",                org:"Women's College Hospital",                                      expertise:"Digital health",                   linkedin:"https://www.linkedin.com/in/anne-forsyth-9175394a/" },
+  { id:12, name:"Anne Stake",                     role:"AI Product and Portfolio",                                            org:"Gates Foundation",                                              expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/anne-stake-015b634/" },
+  { id:13, name:"Annie (Mary-Anne) Hartley",      role:"Director of LiGHT",                                                  org:"Ariadne Labs / EPFL",                                           expertise:"AI",                               linkedin:"https://www.linkedin.com/in/anniehartley" },
+  { id:14, name:"Assiatou Kama Niang",            role:"Co-founder and Executive Director",                                   org:"Community Innovation Hub",                                      expertise:"Digital health advocacy",          linkedin:"https://www.linkedin.com/in/assiatou-kama-niang-2410b2a7/" },
+  { id:15, name:"Audrey Toure",                   role:"Communications Officer",                                              org:"Union Béninoise de Pharmaciens (UBPHAR)",                       expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/audrey-toure-b5a8b0213/" },
+  { id:16, name:"Béatrice Garrette",              role:"Director General",                                                    org:"Fondation Pierre Fabre",                                        expertise:"Digital health philanthropy",       linkedin:"https://www.linkedin.com/in/beatrice-garrette-302a9415/" },
+  { id:17, name:"Beatrice Murage",                role:"Global Director, Sustainability and Access to Care",                  org:"Philips",                                                       expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/beatrice-murage-7104b2a/" },
+  { id:18, name:"Carol Kamasaka",                 role:"Digital Health Specialist and President",                             org:"Uganda Health Informatics Association",                          expertise:"Health information systems",        linkedin:"https://www.linkedin.com/in/carolkamasaka/" },
+  { id:19, name:"Carolina Batista",               role:"Partner & Head of Global Health",                                     org:"Baraka Impact Finance",                                         expertise:"Health financing",                  linkedin:"https://www.linkedin.com/in/carolina-batista-md-mph-a9024413/" },
+  { id:20, name:"Caroline Perrin",                role:"Executive Director",                                                  org:"Geneva Digital Health Hub (gdhub)",                              expertise:"Health information systems",        linkedin:"https://www.linkedin.com/in/caroline-franck-perrin-71a7a414/" },
+  { id:21, name:"Caroline Shakwei Mbindyo",       role:"Chief Innovation Officer",                                            org:"Amref Health Africa",                                           expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/caroline-mbindyo-9828a113/" },
+  { id:22, name:"Christina Villella",             role:"Member/Treasurer, Board of Directors",                                org:"Global Digital Health Network",                                  expertise:"Health information systems",        linkedin:"https://www.linkedin.com/in/christina-villella-0275a52b/" },
+  { id:23, name:"Danielle Simpson-Cupido",        role:"Chief Executive Officer",                                             org:"CHAPS - Centre for HIV/AIDS Prevention Studies",                 expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/danielle-simpson-cupido-63870814/" },
+  { id:24, name:"Derya Şahin",                    role:"Digital Health and Data Governance Consultant",                       org:"The World Bank",                                                expertise:"AI",                               linkedin:"https://www.linkedin.com/in/deryasahin/" },
+  { id:25, name:"Effy Vayena",                    role:"Co Director",                                                         org:"Stavros Niarchos Foundation Bioethics Academy",                  expertise:"Digital health policy",             linkedin:"https://www.linkedin.com/in/effy-vayena-34301614/" },
+  { id:26, name:"Erica Layer",                    role:"Chief Operating Officer",                                             org:"health.enabled",                                                expertise:"Digital health policy",             linkedin:"https://www.linkedin.com/in/ericalayer/" },
+  { id:27, name:"Fazilah Shaik Allaudin",         role:"Penang State Health Director",                                        org:"Ministry of Health, Malaysia",                                  expertise:"Digital health policy",             linkedin:"https://www.linkedin.com/in/fazilahshaikallaudin/" },
+  { id:28, name:"Florence Gaudry-Perkins",        role:"Founder & CEO",                                                       org:"Digital Health Partnerships",                                   expertise:"Digital health advocacy",          linkedin:"https://www.linkedin.com/in/florenceperkins/" },
+  { id:29, name:"Ilona Kickbusch",                role:"Director",                                                            org:"DTH Lab",                                                       expertise:"Digital health policy",             linkedin:"https://www.linkedin.com/in/ilonakickbusch/" },
+  { id:30, name:"Iveth J. González",              role:"Head of Health Programme",                                            org:"Terre des hommes foundation",                                   expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/iveth-j-gonzalez-3617321a/" },
+  { id:31, name:"Jacqueline Pienaar",             role:"Chief of Party",                                                      org:"Project Last Mile",                                             expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/jacqueline-pienaar-8b2b7337/" },
+  { id:32, name:"Jennifer Nelson",                role:"Senior Specialist Digital Health Solutions",                          org:"Inter-American Development Bank",                                expertise:"Digital health transformation",      linkedin:"https://www.linkedin.com/in/jennifer-nelson-5460224/" },
+  { id:33, name:"Joseline Carías Galeano",        role:"Chief Operating Officer",                                             org:"RECAINSA",                                                      expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/joseline-car%C3%ADas-galeano-9a117b44/" },
+  { id:34, name:"Joy Kamunyori",                  role:"Partner/Community Member",                                            org:"RootsAI Foundation",                                            expertise:"Health information systems",        linkedin:"https://www.linkedin.com/in/jkamunyori/" },
+  { id:35, name:"Kalipso Chalkidou",              role:"Director Health Finance and Economics",                               org:"WHO",                                                           expertise:"Health financing",                  linkedin:"https://www.linkedin.com/in/kalipso-chalkidou-9993358/" },
+  { id:36, name:"Karen Austrian",                 role:"Director, Girl Center",                                               org:"Population Council",                                            expertise:"Research",                          linkedin:"https://www.linkedin.com/in/karen-austrian-73a70712/" },
+  { id:37, name:"Karin Källander",                role:"Senior Health Specialist",                                            org:"UNICEF",                                                        expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/karinkallander/" },
+  { id:38, name:"Kirsten Mathieson",              role:"Deputy Director and Policy Lead",                                     org:"Transform Health",                                              expertise:"Digital health policy",             linkedin:"https://www.linkedin.com/in/kirstenmathieson/",            featured:true },
+  { id:39, name:"Lauren Wall",                    role:"Senior Program Officer",                                              org:"Gates Foundation",                                              expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/lauren-wall-03598517/" },
+  { id:40, name:"Leah Eklabadh",                  role:"USA Country Lead",                                                    org:"Madiro.org",                                                    expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/leaheklubadh/" },
+  { id:41, name:"Leona Rosenblum",                role:"Deputy Director, Center for Digital Health",                          org:"JSI",                                                           expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/leona-rosenblum-32b0057/" },
+  { id:42, name:"Madeleine Ballard",              role:"Co-Founder & CEO",                                                    org:"Community Health Impact Coalition",                              expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/madeleine-ballard-a3203816/" },
+  { id:43, name:"Magda Lopes Queta",              role:"President",                                                           org:"ENDA Sante",                                                    expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/magda-lopes-queta-464a7815/" },
+  { id:44, name:"Manisha Bhinge",                 role:"Vice President, Health",                                              org:"The Rockefeller Foundation",                                    expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/manisha-bhinge-5555474/" },
+  { id:45, name:"Marelize Gorgens Prestidge",     role:"Evaluation of digital and AI solutions",                              org:"The World Bank",                                                expertise:"AI",                               linkedin:"https://www.linkedin.com/in/marelize-gorgens-7b3b652/" },
+  { id:46, name:"Mathilde Forslund",              role:"Chief Executive Officer",                                             org:"Transform Health",                                              expertise:"Digital health advocacy",          linkedin:"https://www.linkedin.com/in/mathilde-forslund-5561a310/",  featured:true },
+  { id:47, name:"Modupe Agueh McCracken",         role:"Public Health Advisor",                                               org:"Independent",                                                   expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/modupe-agueh-mccracken-4a00501b/" },
+  { id:48, name:"Mou Nandi",                      role:"Co-Founder & CEO",                                                    org:"Monere",                                                        expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/mounandi/" },
+  { id:49, name:"Nanjira Sambuli",                role:"Senior Advocacy Officer, Africa",                                     org:"Gates Foundation",                                              expertise:"Digital health advocacy",          linkedin:"https://www.linkedin.com/in/nanjirasambuli/" },
+  { id:50, name:"Natasha Azzopardi Muscat",       role:"Director Health Systems",                                             org:"WHO",                                                           expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/natasha-azzopardi-muscat-86001a14/" },
+  { id:51, name:"Natasha Sunderji",               role:"Managing Director",                                                   org:"Accenture",                                                     expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/natashasunderji/" },
+  { id:52, name:"Neema K. Lugangira",             role:"Member of Parliament",                                                org:"Government of Tanzania",                                        expertise:"Digital health policy",             linkedin:"https://www.linkedin.com/in/neemalugangira/",              featured:true },
+  { id:53, name:"Neha Verma",                     role:"CEO / Co Founder",                                                    org:"Intelehealth",                                                  expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/neha-verma-9a405625/" },
+  { id:54, name:"Nelly Ale",                      role:"Acting Director, Health Workforce Development",                       org:"Mastercard Foundation",                                         expertise:"Health workforce",                  linkedin:"https://www.linkedin.com/in/nelly-ale-8b656b20/" },
+  { id:55, name:"Nicole Spieker",                 role:"Chief Executive Officer",                                             org:"PharmAccess Foundation",                                        expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/nicolespieker/" },
+  { id:56, name:"Njide Ndili",                    role:"Country Director",                                                    org:"PharmAccess, Nigeria",                                          expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/njide-ndili-8495037/" },
+  { id:57, name:"Nnenna Nwakanma",                role:"Senior Advisor",                                                      org:"Transform Health",                                              expertise:"Digital health policy",             linkedin:"https://www.linkedin.com/in/nnenna/" },
+  { id:58, name:"Ntombifikile Mtshali",           role:"Chief Executive Officer",                                             org:"Shout-It-Now",                                                  expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/ntombifikile-nokwethemba-mtshali-9b4b0811/" },
+  { id:59, name:"Olivia Velez",                   role:"Co-Chair Emeritus/Board Member",                                      org:"Global Digital Health Network",                                 expertise:"Health information systems",        linkedin:"https://www.linkedin.com/in/oliviavelez/" },
+  { id:60, name:"Olutola Vivian Awosiku",         role:"Lead Program Manager",                                                org:"The Africa Digital Health Networks - ADHN",                      expertise:"Digital health advocacy",          linkedin:"https://www.linkedin.com/in/olutolavivian/" },
+  { id:61, name:"Patty Mechael",                  role:"Chief Executive Officer",                                             org:"health.enabled",                                                expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/patricia-mechael-a696001/" },
+  { id:62, name:"Peiling Yap",                    role:"Chief Scientist",                                                     org:"HealthAI",                                                      expertise:"AI",                               linkedin:"https://www.linkedin.com/in/peiling-yap-27b32230/" },
+  { id:63, name:"Primrose Matambanadzo",          role:"Programme Director, Key Populations",                                 org:"CeSHHAR Zimbabwe",                                              expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/primrose-matambanadzo-14022a46/" },
+  { id:64, name:"Priya Balasubramaniam",          role:"Senior Public Health Scientist & Director",                           org:"Public Health Foundation of India",                              expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/priya-balasubramaniam-24080a2/" },
+  { id:65, name:"Priya Morjaria",                 role:"Head of Global Programme Development",                                org:"Peek Vision",                                                   expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/priyamorjaria/" },
+  { id:66, name:"Roopan Gill",                    role:"CEO, Co-Founder",                                                     org:"Vitala Global Foundation",                                      expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/roopan-gill-md-mph-frcsc-97594511/" },
+  { id:67, name:"Rose Nzyoka",                    role:"Board Director",                                                      org:"Global Digital Health Network",                                 expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/rose-nzyoka-6a4a0815/" },
+  { id:68, name:"Rosemary K Muliokela",           role:"Consultant, Global Digital Adaptation Kits",                         org:"World Health Organization",                                     expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/rosemarymuliokela/" },
+  { id:69, name:"Samira Abdulrashid",             role:"Head of Medical",                                                     org:"MYDAWA",                                                        expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/samiraabdulrashid/" },
+  { id:70, name:"Sara (Meg) Davis",               role:"Research and Impact Director",                                        org:"Centre for Interdisciplinary Methodologies, University of Warwick", expertise:"Digital health rights",          linkedin:"https://www.linkedin.com/in/megdavis/" },
+  { id:71, name:"Sherri Haas",                    role:"ET Consultant, Digital Public Infrastructure",                        org:"The World Bank",                                                expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/sherrihaas/" },
+  { id:72, name:"Smisha Agarwal",                 role:"Director, Center for Global Digital Health Innovation",               org:"Johns Hopkins Bloomberg School of Public Health",                expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/smisha-agarwal-325a6916/" },
+  { id:73, name:"Sophia Pirsch",                  role:"Investigator",                                                        org:"Center for Implementation and Innovation in Health Policies",    expertise:"Research",                          linkedin:"https://www.linkedin.com/in/sophia-pirsch-93504a11b/" },
+  { id:74, name:"Stephanie Watson-Grant",         role:"Learning Strategist",                                                 org:"The END Fund",                                                  expertise:"Health information systems",        linkedin:"https://www.linkedin.com/in/stephanie-watson-grant-drph-9336b211/" },
+  { id:75, name:"Sukanya Poddar",                 role:"Managing Trustee",                                                    org:"Committed Communities Development Trust",                        expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/sukanyapoddar/" },
+  { id:76, name:"Tara Nutley",                    role:"Executive Advisor, Digital Health",                                   org:"health.enabled / Palladium / Abt Global",                        expertise:"Digital health strategy",          linkedin:"https://www.linkedin.com/in/taranutley/" },
+  { id:77, name:"Thobekile Finger",               role:"Director of Programs",                                                org:"Higher Health SA",                                              expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/thobekile-finger-b9a38520/" },
+  { id:78, name:"Vidya Mahadevan",                role:"Senior Data Governance Advisor",                                      org:"USAID",                                                         expertise:"Digital health policy",             linkedin:"https://www.linkedin.com/in/vidyamahadevan/" },
+  { id:79, name:"Viviane Oke",                    role:"Founder",                                                             org:"ELLES App",                                                     expertise:"Digital health innovation",         linkedin:"https://www.linkedin.com/in/viviane-oke-4395061b/" },
+  { id:80, name:"Yacine Diop Djibo",              role:"Founder & Executive Director",                                        org:"Speak Up Africa",                                               expertise:"Digital health advocacy",          linkedin:"https://www.linkedin.com/in/yacine-djibo-5561a310/",       featured:true },
+  { id:81, name:"Yashmita Naidoo",                role:"Chief Executive Officer",                                             org:"HIVSA",                                                         expertise:"Health systems strengthening",      linkedin:"https://www.linkedin.com/in/yashmita-naidoo-4632b014/" },
+];
+
+// ── Avatar colours per expertise ─────────────────────────────────
+const EXPERTISE_STYLES = {
+  "AI":                          { bg:"#e0eaf4", color:"#02598E" },
+  "Health systems strengthening":{ bg:"#e0f0f0", color:"#008C8F" },
+  "Health financing":            { bg:"#e8f8ec", color:"#047857" },
+  "Digital health philanthropy": { bg:"#fde8f1", color:"#F85A8E" },
+  "Digital health strategy":     { bg:"#e0eaf4", color:"#02598E" },
+  "Digital health innovation":   { bg:"#fde8f1", color:"#F85A8E" },
+  "Digital health policy":       { bg:"#e8f0fe", color:"#4f46e5" },
+  "Digital health advocacy":     { bg:"#e0f0f0", color:"#008C8F" },
+  "Digital health transformation":{ bg:"#fef0e0", color:"#F97A1A" },
+  "Digital health rights":       { bg:"#fef0e0", color:"#b45309" },
+  "Health information systems":  { bg:"#fef0e0", color:"#F97A1A" },
+  "Health workforce":            { bg:"#f3e8ff", color:"#7c3aed" },
+  "Research":                    { bg:"#fff8e0", color:"#d97706" },
+  "Digital health":              { bg:"#e0eaf4", color:"#02598E" },
+};
+
+const TAG_STYLES = {
+  "AI":                          { bg:"#e0eaf4", color:"#02598E" },
+  "Health systems strengthening":{ bg:"#e0f0f0", color:"#008C8F" },
+  "Health financing":            { bg:"#e8f8ec", color:"#047857" },
+  "Digital health philanthropy": { bg:"#fde8f1", color:"#F85A8E" },
+  "Digital health strategy":     { bg:"#e0eaf4", color:"#02598E" },
+  "Digital health innovation":   { bg:"#fde8f1", color:"#F85A8E" },
+  "Digital health policy":       { bg:"#e8f0fe", color:"#4f46e5" },
+  "Digital health advocacy":     { bg:"#e0f0f0", color:"#008C8F" },
+  "Digital health transformation":{ bg:"#fef0e0", color:"#F97A1A" },
+  "Digital health rights":       { bg:"#fef0e0", color:"#b45309" },
+  "Health information systems":  { bg:"#fef0e0", color:"#F97A1A" },
+  "Health workforce":            { bg:"#f3e8ff", color:"#7c3aed" },
+  "Research":                    { bg:"#fff8e0", color:"#d97706" },
+  "Digital health":              { bg:"#e0eaf4", color:"#02598E" },
+};
+
+const PER_PAGE = 20;
+let currentPage = 1;
+let featuredOnly = false;
+let filtered = [...LEADERS];
+
+// ── Initials from name ────────────────────────────────────────────
+function initials(name) {
+  const parts = name.replace(/\(.*?\)/g,'').trim().split(/\s+/);
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+// ── Populate expertise filter ─────────────────────────────────────
+function buildFilters() {
+  const sel = document.getElementById('expertiseFilter');
+  const unique = [...new Set(LEADERS.map(l => l.expertise))].sort();
+  unique.forEach(e => {
+    const opt = document.createElement('option');
+    opt.value = e; opt.textContent = e;
+    sel.appendChild(opt);
+  });
+}
+
+// ── Apply filters ────────────────────────────────────────────────
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const exp = document.getElementById('expertiseFilter').value;
+  filtered = LEADERS.filter(l => {
+    const matchQ  = !q  || l.name.toLowerCase().includes(q) || l.org.toLowerCase().includes(q) || l.role.toLowerCase().includes(q);
+    const matchE  = !exp || l.expertise === exp;
+    const matchF  = !featuredOnly || l.featured;
+    return matchQ && matchE && matchF;
+  });
+  currentPage = 1;
+  renderAll();
+}
+
+function toggleFeatured() {
+  featuredOnly = !featuredOnly;
+  document.getElementById('featuredToggle').classList.toggle('on', featuredOnly);
+  document.getElementById('featuredCheck').textContent = featuredOnly ? '✓' : '';
+  applyFilters();
+}
+
+function clearFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('expertiseFilter').value = '';
+  featuredOnly = false;
+  document.getElementById('featuredToggle').classList.remove('on');
+  document.getElementById('featuredCheck').textContent = '';
+  filtered = [...LEADERS];
+  currentPage = 1;
+  renderAll();
+}
+
+// ── Render cards ─────────────────────────────────────────────────
+function renderProfiles() {
+  const grid = document.getElementById('profileGrid');
+  const start = (currentPage - 1) * PER_PAGE;
+  const slice = filtered.slice(start, start + PER_PAGE);
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="no-results"><span>🔍</span>No leaders match your filters. <button onclick="clearFilters()" style="color:var(--cobalt);font-weight:800;background:none;border:none;cursor:pointer;">Clear filters</button></div>`;
+    return;
+  }
+
+  grid.innerHTML = slice.map(l => {
+    const ini = initials(l.name);
+    const style = EXPERTISE_STYLES[l.expertise] || { bg:"#e8e8e8", color:"#555" };
+    const tagStyle = TAG_STYLES[l.expertise] || { bg:"#e8e8e8", color:"#555" };
+    const feat = l.featured ? `<div class="featured-badge">★ Featured</div>` : '';
+    return `
+      <div class="pcard${l.featured ? ' featured' : ''}">
+        ${feat}
+        <div class="avatar" style="background:${style.bg};color:${style.color};">${ini}</div>
+        <h3>${l.name}</h3>
+        <div class="role">${l.role}</div>
+        <div class="org">${l.org}</div>
+        <div class="tags">
+          <span class="tag" style="background:${tagStyle.bg};color:${tagStyle.color};">${l.expertise}</span>
+        </div>
+        <a href="${l.linkedin}" target="_blank" class="linkedin" style="text-decoration:none;">in LinkedIn ↗</a>
+        <button class="claim-btn" onclick="event.stopPropagation()">✦ Claim your profile</button>
+      </div>`;
+  }).join('');
+}
+
+// ── Render pagination ─────────────────────────────────────────────
+function renderPagination() {
+  const pag = document.getElementById('pagination');
+  const total = Math.ceil(filtered.length / PER_PAGE);
+  if (total <= 1) { pag.innerHTML = ''; return; }
+
+  let html = `<button class="pg-btn${currentPage === 1 ? ' disabled' : ''}" onclick="goPage(${currentPage-1})">&lsaquo;</button>`;
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || Math.abs(i - currentPage) <= 1) {
+      html += `<button class="pg-btn${i === currentPage ? ' active' : ''}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - currentPage) === 2) {
+      html += `<span style="padding:0 4px;color:var(--muted);">…</span>`;
+    }
+  }
+  html += `<button class="pg-btn${currentPage === total ? ' disabled' : ''}" onclick="goPage(${currentPage+1})">&rsaquo;</button>`;
+  html += `<span class="pg-note">${PER_PAGE} per page</span>`;
+  pag.innerHTML = html;
+}
+
+function goPage(p) {
+  const total = Math.ceil(filtered.length / PER_PAGE);
+  if (p < 1 || p > total) return;
+  currentPage = p;
+  renderProfiles();
+  renderPagination();
+  document.querySelector('.grid-area').scrollTop = 0;
+}
+
+// ── Update stats ─────────────────────────────────────────────────
+function updateStats() {
+  document.getElementById('statLeaders').textContent  = filtered.length;
+  const uniqueExp = new Set(filtered.map(l => l.expertise));
+  document.getElementById('statExpertise').textContent = uniqueExp.size;
+  document.getElementById('resultCount').textContent =
+    `Showing ${Math.min((currentPage-1)*PER_PAGE + PER_PAGE, filtered.length)} of ${filtered.length} leaders`;
+}
+
+// ── Expertise breakdown sidebar ──────────────────────────────────
+function renderExpertiseBars() {
+  const counts = {};
+  filtered.forEach(l => { counts[l.expertise] = (counts[l.expertise] || 0) + 1; });
+  const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,8);
+  const max = sorted[0]?.[1] || 1;
+  const bars = document.getElementById('expertiseBars');
+  bars.innerHTML = sorted.map(([exp, count]) => {
+    const style = EXPERTISE_STYLES[exp] || { color:"#02598E" };
+    const pct = Math.round((count/max)*100);
+    const shortLabel = exp.replace('Digital health ','DH ').replace('Health systems','H. systems').replace('strengthening','strength.');
+    return `<div class="exp-row">
+      <div class="exp-label" title="${exp}">${shortLabel}</div>
+      <div class="exp-bar-wrap"><div class="exp-bar-fill" style="width:${pct}%;background:${style.color};"></div></div>
+      <div class="exp-count" style="color:${style.color};">${count}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── Render all ────────────────────────────────────────────────────
+function renderAll() {
+  updateStats();
+  renderProfiles();
+  renderPagination();
+  renderExpertiseBars();
+}
+
+// ── Page nav ──────────────────────────────────────────────────────
+function show(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.wf-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+buildFilters();
+renderAll();
+
+// ══════════════════════════════════════════════════════════════════
+// BESPOKE BRANCHING FORM LOGIC
+// ══════════════════════════════════════════════════════════════════
+
+let currentBranch = 'self'; // 'self' | 'nominate'
+let consentAnswer = null;   // 'yes' | 'no'
+let etagCount = 0;
+
+const STEP_IDS = ['step-0','step-1','step-2','step-3','step-4','step-5'];
+const STEP_DOTS = ['sd0','sd1','sd2','sd3','sd4','sd5'];
+const STEP_CONNECTORS = ['sc01','sc12','sc23','sc34','sc45'];
+
+function goStep(n) {
+  STEP_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+  document.getElementById('step-consent-no').classList.remove('active');
+  const target = document.getElementById('step-' + n);
+  if (target) target.classList.add('active');
+  updateStepDots(n);
+  document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function goStepDirect(id) {
+  STEP_IDS.forEach(sid => {
+    const el = document.getElementById(sid);
+    if (el) el.classList.remove('active');
+  });
+  document.getElementById('step-consent-no').classList.remove('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function updateStepDots(active) {
+  STEP_DOTS.forEach((id, i) => {
+    const dot = document.getElementById(id);
+    if (!dot) return;
+    dot.classList.remove('done', 'active');
+    if (i < active) dot.classList.add('done');
+    else if (i === active) dot.classList.add('active');
+  });
+  STEP_CONNECTORS.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('done', i < active);
+  });
+}
+
+function selectBranch(branch) {
+  currentBranch = branch;
+  document.getElementById('bc-self').classList.toggle('selected', branch === 'self');
+  document.getElementById('bc-nominate').classList.toggle('selected', branch === 'nominate');
+  document.getElementById('nominate-link-field').style.display = branch === 'nominate' ? 'block' : 'none';
+  // Show/hide step indicator — nominate path has no steps
+  document.querySelector('.step-indicator').style.display = branch === 'nominate' ? 'none' : 'flex';
+  // Update continue button
+  const btn = document.getElementById('step0-btn');
+  if (btn) {
+    btn.textContent = branch === 'nominate' ? 'Submit nomination →' : 'Continue →';
+    btn.className   = branch === 'nominate' ? 'nav-next pink' : 'nav-next';
+  }
+  // Branch tags only relevant for self path
+  ['branch-tag-consent','branch-tag-basic','branch-tag-prof','branch-tag-links'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = '👤 Nominating myself';
+    el.className = 'branch-tag self';
+  });
+}
+
+function handleStep0Continue() {
+  if (currentBranch === 'nominate') {
+    goStep(5); // link only → straight to thank you
+    return;
+  }
+  goStep(1);  // self-nomination → consent
+}
+
+function selectConsent(answer) {
+  consentAnswer = answer;
+  document.getElementById('consent-yes').classList.toggle('selected', answer === 'yes');
+  document.getElementById('consent-no').classList.toggle('selected', answer === 'no');
+}
+
+function handleConsent() {
+  if (consentAnswer === 'no') {
+    STEP_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    });
+    document.getElementById('step-consent-no').classList.add('active');
+    updateStepDots(1);
+  } else {
+    goStep(2);
+  }
+}
+
+function selectExp(el) {
+  document.querySelectorAll('.exp-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectEtag(el) {
+  if (el.classList.contains('maxed')) return;
+  const wasSelected = el.classList.contains('selected');
+  if (wasSelected) {
+    el.classList.remove('selected');
+    etagCount--;
+  } else {
+    if (etagCount >= 3) return;
+    el.classList.add('selected');
+    etagCount++;
+  }
+  document.getElementById('etagHint').textContent = etagCount + ' of 3 selected';
+  document.querySelectorAll('.etag:not(.selected)').forEach(t => {
+    t.classList.toggle('maxed', etagCount >= 3);
+  });
+  // Show "Other" text input when that tag is selected
+  const otherInput = document.getElementById('other-expertise-input');
+  if (otherInput) {
+    const otherTag = document.getElementById('etag-other');
+    otherInput.style.display = otherTag && otherTag.classList.contains('selected') ? 'block' : 'none';
+  }
+}
+
+// ── Publications dynamic rows ─────────────────────────────────────
+let pubCount = 0;
+const PUB_MAX = 3;
+const PUB_TYPES = ['Report', 'Publication', 'Project', 'Achievement', 'Award', 'Other'];
+
+function addPubRow() {
+  if (pubCount >= PUB_MAX) return;
+  pubCount++;
+  const list = document.getElementById('pub-list');
+  const row = document.createElement('div');
+  row.className = 'pub-row';
+  row.id = 'pub-row-' + pubCount;
+
+  const typeOpts = PUB_TYPES.map(t => `<option>${t}</option>`).join('');
+  row.innerHTML = `
+    <select class="pub-type-select"><option value="">Type…</option>${typeOpts}</select>
+    <input class="pub-link-input" type="text" placeholder="Title" />
+    <input class="pub-link-input" type="url" placeholder="Link (https://…)" />
+    <div class="pub-remove" onclick="removePubRow('pub-row-${pubCount}')">×</div>`;
+  list.appendChild(row);
+  updatePubState();
+}
+
+function removePubRow(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+  pubCount = document.getElementById('pub-list').children.length;
+  updatePubState();
+}
+
+function updatePubState() {
+  const btn = document.getElementById('pub-add-btn');
+  const hint = document.getElementById('pub-hint');
+  if (btn) btn.style.display = pubCount >= PUB_MAX ? 'none' : 'flex';
+  if (hint) hint.textContent = pubCount + ' of ' + PUB_MAX + ' added';
+}
+
+function updateWordCount() {
+  const ta = document.getElementById('bioTextarea');
+  const counter = document.getElementById('bioWordCount');
+  const warning = document.getElementById('bioWarning');
+  if (!ta || !counter) return;
+  const len = ta.value.length;
+  counter.textContent = len + ' / 150 chars';
+  counter.style.color = len > 150 ? '#dc2626' : len >= 100 ? '#059669' : 'var(--muted)';
+  if (warning) warning.style.display = len < 100 && len > 0 ? 'block' : 'none';
+}
+
+function simulateLinkedInPull() {
+  // Wireframe simulation — in production this triggers LinkedIn OAuth
+  const confirm = document.getElementById('li-pulled-confirm');
+  if (confirm) confirm.style.display = 'block';
+  // Simulate auto-filled fields with placeholder data
+  const inputs = document.querySelectorAll('#step-2 .form-input');
+  const labels = ['Mathilde Forslund', 'mathilde@transformhealth.org'];
+  inputs.forEach((el, i) => {
+    el.style.background = '#f0f8ff';
+    el.style.border = '1.5px solid #0077b5';
+    if (i < labels.length) el.setAttribute('data-li', labels[i]);
+  });
+  const ta = document.getElementById('bioTextarea');
+  if (ta) {
+    ta.value = 'CEO driving gender equity in global digital health policy.';
+    ta.style.border = '1.5px solid #0077b5';
+    ta.style.background = '#f0f8ff';
+    updateWordCount();
+  }
+}
+
+function selectGeo(el, isNational) {
+  el.classList.toggle('selected');
+  const check = el.querySelector('.geo-check');
+  check.textContent = el.classList.contains('selected') ? '✓' : '';
+  if (isNational) {
+    const dd = document.getElementById('nationalCountry');
+    dd.classList.toggle('visible', el.classList.contains('selected'));
+  }
+}
+</script>
+</body>
+</html>
