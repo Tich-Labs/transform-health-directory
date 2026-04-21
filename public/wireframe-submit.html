@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit Profile — Transform Health Women Leaders</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,800;1,500;1,800&display=swap" rel="stylesheet"/>
+  <!-- Open Graph / Social preview (placeholders; update when deploying) -->
+  <meta property="og:title" content="Submit Profile — Transform Health Women Leaders" />
+  <meta property="og:description" content="Add or nominate a woman leader to the Transform Health Women Leaders database." />
+  <meta property="og:image" content="/public/assets/og-submit.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cobalt:  #02598E;
+      --pink:    #F85A8E;
+      --green:   #00DE2C;
+      --orange:  #F97A1A;
+      --honey:   #FFDE2C;
+      --teal:    #008C8F;
+      --body:    #1a1a1a;
+      --muted:   #6b7280;
+      --border:  #e0e4ea;
+      --surface: #f8f9fb;
+      --radius:  10px;
+      --radius-sm: 6px;
+      --radius-pill: 999px;
+    }
+    body { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 13px; color: var(--body); background: var(--surface); min-height: 100vh; }
+    
+    /* ── Wireframe chrome ── */
+    .wf-chrome { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; flex-direction: column; }
+    .wf-topbar { background: #0f1923; padding: 9px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .wf-topbar h1 { font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; }
+    .wf-badge { font-size: 9px; font-weight: 800; background: var(--pink); color: #fff; border-radius: var(--radius-pill); padding: 2px 9px; }
+    .wf-tabs { background: #fff; border-bottom: 2px solid var(--border); display: flex; overflow-x: auto; scrollbar-width: none; }
+    .wf-tabs::-webkit-scrollbar { display: none; }
+    .wf-tab { padding: 11px 24px; font-size: 11px; font-weight: 800; font-family: 'Montserrat', sans-serif; color: var(--muted); background: transparent; border: none; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; }
+    .wf-tab.active { color: var(--cobalt); border-bottom-color: var(--cobalt); }
+    .wf-offset { height: 82px; }
+
+    /* ── App navbar ── */
+    .app-navbar { background: #fff; border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 60px; flex-shrink: 0; position: sticky; top: 82px; z-index: 10; }
+    .app-logo { display: flex; align-items: center; gap: 12px; }
+    .app-logo img { height: 34px; width: auto; object-fit: contain; }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-link { padding: 8px 16px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 800; color: var(--muted); cursor: pointer; text-decoration: none; }
+    .nav-link.active { background: var(--cobalt); color: #fff; }
+
+    /* ── Form page ── */
+    /* add top padding to avoid overlap with fixed wireframe chrome + sticky navbar */
+    .form-page { flex: 1; background: var(--surface); display: flex; justify-content: center; padding: calc(82px + 40px) 24px 40px; overflow-y: auto; }
+    .form-card { background: #fff; border-radius: var(--radius); border: 1.5px solid var(--border); padding: 40px 48px; width: 100%; max-width: 720px; }
+    .form-card h2 { font-size: 24px; font-weight: 800; color: var(--cobalt); margin-bottom: 4px; }
+
+    /* ── Step indicator ── */
+    .step-indicator { display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
+    .step-dot-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .step-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--muted); }
+    .step-dot.active { background: var(--cobalt); color: #fff; }
+    .step-dot.done { background: var(--green); color: #fff; }
+    .step-dot-label { font-size: 9px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .step-connector { width: 40px; height: 2px; background: var(--border); margin: 0 8px; margin-bottom: 18px; }
+    .step-connector.done { background: var(--green); }
+
+    /* ── Form sections ── */
+    .form-step { display: none; }
+    .form-step.active { display: block; }
+    .form-section-title { font-size: 14px; font-weight: 800; color: var(--cobalt); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px; }
+    .s-num { display: inline-block; width: 24px; height: 24px; background: var(--cobalt); color: #fff; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; margin-right: 8px; }
+
+    /* ── Branch cards ── */
+    .branch-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .branch-card { border: 2px solid var(--border); border-radius: var(--radius); padding: 20px; cursor: pointer; transition: all 0.2s; }
+    .branch-card:hover { border-color: var(--cobalt); }
+    .branch-card.selected { border-color: var(--cobalt); background: #f0f7ff; }
+    .branch-card .bc-icon { font-size: 28px; margin-bottom: 8px; }
+    .branch-card .bc-title { font-size: 14px; font-weight: 800; color: var(--body); margin-bottom: 4px; }
+    .branch-card .bc-sub { font-size: 11px; color: var(--muted); }
+    .branch-tag { display: inline-block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 12px; border-radius: var(--radius-pill); margin-bottom: 16px; }
+    .branch-tag.self { background: #e0eaf4; color: var(--cobalt); }
+
+    /* ── Form fields ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-field { display: flex; flex-direction: column; gap: 5px; }
+    .form-field.full { grid-column: 1/-1; }
+    .form-field label { font-size: 10px; font-weight: 800; color: var(--cobalt); text-transform: uppercase; letter-spacing: 0.06em; }
+    .form-input { height: 40px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 0 12px; font-size: 12px; font-family: 'Montserrat', sans-serif; }
+    .form-input:focus { outline: none; border-color: var(--cobalt); }
+    .form-textarea { height: 80px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 12px; font-size: 12px; font-family: 'Montserrat', sans-serif; resize: none; }
+
+    /* ── Consent box ── */
+    .consent-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 20px; }
+    .consent-box h3 { font-size: 12px; font-weight: 800; color: var(--cobalt); margin-bottom: 8px; }
+    .consent-choice { display: flex; gap: 12px; }
+    .consent-opt { flex: 1; padding: 12px; border: 2px solid var(--border); border-radius: var(--radius-sm); text-align: center; font-size: 12px; font-weight: 800; cursor: pointer; }
+    .consent-opt.selected { border-color: var(--green); background: #f0fdf4; color: var(--green); }
+    .consent-opt.no.selected { border-color: var(--pink); background: #fdf2f8; color: var(--pink); }
+
+    /* ── Expertise tags ── */
+    .exp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .exp-opt { padding: 8px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 10px; font-weight: 800; text-align: center; cursor: pointer; }
+    .exp-opt.selected { background: var(--cobalt); color: #fff; border-color: var(--cobalt); }
+    .exp-opt.maxed { opacity: 0.45; cursor: not-allowed; }
+
+    /* ── Nav buttons ── */
+    .form-nav-row { display: flex; align-items: center; justify-content: space-between; padding-top: 20px; border-top: 1px solid var(--border); margin-top: 24px; }
+    .nav-back { padding: 10px 20px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 800; border: 1.5px solid var(--border); background: #fff; color: var(--muted); cursor: pointer; }
+    .nav-next { padding: 10px 24px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 800; border: none; background: var(--cobalt); color: #fff; cursor: pointer; }
+    .nav-next.pink { background: var(--pink); }
+    .step-count { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+    /* ── Thank you screen ── */
+    .thank-you-screen { text-align: center; padding: 40px 0; }
+    .ty-globe { font-size: 48px; margin-bottom: 16px; }
+    .thank-you-screen h2 { font-size: 20px; font-weight: 800; color: var(--cobalt); margin-bottom: 8px; }
+    .thank-you-screen p { font-size: 12px; color: var(--muted); margin-bottom: 24px; }
+    .email-note { background: var(--surface); border-radius: var(--radius); padding: 20px; text-align: left; font-size: 11px; line-height: 1.8; }
+    .ty-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; }
+    .ty-btn { padding: 12px 24px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 800; cursor: pointer; border: none; }
+    .ty-btn.primary { background: var(--cobalt); color: #fff; }
+    .ty-btn.secondary { background: var(--surface); color: var(--body); border: 1.5px solid var(--border); }
+
+    /* ── Shareable URL bar ── */
+    .share-bar { background: #f0f7ff; border: 1.5px solid #bfdbfe; border-radius: var(--radius-sm); padding: 9px 14px; margin-bottom: 22px; display: flex; align-items: center; gap: 10px; font-size: 11px; color: #1d4ed8; font-weight: 800; }
+    .url-pill { background: #fff; border: 1px solid #93c5fd; border-radius: var(--radius-pill); padding: 4px 12px; font-size: 10px; }
+    .copy-btn { margin-left: auto; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 10px; background: #fff; border: 1px solid #93c5fd; cursor: pointer; }
+
+    /* ── Publications rows ── */
+    .pub-row { display: flex; gap: 8px; align-items: center; }
+    .pub-type-select { height: 36px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 11px; width: 100px; }
+    .pub-link-input { flex: 1; height: 36px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 0 10px; font-size: 11px; }
+
+    /* ── Footer note ── */
+    .anno-strip { display:block; width:100%; background: #fffbe6; border-top: 1.5px solid #e6c800; padding: 14px 32px; margin-top: 0; box-shadow: none; border-radius: 0 0 var(--radius) var(--radius); }
+    .anno-strip h4 { font-size: 11px; font-weight: 800; color: var(--cobalt); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .anno-strip ul { margin-left: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 32px; }
+    .anno-strip li { font-size: 11px; color: #555; line-height: 1.8; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <!-- Wireframe chrome -->
+  <div class="wf-chrome">
+    <div class="wf-topbar">
+      <h1>Submit Profile</h1>
+      <span class="wf-badge">WIREFRAME</span>
+    </div>
+    <div class="wf-offset"></div>
+  </div>
+
+  <!-- App Navbar -->
+  <nav class="app-navbar" data-nav="submit">
+    <div class="app-logo">
+      <span style="font-weight:800;font-size:16px;color:var(--cobalt);">Transform Health</span>
+    </div>
+    <div class="nav-links">
+      <a href="wireframe-directory.html" class="nav-link">Directory</a>
+      <a href="analytics-landing.html" class="nav-link">Analytics</a>
+      <a href="wireframe-submit.html" class="nav-link active">Submit Profile</a>
+    </div>
+  </nav>
+
+  <!-- Form Page -->
+  <div class="form-page">
+    <div class="form-card" style="max-width:740px;">
+
+      <!-- Shareable URL bar -->
+      <div class="share-bar">
+        <span>🔗 Socially shareable URL</span>
+        <span class="url-pill">transformhealthcoalition.org/leaders/submit</span>
+        <span style="font-size:10px;color:#1d4ed8;font-weight:500;">OG image + description auto-generated for WhatsApp / Twitter / LinkedIn share preview</span>
+        <button class="copy-btn">Copy link</button>
+      </div>
+
+      <!-- Progress steps -->
+      <div class="step-indicator">
+        <div class="step-dot-wrap"><div class="step-dot active" id="sd0">1</div><div class="step-dot-label">Start</div></div>
+        <div class="step-connector" id="sc01"></div>
+        <div class="step-dot-wrap"><div class="step-dot" id="sd1">2</div><div class="step-dot-label">Consent</div></div>
+        <div class="step-connector" id="sc12"></div>
+        <div class="step-dot-wrap"><div class="step-dot" id="sd2">3</div><div class="step-dot-label">Basic Info</div></div>
+        <div class="step-connector" id="sc23"></div>
+        <div class="step-dot-wrap"><div class="step-dot" id="sd3">4</div><div class="step-dot-label">Profile</div></div>
+        <div class="step-connector" id="sc34"></div>
+        <div class="step-dot-wrap"><div class="step-dot" id="sd4">5</div><div class="step-dot-label">Links</div></div>
+        <div class="step-connector" id="sc45"></div>
+        <div class="step-dot-wrap"><div class="step-dot" id="sd5">✓</div><div class="step-dot-label">Done</div></div>
+      </div>
+
+      <!-- STEP 0: Entry branch -->
+      <div id="step-0" class="form-step active">
+        <h2 style="font-size:22px;font-weight:800;color:var(--cobalt);margin-bottom:8px;">Women Leaders in Digital Health Database</h2>
+        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:18px;font-size:12px;color:var(--body);line-height:1.8;">
+          Transform Health is building a global database of women leaders in digital health to increase visibility, representation, and engagement in leadership, policy, and technical spaces. This is in efforts to take forward recommendations from the Transform Health policy brief <em>"Establishing Gender Equitable Foundations for Digital Health Transformation to Advance Universal Health Coverage"</em> launched in 2024 to mainstream gender in digital health through increasing the number of women in leadership and decision-making roles.<br><br>
+          Information submitted through this form may be featured in a publicly accessible database. By consenting, you agree that your profile information including your name, role, organisation, biography, and relevant links may be publicly displayed. <strong>Your email address will not be publicly displayed.</strong>
+        </div>
+
+        <div style="font-size:12px;color:var(--body);margin-bottom:16px;line-height:1.9;">
+          You can:<br>
+          &nbsp;&nbsp;• <strong>Submit your profile</strong> (add yourself to the database)<br>
+          &nbsp;&nbsp;• <strong>Nominate another woman leader</strong><br>
+          <span style="font-size:11px;color:var(--muted);">⏱️ This form takes 3–5 minutes.</span>
+        </div>
+
+        <div style="font-size:11px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Are you adding yourself to the database or nominating someone else? *</div>
+        <div class="branch-cards">
+          <div class="branch-card" id="bc-self" onclick="selectBranch('self')">
+            <div class="bc-icon">👤</div>
+            <div class="bc-title">I am nominating myself</div>
+            <div class="bc-sub">Submit your own profile to the database</div>
+          </div>
+          <div class="branch-card" id="bc-nominate" onclick="selectBranch('nominate')">
+            <div class="bc-icon">🌟</div>
+            <div class="bc-title">I am nominating someone else</div>
+            <div class="bc-sub">Nominate another woman leader you know</div>
+          </div>
+        </div>
+
+        <div id="nominate-link-field" style="display:none;margin-bottom:16px;">
+          <label style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:6px;">Please add the public profile link to the person you are nominating *</label>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:500;">e.g. LinkedIn URL or professional website</div>
+          <div style="height:40px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);display:flex;align-items:center;padding:0 14px;font-size:12px;color:#9ca3af;">https://linkedin.com/in/…</div>
+        </div>
+
+        <div class="form-nav-row" style="justify-content:flex-end;border-top:none;padding-top:0;margin-top:16px;">
+          <button class="nav-next" id="step0-btn" onclick="handleStep0Continue()">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 1: Consent -->
+      <div id="step-1" class="form-step">
+        <div id="branch-tag-consent" class="branch-tag self">👤 Adding myself</div>
+        <div class="form-section-title"><span class="s-num">1</span> Consent &amp; Permissions</div>
+
+        <div class="consent-box" style="margin-bottom:16px;">
+          <h3 style="font-size:12px;font-weight:800;color:var(--cobalt);margin-bottom:8px;">Do you consent to your information being included in the Transform Health Women Leaders Database?</h3>
+          <p style="font-size:11px;color:var(--body);line-height:1.7;margin-bottom:14px;">Your name, role, organisation, areas of expertise, bio, and LinkedIn will be <strong>publicly visible</strong>. Your email address will <strong>never</strong> be published and is used only for follow-up and profile updates.</p>
+          <div class="consent-choice">
+            <div class="consent-opt yes" id="consent-yes" onclick="selectConsent('yes')">✓ &nbsp;Yes, I consent</div>
+            <div class="consent-opt no"  id="consent-no"  onclick="selectConsent('no')">✕ &nbsp;No</div>
+          </div>
+        </div>
+
+        <div class="form-nav-row">
+          <button class="nav-back" onclick="goStep(0)">← Back</button>
+          <span class="step-count">Step 2 of 6</span>
+          <button class="nav-next" onclick="handleConsent()">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 1b: Consent declined -->
+      <div id="step-consent-no" class="form-step">
+        <div style="text-align:center;padding:40px 0;">
+          <div style="font-size:48px;">🙏</div>
+          <h3 style="font-size:18px;font-weight:800;color:var(--muted);">Thank you. We cannot proceed without consent.</h3>
+          <p style="font-size:12px;color:var(--muted);line-height:1.8;margin-top:10px;">If you change your mind, you're welcome to return and submit anytime.</p>
+          <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;">
+            <button class="nav-back" onclick="goStepDirect('step-1')">← Go back</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Basic Info -->
+      <div id="step-2" class="form-step">
+        <div id="branch-tag-basic" class="branch-tag self">👤 Adding myself</div>
+        <div class="form-section-title"><span class="s-num">2</span> Basic Information</div>
+
+        <div class="form-grid" style="margin-bottom:16px;">
+          <div class="form-field">
+            <label>First Name *</label>
+            <input type="text" class="form-input" placeholder="Your first name">
+          </div>
+          <div class="form-field">
+            <label>Last Name *</label>
+            <input type="text" class="form-input" placeholder="Your last name">
+          </div>
+          <div class="form-field full">
+            <label>Job Title / Role *</label>
+            <input type="text" class="form-input" placeholder="e.g. Chief Digital Health Officer">
+          </div>
+          <div class="form-field full">
+            <label>Organisation *</label>
+            <input type="text" class="form-input" placeholder="e.g. Ministry of Health, Kenya">
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Your photo</label>
+          <div style="height:100px;border:2px dashed var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;gap:12px;">
+            <div style="width:80px;height:80px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:24px;">👤</div>
+            <div>
+              <input id="photoInput" type="file" accept="image/png,image/jpeg" style="display:none" />
+              <button id="photoBtn" style="padding:8px 16px;border:1.5px solid var(--cobalt);border-radius:var(--radius-pill);background:#fff;color:var(--cobalt);font-size:11px;font-weight:800;cursor:pointer;">Upload photo</button>
+              <div id="photoName" style="font-size:11px;color:var(--muted);margin-top:6px;"></div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:6px;">JPEG or PNG, max 5MB</div>
+        </div>
+
+        <div class="form-nav-row">
+          <button class="nav-back" onclick="goStep(1)">← Back</button>
+          <span class="step-count">Step 3 of 6</span>
+          <button class="nav-next" onclick="goStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Profile -->
+      <div id="step-3" class="form-step">
+        <div id="branch-tag-prof" class="branch-tag self">👤 Adding myself</div>
+        <div class="form-section-title"><span class="s-num">3</span> Profile Details</div>
+
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Areas of expertise * <span style="font-weight:500;text-transform:none;color:var(--muted);">(select up to 3)</span></label>
+          <div class="exp-grid">
+            <div class="exp-opt" onclick="selectEtag(this)">AI &amp; Automation</div>
+            <div class="exp-opt" onclick="selectEtag(this)">Digital Health Policy</div>
+            <div class="exp-opt" onclick="selectEtag(this)">Health Financing</div>
+            <div class="exp-opt" onclick="selectEtag(this)">Health Systems</div>
+            <div class="exp-opt" onclick="selectEtag(this)">Data &amp; Analytics</div>
+            <div class="exp-opt" onclick="selectEtag(this)">mHealth</div>
+            <div class="exp-opt" onclick="selectEtag(this)">Telemedicine</div>
+            <div class="exp-opt" onclick="selectEtag(this)">Research</div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:6px;" id="etagHint">0 of 3 selected</div>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Geographic scope *</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <div class="exp-opt" onclick="selectGeo(this,false)" style="flex:1;min-width:100px;"><span class="geo-check"></span> Global / Multicountry</div>
+            <div class="exp-opt" onclick="selectGeo(this,true)" style="flex:1;min-width:100px;"><span class="geo-check"></span> National</div>
+          </div>
+          <select id="nationalCountry" style="display:none;margin-top:8px;height:36px;border:1.5px solid var(--border);border-radius:var(--radius-sm);width:200px;font-size:11px;">
+            <option>Select country…</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Short bio * <span style="font-weight:500;text-transform:none;color:var(--muted);">(100-150 words)</span></label>
+          <textarea id="bioTextarea" class="form-textarea" placeholder="Brief description of your work in digital health…"></textarea>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;display:flex;gap:12px;align-items:center;" >
+            <div id="wordCount">0 words</div>
+            <div id="bioWarning" style="font-size:10px;color:var(--pink);display:none;">Please keep bio between 100–150 words.</div>
+          </div>
+        </div>
+
+        <div class="form-nav-row">
+          <button class="nav-back" onclick="goStep(2)">← Back</button>
+          <span class="step-count">Step 4 of 6</span>
+          <button class="nav-next" onclick="goStep(4)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Links -->
+      <div id="step-4" class="form-step">
+        <div id="branch-tag-links" class="branch-tag self">👤 Adding myself</div>
+        <div class="form-section-title"><span class="s-num">4</span> Visibility &amp; Links</div>
+
+        <div class="form-grid" style="margin-bottom:16px;">
+          <div class="form-field full">
+            <label>LinkedIn profile or professional website</label>
+            <input type="url" class="form-input" placeholder="https://linkedin.com/in/…">
+          </div>
+        </div>
+
+        <div class="form-nav-row">
+          <button class="nav-back" onclick="goStep(3)">← Back</button>
+          <span class="step-count">Step 5 of 6</span>
+          <button class="nav-next pink" onclick="submitProfile()">Submit Profile →</button>
+        </div>
+      </div>
+
+      <!-- STEP 5: Thank You -->
+      <div id="step-5" class="form-step">
+        <div class="thank-you-screen">
+          <div class="ty-globe">🌍</div>
+          <h2>Thank you for contributing to the Transform Health Women Leaders in Digital Health Database 🌍</h2>
+          <p>Your submission helps advance gender equity and representation in digital health leadership.</p>
+          <div class="email-note">
+            <strong style="color:var(--cobalt);">📧 Confirmation email sent to your inbox</strong><br><br>
+            Your email includes:<br>
+            • <strong>"Update your profile anytime here"</strong> — a direct link to edit your submission<br>
+            • A <strong>follow-up survey</strong> link to share additional feedback<br><br>
+            <span style="color:var(--muted);">The Transform Health team will review your profile before it goes live in the database.</span>
+          </div>
+          <div class="ty-actions">
+            <button class="ty-btn primary" onclick="location.href='wireframe-directory.html'">View the directory →</button>
+            <button class="ty-btn secondary">Share this form 🔗</button>
+          </div>
+        </div>
+      </div>
+  
+     
+
+      </div>
+    </div>
+     <div class="anno-strip">
+        <h4>Screen 3 — Bespoke branching form · open items</h4>
+        <ul>
+          <li><strong>Entry branch:</strong> "Adding myself" vs "Nominating someone else" — second path collects a public profile link before proceeding to consent</li>
+          <li><strong>Consent gate:</strong> "No" → polite end screen; "Yes" → unlocks all profile sections sequentially</li>
+          <li><strong>Expertise tags:</strong> Max 3 selections enforced client-side; remaining tags grey out once limit reached</li>
+          <li><strong>Geographic scope:</strong> "National" selection reveals a country dropdown — all other regions are multi-select checkboxes</li>
+          <li><strong>Shareable URL:</strong> OG meta tags (title, description, image) auto-generated so WhatsApp / Twitter / LinkedIn previews render correctly</li>
+          <li><strong>Auto-email trigger:</strong> Apps Script sends confirmation with "update profile" link + follow-up survey link on submit</li>
+          <li><strong>Profile image:</strong> JPEG/PNG upload → stored in Google Drive · admin approves before it goes live</li>
+          <li><strong>Bio word count:</strong> Real-time counter enforces 100–150 word soft cap with a warning, not a hard block</li>
+        </ul>
+      </div>
+
+    <script>
+    // ══════════════════════════════════════════════════════════════════
+    // FORM LOGIC
+    // ══════════════════════════════════════════════════════════════════
+
+    let currentBranch = 'self'; // 'self' | 'nominate'
+    let consentAnswer = null; // 'yes' | 'no'
+    let etagCount = 0;
+
+    const STEP_IDS = ['step-0','step-1','step-2','step-3','step-4','step-5'];
+    const STEP_DOTS = ['sd0','sd1','sd2','sd3','sd4','sd5'];
+    const STEP_CONNECTORS = ['sc01','sc12','sc23','sc34','sc45'];
+
+    function goStep(n) {
+      STEP_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+      });
+      document.getElementById('step-consent-no').classList.remove('active');
+      const target = document.getElementById('step-' + n);
+      if (target) target.classList.add('active');
+      updateStepDots(n);
+      document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function goStepDirect(id) {
+      STEP_IDS.forEach(sid => {
+        const el = document.getElementById(sid);
+        if (el) el.classList.remove('active');
+      });
+      document.getElementById('step-consent-no').classList.remove('active');
+      document.getElementById(id).classList.add('active');
+    }
+
+    function updateStepDots(active) {
+      STEP_DOTS.forEach((id, i) => {
+        const dot = document.getElementById(id);
+        if (!dot) return;
+        dot.classList.remove('active', 'done');
+        if (i < active) dot.classList.add('done');
+        if (i === active) dot.classList.add('active');
+      });
+      STEP_CONNECTORS.forEach((id, i) => {
+        const conn = document.getElementById(id);
+        if (!conn) return;
+        conn.classList.remove('done');
+        if (i < active) conn.classList.add('done');
+      });
+    }
+
+    function selectBranch(branch) {
+      currentBranch = branch;
+      document.getElementById('bc-self').classList.toggle('selected', branch === 'self');
+      document.getElementById('bc-nominate').classList.toggle('selected', branch === 'nominate');
+      document.getElementById('nominate-link-field').style.display = branch === 'nominate' ? 'block' : 'none';
+      document.querySelector('.step-indicator').style.display = branch === 'nominate' ? 'none' : 'flex';
+      const btn = document.getElementById('step0-btn');
+      if (btn) {
+        btn.textContent = branch === 'nominate' ? 'Submit nomination →' : 'Continue →';
+        btn.className = branch === 'nominate' ? 'nav-next pink' : 'nav-next';
+      }
+      ['branch-tag-consent','branch-tag-basic','branch-tag-prof','branch-tag-links'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = branch === 'nominate' ? '🌟 Nominating someone' : '👤 Adding myself';
+        el.className = 'branch-tag ' + (branch === 'self' ? 'self' : '');
+      });
+    }
+
+    function handleStep0Continue() {
+      if (currentBranch === 'nominate') {
+        // nomination is a link-only flow; submit nomination and show thank you
+        submitProfile();
+        return;
+      }
+      goStep(1); // self-nomination → consent
+    }
+
+    function selectConsent(answer) {
+      consentAnswer = answer;
+      document.getElementById('consent-yes').classList.toggle('selected', answer === 'yes');
+      document.getElementById('consent-no').classList.toggle('selected', answer === 'no');
+    }
+
+    function handleConsent() {
+      if (consentAnswer === 'no') {
+        STEP_IDS.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove('active');
+        });
+        document.getElementById('step-consent-no').classList.add('active');
+        updateStepDots(1);
+      } else if (consentAnswer === 'yes') {
+        goStep(2);
+      }
+    }
+
+    // Expertise tags
+    function selectEtag(el) {
+      if (el.classList.contains('maxed')) return;
+      const wasSelected = el.classList.contains('selected');
+      if (wasSelected) {
+        el.classList.remove('selected');
+        etagCount--;
+      } else {
+        if (etagCount >= 3) return;
+        el.classList.add('selected');
+        etagCount++;
+      }
+      // update hint
+      const hint = document.getElementById('etagHint');
+      if (hint) hint.textContent = etagCount + ' of 3 selected';
+      // toggle maxed state on remaining options
+      const opts = document.querySelectorAll('.exp-opt');
+      opts.forEach(o => {
+        if (!o.classList.contains('selected')) {
+          o.classList.toggle('maxed', etagCount >= 3);
+        } else {
+          o.classList.remove('maxed');
+        }
+      });
+    }
+
+    // Geographic scope
+    function selectGeo(el, isNational) {
+      el.classList.toggle('selected');
+      const check = el.querySelector('.geo-check');
+      check.textContent = el.classList.contains('selected') ? '✓' : '';
+      if (isNational) {
+        const dd = document.getElementById('nationalCountry');
+        dd.classList.toggle('visible', el.classList.contains('selected'));
+        dd.style.display = el.classList.contains('selected') ? 'block' : 'none';
+      }
+    }
+
+    // Word count
+    const bioField = document.getElementById('bioTextarea');
+    function updateBioCount() {
+      const words = bioField.value.trim().split(/\s+/).filter(w => w).length;
+      const wc = document.getElementById('wordCount');
+      const warn = document.getElementById('bioWarning');
+      if (wc) wc.textContent = words + ' words';
+      if (!warn) return;
+      if (words > 150 || words < 100) {
+        warn.style.display = 'block';
+      } else {
+        warn.style.display = 'none';
+      }
+    }
+    if (bioField) {
+      bioField.addEventListener('input', updateBioCount);
+      // initial
+      updateBioCount();
+    }
+
+    // Photo upload button handling
+    const photoBtn = document.getElementById('photoBtn');
+    const photoInput = document.getElementById('photoInput');
+    const photoName = document.getElementById('photoName');
+    if (photoBtn && photoInput) {
+      photoBtn.addEventListener('click', function() { photoInput.click(); });
+      photoInput.addEventListener('change', function() {
+        const f = this.files && this.files[0];
+        if (f) {
+          photoName.textContent = f.name + ' (' + Math.round(f.size/1024) + 'KB)';
+        } else {
+          photoName.textContent = '';
+        }
+      });
+    }
+
+    // Optional Apps Script endpoint for sending confirmation emails and saving submissions
+    const APPS_SCRIPT_URL = '';
+    function submitProfile() {
+      // show thank you immediately if no endpoint configured
+      if (!APPS_SCRIPT_URL) {
+        goStep(5);
+        return;
+      }
+      const submitBtn = document.querySelector('.nav-next.pink') || document.querySelector('.nav-next');
+      if (submitBtn) submitBtn.disabled = true;
+      // collect minimal payload
+      const payload = {
+        branch: currentBranch,
+        firstName: document.querySelector('#step-2 .form-input') ? document.querySelectorAll('#step-2 .form-input')[0].value : '',
+        lastName: document.querySelectorAll('#step-2 .form-input')[1] ? document.querySelectorAll('#step-2 .form-input')[1].value : '',
+        bio: document.getElementById('bioTextarea') ? document.getElementById('bioTextarea').value : '',
+        linkedin: document.querySelector('#step-4 .form-input') ? document.querySelector('#step-4 .form-input').value : ''
+      };
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(r => r.json()).then(resp => {
+        goStep(5);
+      }).catch(err => {
+        console.error('submit error', err);
+        goStep(5);
+      }).finally(()=> { if (submitBtn) submitBtn.disabled = false; });
+    }
+
+    // Initial UI setup
+    window.addEventListener('DOMContentLoaded', function() {
+      if (typeof selectBranch === 'function') selectBranch(currentBranch);
+      if (typeof updateStepDots === 'function') updateStepDots(0);
+      // ensure expertise maxed state reflects current count
+      const opts = document.querySelectorAll('.exp-opt');
+      opts.forEach(o => o.classList.toggle('maxed', etagCount >= 3 && !o.classList.contains('selected')));
+    });
+  </script>
+
+</body>
+</html>
