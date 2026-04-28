@@ -1,0 +1,112 @@
+/* Shared wireframe styles extracted from wireframe-* pages
+   Keep wireframe styles separate from the React/Tailwind app.
+*/
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 13px; color: #1a1a1a; background: #e8ecf0; }
+
+:root {
+  --cobalt:  #02598E;
+  --pink:    #F85A8E;
+  --green:   #00DE2C;
+  --orange:  #F97A1A;
+  --honey:   #FFDE2C;
+  --teal:    #008C8F;
+  --body:    #1a1a1a;
+  --muted:   #6b7280;
+  --border:  #e0e4ea;
+  --surface: #f8f9fb;
+  --sidebar-bg: #0f1f2e;
+  --radius:    10px;
+  --radius-sm: 6px;
+  --radius-pill: 999px;
+  --approved: #059669;
+  --rejected: #dc2626;
+  --pending:  #d97706;
+}
+
+/* Hide wireframe-only chrome/notes by default so "actual app" pages stay clean.
+  Add `class="wireframe"` to the <body> element on a page to reveal these notes.
+*/
+.wf-chrome, .wf-badge, .anno-strip, .wf-tabs, .wf-offset { display: none !important; }
+body.wireframe .wf-chrome { display: flex !important; }
+body.wireframe .wf-tabs { display: flex !important; }
+body.wireframe .wf-badge { display: inline-block !important; }
+body.wireframe .wf-offset { display: block !important; }
+body.wireframe .anno-strip { display: block !important; }
+
+
+/* ── Wireframe chrome ── */
+.wf-chrome { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; flex-direction: column; }
+.wf-topbar { background: #0f1923; padding: 9px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.wf-topbar h1 { font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; }
+.wf-badge { font-size: 9px; font-weight: 800; background: var(--pink); color: #fff; border-radius: var(--radius-pill); padding: 2px 9px; }
+.wf-tabs { background: #fff; border-bottom: 2px solid var(--border); display: flex; overflow-x: auto; scrollbar-width: none; }
+.wf-tabs::-webkit-scrollbar { display: none; }
+.wf-tab { padding: 11px 24px; font-size: 11px; font-weight: 800; font-family: 'Montserrat', sans-serif; color: var(--muted); background: transparent; border: none; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; transition: color 0.15s; }
+.wf-tab:hover { color: #374151; }
+.wf-tab.active { color: var(--cobalt); border-bottom-color: var(--cobalt); }
+.wf-offset { height: 82px; }
+
+/* App navbar / shell / common components used across wireframes */
+.app-navbar { background: #fff; border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 60px; flex-shrink: 0; position: sticky; top: 82px; z-index: 10; }
+.nav-link { padding: 8px 16px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 800; color: var(--muted); cursor: pointer; transition: all 0.15s; text-decoration: none; }
+.nav-link.active { background: var(--cobalt); color: #fff; }
+
+/* Stat cards, tables, forms, and other shared wireframe utilities */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+.stat-card { background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px 18px; text-align: center; border-top-width: 3px; }
+.section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cobalt); }
+.table-wrap { background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+thead th { background: var(--surface); padding: 12px 16px; font-size: 10px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; text-align: left; border-bottom: 1.5px solid var(--border); }
+tbody td { padding: 12px 16px; font-size: 12px; color: var(--body); border-bottom: 1px solid var(--border); font-weight: 500; vertical-align: middle; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 800; padding: 7px 16px; cursor: pointer; border: none; font-family: 'Montserrat', sans-serif; transition: opacity 0.15s; }
+.btn:hover { opacity: 0.88; }
+.btn-approve { background: var(--approved); color: #fff; }
+.btn-reject  { background: var(--rejected); color: #fff; }
+.btn-pending { background: var(--pending);  color: #fff; }
+.btn-secondary { background: #fff; color: var(--body); border: 1.5px solid var(--border); }
+.btn-primary   { background: var(--cobalt); color: #fff; }
+.btn-sm { padding: 5px 12px; font-size: 10px; }
+
+/* Forms and inputs */
+.form-card { background: #fff; border-radius: var(--radius); border: 1.5px solid var(--border); padding: 40px 48px; width: 100%; max-width: 720px; }
+.form-input, .form-select { height: 40px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 0 12px; font-size: 12px; font-family: 'Montserrat', sans-serif; }
+.form-textarea { height: 80px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 12px; font-size: 12px; font-family: 'Montserrat', sans-serif; resize: none; }
+
+/* Wireframe-specific helpers (step indicator, branch cards, tags, etc.) */
+.step-indicator { display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
+.step-dot-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.step-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--muted); }
+.step-dot.active { background: var(--cobalt); color: #fff; }
+.step-dot.done { background: var(--green); color: #fff; }
+.step-dot-label { font-size: 9px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.step-connector { width: 40px; height: 2px; background: var(--border); margin: 0 8px; margin-bottom: 18px; }
+.step-connector.done { background: var(--green); }
+.form-step { display: none; }
+.form-step.active { display: block; }
+.branch-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.branch-card { border: 2px solid var(--border); border-radius: var(--radius); padding: 20px; cursor: pointer; transition: all 0.2s; }
+.branch-card:hover { border-color: var(--cobalt); }
+.branch-card.selected { border-color: var(--cobalt); background: #f0f7ff; }
+.consent-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 20px; }
+.consent-choice { display: flex; gap: 12px; }
+.consent-opt { flex: 1; padding: 12px; border: 2px solid var(--border); border-radius: var(--radius-sm); text-align: center; font-size: 12px; font-weight: 800; cursor: pointer; }
+.consent-opt.selected { border-color: var(--green); background: #f0fdf4; color: var(--green); }
+.consent-opt.no.selected { border-color: var(--pink); background: #fdf2f8; color: var(--pink); }
+
+/* Misc layout helpers used by wireframes */
+.share-bar { background: #f0f7ff; border: 1.5px solid #bfdbfe; border-radius: var(--radius-sm); padding: 9px 14px; margin-bottom: 22px; display: flex; align-items: center; gap: 10px; font-size: 11px; color: #1d4ed8; font-weight: 800; }
+.anno-strip { display:block; width:100%; background: #fffbe6; border-top: 1.5px solid #e6c800; padding: 14px 32px; margin-top: 0; box-shadow: none; border-radius: 0 0 var(--radius) var(--radius); }
+
+@media (max-width: 900px) {
+  .admin-shell { grid-template-columns: 1fr; }
+  .sidebar { position: relative; height: auto; flex-direction: row; flex-wrap: wrap; padding: 8px; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .anno-strip ul { grid-template-columns: 1fr; }
+  .preview-fields { grid-template-columns: 1fr 1fr; }
+  .profile-grid { grid-template-columns: repeat(2, 1fr); }
+}

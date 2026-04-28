@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Minimal neutral tokens for MVP */
+:root{
+  --th-primary: #374151;
+  --th-muted: #6b7280;
+}
+
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}

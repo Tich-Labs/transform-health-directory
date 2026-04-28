@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Submit Profile — Transform Health Women Leaders</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,800;1,500;1,800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="index.css"/>
   <!-- Open Graph / Social preview (placeholders; update when deploying) -->
   <meta property="og:title" content="Submit Profile — Transform Health Women Leaders" />
   <meta property="og:description" content="Add or nominate a woman leader to the Transform Health Women Leaders database." />
@@ -412,7 +413,9 @@
 
     <script>
     // ══════════════════════════════════════════════════════════════════
-    // FORM LOGIC
+    // FORM LOGIC (lightweight interactions for the wireframe)
+    // Enables branching, consent flow, step navigation, tag selection, and simple submit.
+    // For production, wire this to a backend or Apps Script endpoint.
     // ══════════════════════════════════════════════════════════════════
 
     let currentBranch = 'self'; // 'self' | 'nominate'
@@ -423,203 +426,106 @@
     const STEP_DOTS = ['sd0','sd1','sd2','sd3','sd4','sd5'];
     const STEP_CONNECTORS = ['sc01','sc12','sc23','sc34','sc45'];
 
+    function hideAllSteps() {
+      STEP_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
+      const c = document.getElementById('step-consent-no'); if (c) c.classList.remove('active');
+    }
+
     function goStep(n) {
-      STEP_IDS.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.remove('active');
-      });
-      document.getElementById('step-consent-no').classList.remove('active');
+      hideAllSteps();
       const target = document.getElementById('step-' + n);
       if (target) target.classList.add('active');
       updateStepDots(n);
-      document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const card = document.querySelector('.form-card'); if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function goStepDirect(id) {
-      STEP_IDS.forEach(sid => {
-        const el = document.getElementById(sid);
-        if (el) el.classList.remove('active');
-      });
-      document.getElementById('step-consent-no').classList.remove('active');
-      document.getElementById(id).classList.add('active');
+      hideAllSteps();
+      const el = document.getElementById(id); if (el) el.classList.add('active');
     }
 
     function updateStepDots(active) {
       STEP_DOTS.forEach((id, i) => {
-        const dot = document.getElementById(id);
-        if (!dot) return;
-        dot.classList.remove('active', 'done');
+        const dot = document.getElementById(id); if (!dot) return;
+        dot.classList.remove('active','done');
         if (i < active) dot.classList.add('done');
         if (i === active) dot.classList.add('active');
       });
-      STEP_CONNECTORS.forEach((id, i) => {
-        const conn = document.getElementById(id);
-        if (!conn) return;
-        conn.classList.remove('done');
-        if (i < active) conn.classList.add('done');
-      });
+      STEP_CONNECTORS.forEach((id, i) => { const c = document.getElementById(id); if (!c) return; c.classList.toggle('done', i < active); });
     }
 
     function selectBranch(branch) {
       currentBranch = branch;
-      document.getElementById('bc-self').classList.toggle('selected', branch === 'self');
-      document.getElementById('bc-nominate').classList.toggle('selected', branch === 'nominate');
-      document.getElementById('nominate-link-field').style.display = branch === 'nominate' ? 'block' : 'none';
-      document.querySelector('.step-indicator').style.display = branch === 'nominate' ? 'none' : 'flex';
-      const btn = document.getElementById('step0-btn');
-      if (btn) {
-        btn.textContent = branch === 'nominate' ? 'Submit nomination →' : 'Continue →';
-        btn.className = branch === 'nominate' ? 'nav-next pink' : 'nav-next';
-      }
-      ['branch-tag-consent','branch-tag-basic','branch-tag-prof','branch-tag-links'].forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.textContent = branch === 'nominate' ? '🌟 Nominating someone' : '👤 Adding myself';
-        el.className = 'branch-tag ' + (branch === 'self' ? 'self' : '');
-      });
+      const self = document.getElementById('bc-self'); const nom = document.getElementById('bc-nominate');
+      if (self) self.classList.toggle('selected', branch === 'self');
+      if (nom) nom.classList.toggle('selected', branch === 'nominate');
+      const linkField = document.getElementById('nominate-link-field'); if (linkField) linkField.style.display = branch === 'nominate' ? 'block' : 'none';
+      const indicator = document.querySelector('.step-indicator'); if (indicator) indicator.style.display = branch === 'nominate' ? 'none' : 'flex';
+      const btn = document.getElementById('step0-btn'); if (btn) { btn.textContent = branch === 'nominate' ? 'Submit nomination →' : 'Continue →'; btn.className = branch === 'nominate' ? 'nav-next pink' : 'nav-next'; }
+      ['branch-tag-consent','branch-tag-basic','branch-tag-prof','branch-tag-links'].forEach(id => { const el = document.getElementById(id); if (!el) return; el.textContent = branch === 'nominate' ? '🌟 Nominating someone' : '👤 Adding myself'; });
     }
 
     function handleStep0Continue() {
-      if (currentBranch === 'nominate') {
-        // nomination is a link-only flow; submit nomination and show thank you
-        submitProfile();
-        return;
-      }
-      goStep(1); // self-nomination → consent
+      if (currentBranch === 'nominate') { submitProfile(); return; }
+      goStep(1);
     }
 
     function selectConsent(answer) {
       consentAnswer = answer;
-      document.getElementById('consent-yes').classList.toggle('selected', answer === 'yes');
-      document.getElementById('consent-no').classList.toggle('selected', answer === 'no');
+      const yes = document.getElementById('consent-yes'); const no = document.getElementById('consent-no');
+      if (yes) yes.classList.toggle('selected', answer === 'yes');
+      if (no) no.classList.toggle('selected', answer === 'no');
     }
 
     function handleConsent() {
       if (consentAnswer === 'no') {
-        STEP_IDS.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.classList.remove('active');
-        });
-        document.getElementById('step-consent-no').classList.add('active');
-        updateStepDots(1);
-      } else if (consentAnswer === 'yes') {
-        goStep(2);
+        hideAllSteps(); const el = document.getElementById('step-consent-no'); if (el) el.classList.add('active'); updateStepDots(1); return;
       }
+      if (consentAnswer === 'yes') goStep(2);
+      else alert('Please choose whether you consent to continue.');
     }
 
-    // Expertise tags
     function selectEtag(el) {
       if (el.classList.contains('maxed')) return;
-      const wasSelected = el.classList.contains('selected');
-      if (wasSelected) {
-        el.classList.remove('selected');
-        etagCount--;
-      } else {
-        if (etagCount >= 3) return;
-        el.classList.add('selected');
-        etagCount++;
-      }
-      // update hint
-      const hint = document.getElementById('etagHint');
-      if (hint) hint.textContent = etagCount + ' of 3 selected';
-      // toggle maxed state on remaining options
-      const opts = document.querySelectorAll('.exp-opt');
-      opts.forEach(o => {
-        if (!o.classList.contains('selected')) {
-          o.classList.toggle('maxed', etagCount >= 3);
-        } else {
-          o.classList.remove('maxed');
-        }
-      });
+      const was = el.classList.contains('selected');
+      if (was) { el.classList.remove('selected'); etagCount--; }
+      else { if (etagCount >= 3) return; el.classList.add('selected'); etagCount++; }
+      const hint = document.getElementById('etagHint'); if (hint) hint.textContent = etagCount + ' of 3 selected';
+      document.querySelectorAll('.exp-opt').forEach(o => { if (!o.classList.contains('selected')) o.classList.toggle('maxed', etagCount >= 3); });
     }
 
-    // Geographic scope
     function selectGeo(el, isNational) {
+      // simple toggle; if national, show country dropdown
       el.classList.toggle('selected');
-      const check = el.querySelector('.geo-check');
-      check.textContent = el.classList.contains('selected') ? '✓' : '';
-      if (isNational) {
-        const dd = document.getElementById('nationalCountry');
-        dd.classList.toggle('visible', el.classList.contains('selected'));
-        dd.style.display = el.classList.contains('selected') ? 'block' : 'none';
-      }
+      const check = el.querySelector('.geo-check'); if (check) check.textContent = el.classList.contains('selected') ? '✓' : '';
+      if (isNational) { const dd = document.getElementById('nationalCountry'); if (dd) dd.style.display = el.classList.contains('selected') ? 'block' : 'none'; }
     }
 
-    // Word count
-    const bioField = document.getElementById('bioTextarea');
+    // bio word count
     function updateBioCount() {
-      const words = bioField.value.trim().split(/\s+/).filter(w => w).length;
-      const wc = document.getElementById('wordCount');
-      const warn = document.getElementById('bioWarning');
-      if (wc) wc.textContent = words + ' words';
-      if (!warn) return;
-      if (words > 150 || words < 100) {
-        warn.style.display = 'block';
-      } else {
-        warn.style.display = 'none';
-      }
+      const bio = document.getElementById('bioTextarea'); if (!bio) return;
+      const words = bio.value.trim().split(/\s+/).filter(Boolean).length;
+      const wc = document.getElementById('wordCount'); if (wc) wc.textContent = words + ' words';
+      const warn = document.getElementById('bioWarning'); if (warn) warn.style.display = (words < 100 || words > 150) ? 'block' : 'none';
     }
-    if (bioField) {
-      bioField.addEventListener('input', updateBioCount);
-      // initial
-      updateBioCount();
-    }
+    const bioEl = document.getElementById('bioTextarea'); if (bioEl) bioEl.addEventListener('input', updateBioCount);
 
-    // Photo upload button handling
-    const photoBtn = document.getElementById('photoBtn');
-    const photoInput = document.getElementById('photoInput');
-    const photoName = document.getElementById('photoName');
-    if (photoBtn && photoInput) {
-      photoBtn.addEventListener('click', function() { photoInput.click(); });
-      photoInput.addEventListener('change', function() {
-        const f = this.files && this.files[0];
-        if (f) {
-          photoName.textContent = f.name + ' (' + Math.round(f.size/1024) + 'KB)';
-        } else {
-          photoName.textContent = '';
-        }
-      });
-    }
+    // photo upload
+    const photoBtn = document.getElementById('photoBtn'); const photoInput = document.getElementById('photoInput'); const photoName = document.getElementById('photoName');
+    if (photoBtn && photoInput) { photoBtn.addEventListener('click', () => photoInput.click()); photoInput.addEventListener('change', function() { const f = this.files && this.files[0]; if (f && photoName) photoName.textContent = f.name + ' (' + Math.round(f.size/1024) + 'KB)'; }); }
 
-    // Optional Apps Script endpoint for sending confirmation emails and saving submissions
+    // lightweight submit — advances to thank you; replace APPS_SCRIPT_URL to POST to backend
     const APPS_SCRIPT_URL = '';
     function submitProfile() {
-      // show thank you immediately if no endpoint configured
-      if (!APPS_SCRIPT_URL) {
-        goStep(5);
-        return;
-      }
-      const submitBtn = document.querySelector('.nav-next.pink') || document.querySelector('.nav-next');
-      if (submitBtn) submitBtn.disabled = true;
-      // collect minimal payload
-      const payload = {
-        branch: currentBranch,
-        firstName: document.querySelector('#step-2 .form-input') ? document.querySelectorAll('#step-2 .form-input')[0].value : '',
-        lastName: document.querySelectorAll('#step-2 .form-input')[1] ? document.querySelectorAll('#step-2 .form-input')[1].value : '',
-        bio: document.getElementById('bioTextarea') ? document.getElementById('bioTextarea').value : '',
-        linkedin: document.querySelector('#step-4 .form-input') ? document.querySelector('#step-4 .form-input').value : ''
-      };
-      fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).then(r => r.json()).then(resp => {
-        goStep(5);
-      }).catch(err => {
-        console.error('submit error', err);
-        goStep(5);
-      }).finally(()=> { if (submitBtn) submitBtn.disabled = false; });
+      if (APPS_SCRIPT_URL === '') { goStep(5); return; }
+      const payload = { branch: currentBranch, bio: document.getElementById('bioTextarea') ? document.getElementById('bioTextarea').value : '' };
+      fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'application/json' } })
+        .then(() => goStep(5)).catch(() => goStep(5));
     }
 
-    // Initial UI setup
-    window.addEventListener('DOMContentLoaded', function() {
-      if (typeof selectBranch === 'function') selectBranch(currentBranch);
-      if (typeof updateStepDots === 'function') updateStepDots(0);
-      // ensure expertise maxed state reflects current count
-      const opts = document.querySelectorAll('.exp-opt');
-      opts.forEach(o => o.classList.toggle('maxed', etagCount >= 3 && !o.classList.contains('selected')));
-    });
-  </script>
+    // initial
+    window.addEventListener('DOMContentLoaded', () => { selectBranch(currentBranch); updateStepDots(0); updateBioCount(); });
+    </script>
 
 </body>
 </html>

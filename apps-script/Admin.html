@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <title>Admin — Transform Health</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;padding:18px;background:#f3f4f6;color:#111}
+      .login{max-width:420px;margin:18px auto;background:#fff;padding:18px;border-radius:8px;border:1px solid #e5e7eb}
+      .row{display:flex;gap:8px;margin-bottom:8px}
+      input,textarea{width:100%;padding:8px;border:1px solid #d1d5db;border-radius:6px}
+      table{width:100%;border-collapse:collapse;margin-top:12px}
+      th,td{padding:8px;border:1px solid #e5e7eb;font-size:13px}
+      .btn{padding:6px 10px;border-radius:6px;border:none;cursor:pointer}
+      .btn-approve{background:#059669;color:#fff}
+      .btn-reject{background:#dc2626;color:#fff}
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="login">
+        <h3>Admin — Transform Health</h3>
+        <div style="margin-bottom:8px;">Enter admin password to manage submissions</div>
+        <div class="row"><input id="pw" placeholder="admin password"><button class="btn" id="pwBtn">Unlock</button></div>
+        <div id="msg" style="color:#c00;margin-top:6px"></div>
+      </div>
+      <div id="panel" style="display:none;max-width:1100px;margin:12px auto"></div>
+    </div>
+
+    <script>
+      var ADMIN_UNLOCKED = false;
+      document.getElementById('pwBtn').addEventListener('click', function(){
+        var pw = document.getElementById('pw').value.trim();
+        if(!pw) return document.getElementById('msg').textContent = 'Enter password';
+        google.script.run.withSuccessHandler(function(ok){
+          if(ok){ ADMIN_UNLOCKED = true; document.getElementById('msg').textContent=''; loadPending(); }
+          else document.getElementById('msg').textContent='Wrong password';
+        }).withFailureHandler(function(e){ document.getElementById('msg').textContent = 'Error: '+e.message; }).checkAdminPassword(pw);
+      });
+
+      function loadPending(){
+        document.getElementById('panel').style.display = 'block';
+        google.script.run.withSuccessHandler(renderTable).serverGetPending();
+      }
+
+      function renderTable(rows){
+        var html = '<h4>Pending submissions</h4>';
+        if(!rows || rows.length === 0) html += '<div>No pending submissions</div>';
+        else{
+          html += '<table><thead><tr><th>Name</th><th>Role / Org</th><th>Bio</th><th>Actions</th></tr></thead><tbody>';
+          rows.forEach(function(r){
+            html += '<tr>';
+            html += '<td>' + (r.first_name || '') + ' ' + (r.last_name||'') + '<br><small>' + (r.editor_email||'') + '</small></td>';
+            html += '<td>' + (r.role||'') + '<br><small>' + (r.organisation||'') + '</small></td>';
+            html += '<td style="max-width:420px;word-break:break-word">' + (r.bio||'') + '</td>';
+            html += '<td><button class="btn btn-approve" onclick="approve(\''+r.id+'\')">Approve</button> <button class="btn btn-reject" onclick="reject(\''+r.id+'\')">Reject</button></td>';
+            html += '</tr>';
+          });
+          html += '</tbody></table>';
+        }
+        document.getElementById('panel').innerHTML = html;
+      }
+
+      function approve(id){ if(!ADMIN_UNLOCKED) return alert('Unlock first'); google.script.run.withSuccessHandler(loadPending).serverApprove(id); }
+      function reject(id){ if(!ADMIN_UNLOCKED) return alert('Unlock first'); google.script.run.withSuccessHandler(loadPending).serverReject(id); }
+    </script>
+  </body>
+</html>

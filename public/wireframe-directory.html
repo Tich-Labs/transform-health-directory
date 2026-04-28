@@ -451,8 +451,7 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 13px;
   </div>
   <div class="wf-tabs">
     <button class="wf-tab active" onclick="show('p1',this)">1 — Directory Landing <span class="scope">27 Apr · live data</span></button>
-    <button class="wf-tab" onclick="show('p2',this)">2 — Full Profile Card <span class="scope">18 May</span></button>
-    <button class="wf-tab" onclick="show('p3',this)">3 — Bespoke Form (branching) <span class="scope">18 May</span></button>
+    <button class="wf-tab" onclick="location.href='wireframe-submit.html'">3 — Submit Profile <span class="scope">18 May</span></button>
     <button class="wf-tab" onclick="show('p4',this)">4 — App Flow</button>
   </div>
 </div>
@@ -567,9 +566,11 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 13px;
           <div class="flex items-center gap-3 text-xs text-gray-700 mt-2 pt-2 border-t border-gray-100">
             <span>📍 Kenya</span>
             <span>· Government</span>
-          </div>
-        </div>
-      </div>
+</div>
+</div>
+
+<!-- PAGE 4 — APP FLOW -->
+<div id="p4" class="page">
     </div>
   </div>
   <div class="anno-strip">
@@ -580,314 +581,10 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 13px;
       <li>Email stored in Sheet but never shown publicly — admin reference only</li>
       <li>Modal opens on card click · close button or click-outside dismisses</li>
     </ul>
-  </div>
+</div>
 </div>
 
-
-<!-- ══════════════════════════════════
-     PAGE 3 — BESPOKE BRANCHING FORM
-══════════════════════════════════ -->
-<div id="p3" class="page">
-  <div class="app-shell" style="flex:1;">
-    <div class="app-navbar" data-nav="submit"></div>
-
-    <div class="form-page">
-      <div class="form-card" style="max-width:740px;">
-
-        <!-- Shareable URL bar -->
-        <div class="share-bar">
-          <span>🔗 Socially shareable URL</span>
-          <span class="url-pill">transformhealthcoalition.org/leaders/submit</span>
-          <span style="font-size:10px;color:#1d4ed8;font-weight:500;">OG image + description auto-generated for WhatsApp / Twitter / LinkedIn share preview</span>
-          <button class="copy-btn">Copy link</button>
-        </div>
-
-        <!-- Progress steps -->
-        <div class="step-indicator">
-          <div class="step-dot-wrap"><div class="step-dot active" id="sd0">1</div><div class="step-dot-label">Start</div></div>
-          <div class="step-connector" id="sc01"></div>
-          <div class="step-dot-wrap"><div class="step-dot" id="sd1">2</div><div class="step-dot-label">Consent</div></div>
-          <div class="step-connector" id="sc12"></div>
-          <div class="step-dot-wrap"><div class="step-dot" id="sd2">3</div><div class="step-dot-label">Basic Info</div></div>
-          <div class="step-connector" id="sc23"></div>
-          <div class="step-dot-wrap"><div class="step-dot" id="sd3">4</div><div class="step-dot-label">Profile</div></div>
-          <div class="step-connector" id="sc34"></div>
-          <div class="step-dot-wrap"><div class="step-dot" id="sd4">5</div><div class="step-dot-label">Links</div></div>
-          <div class="step-connector" id="sc45"></div>
-          <div class="step-dot-wrap"><div class="step-dot" id="sd5">✓</div><div class="step-dot-label">Done</div></div>
-        </div>
-
-        <!-- ─── STEP 0: Entry branch ─── -->
-        <div id="step-0" class="form-step active">
-          <h2 style="font-size:22px;font-weight:800;color:var(--cobalt);margin-bottom:8px;">Women Leaders in Digital Health Database</h2>
-          <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:18px;font-size:12px;color:var(--body);line-height:1.8;">
-            Transform Health is building a global database of women leaders in digital health to increase visibility, representation, and engagement in leadership, policy, and technical spaces. This is in efforts to take forward recommendations from the Transform Health policy brief <em>"Establishing Gender Equitable Foundations for Digital Health Transformation to Advance Universal Health Coverage"</em> launched in 2024 to mainstream gender in digital health through increasing the number of women in leadership and decision-making roles.<br><br>
-            Information submitted through this form may be featured in a publicly accessible database. By consenting, you agree that your profile information including your name, role, organisation, biography, and relevant links may be publicly displayed. <strong>Your email address will not be publicly displayed.</strong>
-          </div>
-
-          <div style="font-size:12px;color:var(--body);margin-bottom:16px;line-height:1.9;">
-            You can:<br>
-            &nbsp;&nbsp;• <strong>Submit your profile</strong> (add yourself to the database)<br>
-            &nbsp;&nbsp;• <strong>Nominate another woman leader</strong><br>
-            <span style="font-size:11px;color:var(--muted);">⏱️ This form takes 3–5 minutes.</span>
-          </div>
-
-          <div style="font-size:11px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Are you adding yourself to the database or nominating someone else? *</div>
-          <div class="branch-cards">
-            <div class="branch-card" id="bc-self" onclick="selectBranch('self')">
-              <div class="bc-icon">👤</div>
-              <div class="bc-title">I am nominating myself</div>
-              <div class="bc-sub">Submit your own profile to the database</div>
-            </div>
-            <div class="branch-card" id="bc-nominate" onclick="selectBranch('nominate')">
-              <div class="bc-icon">🌟</div>
-              <div class="bc-title">I am nominating someone else</div>
-              <div class="bc-sub">Nominate another woman leader you know</div>
-            </div>
-          </div>
-
-          <!-- Nominate: profile link field (hidden until selected) -->
-          <div id="nominate-link-field" style="display:none;margin-bottom:16px;">
-            <label style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:6px;">Please add the public profile link to the person you are nominating *</label>
-            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:500;">e.g. LinkedIn URL or professional website</div>
-            <div style="height:40px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);display:flex;align-items:center;padding:0 14px;font-size:12px;color:#9ca3af;">https://linkedin.com/in/…</div>
-          </div>
-
-          <div class="form-nav-row" style="justify-content:flex-end;border-top:none;padding-top:0;margin-top:16px;">
-            <button class="nav-next" id="step0-btn" onclick="handleStep0Continue()">Continue →</button>
-          </div>
-        </div>
-
-        <!-- ─── STEP 1: Consent ─── -->
-        <div id="step-1" class="form-step">
-          <div id="branch-tag-consent" class="branch-tag self">👤 Adding myself</div>
-          <div class="form-section-title"><span class="s-num">1</span> Consent &amp; Permissions</div>
-
-          <div class="consent-box" style="margin-bottom:16px;">
-            <h3 style="font-size:12px;font-weight:800;color:var(--cobalt);margin-bottom:8px;">Do you consent to your information being included in the Transform Health Women Leaders Database?</h3>
-            <p style="font-size:11px;color:var(--body);line-height:1.7;margin-bottom:14px;">Your name, role, organisation, areas of expertise, bio, and LinkedIn will be <strong>publicly visible</strong>. Your email address will <strong>never</strong> be published and is used only for follow-up and profile updates.</p>
-            <div class="consent-choice">
-              <div class="consent-opt yes" id="consent-yes" onclick="selectConsent('yes')">✓ &nbsp;Yes, I consent</div>
-              <div class="consent-opt no"  id="consent-no"  onclick="selectConsent('no')">✕ &nbsp;No</div>
-            </div>
-          </div>
-
-          <div class="form-nav-row">
-            <button class="nav-back" onclick="goStep(0)">← Back</button>
-            <span class="step-count">Step 2 of 6</span>
-            <button class="nav-next" onclick="handleConsent()">Continue →</button>
-          </div>
-        </div>
-
-        <!-- ─── STEP 1b: Consent declined ─── -->
-        <div id="step-consent-no" class="form-step">
-          <div class="declined-screen">
-            <div class="dc-icon">🙏</div>
-            <h3 style="font-size:18px;font-weight:800;color:var(--muted);">Thank you. We cannot proceed without consent.</h3>
-            <p style="font-size:12px;color:var(--muted);line-height:1.8;margin-top:10px;">If you change your mind, you're welcome to return and submit anytime.</p>
-            <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;">
-              <button class="nav-back" onclick="goStepDirect('step-1')">← Go back</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ─── STEP 2: Basic Information ─── -->
-        <div id="step-2" class="form-step">
-          <div id="branch-tag-basic" class="branch-tag self">👤 Nominating myself</div>
-          <div class="form-section-title"><span class="s-num">2</span> Basic Information</div>
-
-          <!-- LinkedIn connect -->
-          <div class="li-connect-box">
-            <div class="li-logo">in</div>
-            <div style="flex:1;">
-              <div style="font-size:13px;font-weight:800;color:#0077b5;margin-bottom:3px;">Import from LinkedIn</div>
-              <div style="font-size:11px;color:var(--muted);line-height:1.6;">Connect your LinkedIn account to auto-fill your name, photo, role, organisation, and bio. You can edit anything before submitting.</div>
-            </div>
-            <button class="li-connect-btn" onclick="simulateLinkedInPull()">Connect with LinkedIn</button>
-          </div>
-          <div id="li-pulled-confirm" style="display:none;margin-bottom:14px;">
-            <span class="li-pulled-badge">✓ LinkedIn data imported — review and edit below</span>
-          </div>
-          <div style="font-size:10px;color:var(--muted);margin-bottom:16px;font-weight:500;">Or fill in manually below.</div>
-
-          <div class="form-grid" style="margin-bottom:16px;">
-            <div class="form-field full">
-              <label>Full Name *</label>
-              <div class="form-input"></div>
-            </div>
-            <div class="form-field full">
-              <label>Email Address * <span style="font-weight:500;text-transform:none;font-size:9px;">(used for follow-up &amp; profile updates · never published)</span></label>
-              <div class="form-input"></div>
-            </div>
-            <div class="form-field full">
-              <label>Profile Photo <span style="font-weight:500;text-transform:none;font-size:9px;">JPEG or PNG · optional</span></label>
-              <div style="height:72px;border:2px dashed var(--border);border-radius:var(--radius-sm);background:var(--surface);display:flex;align-items:center;justify-content:center;gap:10px;">
-                <span style="font-size:20px;">📷</span>
-                <span style="font-size:11px;color:var(--muted);font-weight:500;">Drop image here or click to browse</span>
-              </div>
-            </div>
-            <div class="form-field full">
-              <label>Country of Residence *</label>
-              <select class="filter-select" style="width:100%;height:40px;border-radius:var(--radius-sm);">
-                <option>Select country…</option>
-                <option>Kenya</option><option>Nigeria</option><option>South Africa</option>
-                <option>India</option><option>United Kingdom</option><option>United States</option>
-                <option>Brazil</option><option>Sweden</option><option>Lebanon</option>
-                <option>Singapore</option><option>Other…</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label>Organisation / Institution</label>
-              <div class="form-input"></div>
-            </div>
-            <div class="form-field">
-              <label>Current Role / Title</label>
-              <div class="form-input"></div>
-            </div>
-          </div>
-
-          <div class="form-nav-row">
-            <button class="nav-back" onclick="goStep(1)">← Back</button>
-            <span class="step-count">Step 3 of 6</span>
-            <button class="nav-next" onclick="goStep(3)">Continue →</button>
-          </div>
-        </div>
-
-        <!-- ─── STEP 3: Professional Profile ─── -->
-        <div id="step-3" class="form-step">
-          <div id="branch-tag-prof" class="branch-tag self">👤 Adding myself</div>
-          <div class="form-section-title"><span class="s-num">3</span> Professional Profile</div>
-
-          <div style="margin-bottom:18px;">
-            <div style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Years of experience in digital health or related fields *</div>
-            <div class="exp-choice">
-              <div class="exp-opt" onclick="selectExp(this)">0–2 years</div>
-              <div class="exp-opt" onclick="selectExp(this)">3–7 years</div>
-              <div class="exp-opt" onclick="selectExp(this)">8–15 years</div>
-              <div class="exp-opt" onclick="selectExp(this)">15+ years</div>
-            </div>
-          </div>
-
-          <div style="margin-bottom:18px;">
-            <div style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Areas of expertise * <span style="font-size:9px;font-weight:500;text-transform:none;">(select up to 3)</span></div>
-            <div class="etag-hint" id="etagHint">0 of 3 selected</div>
-            <div class="expertise-tags">
-              <div class="etag" onclick="selectEtag(this)">Digital health implementation</div>
-              <div class="etag" onclick="selectEtag(this)">Health data governance</div>
-              <div class="etag" onclick="selectEtag(this)">Artificial Intelligence / Data science</div>
-              <div class="etag" onclick="selectEtag(this)">Health systems strengthening</div>
-              <div class="etag" onclick="selectEtag(this)">Policy and regulation</div>
-              <div class="etag" onclick="selectEtag(this)">Gender and health equity</div>
-              <div class="etag" onclick="selectEtag(this)">Research and academia</div>
-              <div class="etag" onclick="selectEtag(this)">Advocacy and civil society</div>
-              <div class="etag" onclick="selectEtag(this)">Private sector / innovation</div>
-              <div class="etag" onclick="selectEtag(this)" id="etag-other">Other (please specify)</div>
-            </div>
-            <input id="other-expertise-input" type="text" placeholder="Please specify…" style="display:none;margin-top:8px;width:100%;height:38px;border:1.5px solid var(--cobalt);border-radius:var(--radius-sm);padding:0 14px;font-family:'Montserrat',sans-serif;font-size:12px;background:#f0f7ff;outline:none;">
-          </div>
-
-          <div style="margin-bottom:18px;">
-            <div style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Geographic scope of work * <span style="font-size:9px;font-weight:500;text-transform:none;">(select all that apply)</span></div>
-            <div class="geo-grid">
-              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>East Asia and Pacific</div>
-              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>Europe and Central Asia</div>
-              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>Latin America and the Caribbean</div>
-              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>Middle East and North Africa</div>
-              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>North America</div>
-              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>South Asia</div>
-              <div class="geo-opt" onclick="selectGeo(this)"><div class="geo-check"></div>Sub-Saharan Africa</div>
-              <div class="geo-opt" id="geo-national" onclick="selectGeo(this, true)"><div class="geo-check"></div>National</div>
-            </div>
-            <select class="country-dropdown" id="nationalCountry">
-              <option>Select your country…</option>
-              <option>Kenya</option><option>Nigeria</option><option>South Africa</option>
-              <option>India</option><option>United Kingdom</option><option>United States</option>
-              <option>Brazil</option><option>Sweden</option><option>Other…</option>
-            </select>
-          </div>
-
-          <div style="margin-bottom:4px;">
-            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
-              <div style="font-size:10px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:0.06em;">Short professional bio * <span style="font-size:9px;font-weight:500;text-transform:none;">(100–150 characters)</span></div>
-              <span id="bioWordCount" style="font-size:10px;font-weight:800;color:var(--muted);">0 / 150 chars</span>
-            </div>
-            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:500;line-height:1.6;">Since this is a public database, submissions may be lightly edited for clarity or length.</div>
-            <textarea id="bioTextarea" oninput="updateWordCount()" maxlength="150" style="height:80px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);width:100%;padding:10px 14px;font-family:'Montserrat',sans-serif;font-size:12px;resize:none;" placeholder="One punchy sentence about your work and impact (100–150 characters)…"></textarea>
-            <div id="bioWarning" style="display:none;font-size:10px;color:#d97706;font-weight:800;margin-top:4px;">⚠ Aim for at least 100 characters for a complete bio.</div>
-          </div>
-
-          <div class="form-nav-row">
-            <button class="nav-back" onclick="goStep(2)">← Back</button>
-            <span class="step-count">Step 4 of 6</span>
-            <button class="nav-next" onclick="goStep(4)">Continue →</button>
-          </div>
-        </div>
-
-        <!-- ─── STEP 4: Visibility & Links ─── -->
-        <div id="step-4" class="form-step">
-          <div id="branch-tag-links" class="branch-tag self">👤 Adding myself</div>
-          <div class="form-section-title"><span class="s-num">4</span> Visibility &amp; Links</div>
-
-          <div class="form-grid" style="margin-bottom:16px;">
-            <div class="form-field full">
-              <label>LinkedIn profile or professional website</label>
-              <div style="height:40px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);display:flex;align-items:center;padding:0 14px;font-size:12px;color:#9ca3af;">https://…</div>
-            </div>
-            <div class="form-field full">
-              <label>Notable publications, projects, or achievements <span style="font-weight:500;text-transform:none;font-size:9px;">(optional · max 3)</span></label>
-              <div id="pub-list" style="display:flex;flex-direction:column;gap:8px;"></div>
-              <button id="pub-add-btn" onclick="addPubRow()" style="margin-top:8px;display:flex;align-items:center;gap:7px;height:36px;padding:0 16px;border:2px dashed var(--cobalt);border-radius:var(--radius-pill);background:#f0f7ff;color:var(--cobalt);font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;width:fit-content;">
-                <span style="font-size:18px;line-height:1;">+</span> Add item
-              </button>
-              <div style="font-size:10px;color:var(--muted);margin-top:6px;font-weight:500;" id="pub-hint">0 of 3 added</div>
-            </div>
-          </div>
-
-          <div class="form-nav-row">
-            <button class="nav-back" onclick="goStep(3)">← Back</button>
-            <span class="step-count">Step 5 of 6</span>
-            <button class="nav-next pink" onclick="goStep(5)">Submit Profile →</button>
-          </div>
-        </div>
-
-        <!-- ─── STEP 5: Thank You ─── -->
-        <div id="step-5" class="form-step">
-          <div class="thank-you-screen">
-            <div class="ty-globe">🌍</div>
-            <h2>Thank you for contributing to the Transform Health Women Leaders in Digital Health Database 🌍</h2>
-            <p>Your submission helps advance gender equity and representation in digital health leadership.</p>
-            <div class="email-note">
-              <strong style="color:var(--cobalt);">📧 Confirmation email sent to your inbox</strong><br><br>
-              Your email includes:<br>
-              • <strong>"Update your profile anytime here"</strong> — a direct link to edit your submission<br>
-              • A <strong>follow-up survey</strong> link to share additional feedback<br><br>
-              <span style="color:var(--muted);">The Transform Health team will review your profile before it goes live in the database.</span>
-            </div>
-            <div class="ty-actions">
-              <button class="ty-btn primary" onclick="show('p1', document.querySelectorAll('.wf-tab')[0])">View the directory →</button>
-              <button class="ty-btn secondary">Share this form 🔗</button>
-            </div>
-            <div style="font-size:10px;color:var(--muted);margin-top:20px;line-height:1.7;">On submit: Apps Script triggers confirmation email → row enters Sheet "Pending" tab → Transform Health team reviews before publishing.</div>
-          </div>
-        </div>
-
-      </div><!-- /form-card -->
-    </div><!-- /form-page -->
-  </div><!-- /app-shell -->
-
-  <div class="anno-strip">
-    <h4>Screen 3 — Bespoke branching form · open items</h4>
-    <ul>
-      <li><strong>Entry branch:</strong> "Adding myself" vs "Nominating someone else" — second path collects a public profile link before proceeding to consent</li>
-      <li><strong>Consent gate:</strong> "No" → polite end screen; "Yes" → unlocks all profile sections sequentially</li>
-      <li><strong>Expertise tags:</strong> Max 3 selections enforced client-side; remaining tags grey out once limit reached</li>
-      <li><strong>Geographic scope:</strong> "National" selection reveals a country dropdown — all other regions are multi-select checkboxes</li>
-      <li><strong>Shareable URL:</strong> OG meta tags (title, description, image) auto-generated so WhatsApp / Twitter / LinkedIn previews render correctly</li>
-      <li><strong>Auto-email trigger:</strong> Apps Script sends confirmation with "update profile" link + follow-up survey link on submit</li>
-      <li><strong>Profile image:</strong> JPEG/PNG upload → stored in Google Drive · admin approves before it goes live</li>
-      <li><strong>Bio word count:</strong> Real-time counter enforces 100–150 word soft cap with a warning, not a hard block</li>
-    </ul>
-  </div>
+<!-- PAGE 4 — APP FLOW -->
 </div>
 
 
@@ -1235,10 +932,10 @@ function renderAll() {
 // ── Single nav definition ─────────────────────────────────────────
 const NAV_LINKS = [
   { key: 'directory',  label: 'Directory',      internal: 'p1' },
-  { key: 'submit',     label: 'Submit Profile',  internal: 'p3' },
+  { key: 'submit',    label: 'Submit Profile',  href: 'wireframe-submit.html' },
   { key: 'analytics',  label: 'Analytics',      href: 'analytics-landing.html' },
 ];
-const INTERNAL_PAGES = ['p1','p2','p3','p4'];
+const INTERNAL_PAGES = ['p1','p2','p4'];
 
 function buildNav() {
   document.querySelectorAll('.app-navbar[data-nav]').forEach(nav => {
@@ -1286,7 +983,7 @@ buildFilters();
 if (window.location.hash) {
   const target = window.location.hash.slice(1); // e.g. "p3"
   const targetEl = document.getElementById(target);
-  const tabIndex = { p1: 0, p2: 1, p3: 2, p4: 3 }[target];
+  const tabIndex = { p1: 0, p2: 1, p4: 2 }[target];
   if (targetEl !== null && tabIndex !== undefined) {
     show(target, document.querySelectorAll('.wf-tab')[tabIndex]);
   }
