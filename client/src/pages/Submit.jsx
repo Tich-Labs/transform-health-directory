@@ -282,42 +282,42 @@ export default function Submit({ onManageProfile }) {
               </div>
 
               <p className="text-xs text-gray-500 mb-4">
-                You can <strong>submit your profile</strong> or <strong>nominate another woman leader</strong>. ⏱️ This form takes 3–5 minutes.
+                You can <strong className="text-[#F85A8E]">submit your profile</strong> or <strong>nominate another woman leader</strong>. ⏱️ This form takes 3–5 minutes.
               </p>
 
               <p className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-3">
                 Are you adding yourself or nominating someone else? *
               </p>
 
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
-                <button
-                  onClick={() => selectBranch('self')}
-                  className={`p-4 border-2 rounded-lg text-center transition-colors ${
-                    branch === 'self'
-                      ? 'border-gray-900 bg-gray-50'
-                      : 'border-gray-200 hover:border-gray-400'
-                  }`}
-                >
-                  <div className="text-2xl mb-2">👤</div>
-                  <div className="font-medium text-sm">I am nominating myself</div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    Submit your own profile
-                  </div>
-                </button>
-                <button
-                  onClick={() => selectBranch('nominate')}
-                  className={`p-4 border-2 rounded-lg text-center transition-colors ${
-                    branch === 'nominate'
-                      ? 'border-gray-900 bg-gray-50'
-                      : 'border-gray-200 hover:border-gray-400'
-                  }`}
-                >
-                  <div className="text-2xl mb-2">🌟</div>
-                  <div className="font-medium text-sm">I am nominating someone else</div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    Nominate another woman leader
-                  </div>
-                </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+                  <button
+                    onClick={() => selectBranch('self')}
+                    className={`p-4 border-2 rounded-lg text-center transition-colors ${
+                      branch === 'self'
+                        ? 'border-[#F85A8E] bg-pink-50'
+                        : 'border-gray-200 hover:border-gray-400'
+                    }`}
+                  >
+                    <div className="text-2xl mb-2">👤</div>
+                    <div className="font-medium text-sm">I am nominating myself</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      Submit your own profile
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => selectBranch('nominate')}
+                    className={`p-4 border-2 rounded-lg text-center transition-colors ${
+                      branch === 'nominate'
+                        ? 'border-[#F85A8E] bg-pink-50'
+                        : 'border-gray-200 hover:border-gray-400'
+                    }`}
+                  >
+                    <div className="text-2xl mb-2">🌟</div>
+                    <div className="font-medium text-sm">I am nominating someone else</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      Nominate another woman leader
+                    </div>
+                  </button>
               </div>
 
               {branch === 'nominate' && (
