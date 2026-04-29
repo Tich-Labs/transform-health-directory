@@ -60,33 +60,33 @@ export default function App() {
   const showHero = ['database', 'submit', 'analytics'].includes(route)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: 'rgb(255, 255, 244)' }}>
       <SiteHeader />
 
       {showHero && (
-        <div style={{ background: '#002D48', fontFamily: "'Montserrat', sans-serif" }}>
+        <div style={{ background: 'rgb(255, 255, 244)', fontFamily: "'Montserrat', sans-serif" }}>
           <div className="max-w-6xl mx-auto px-6 py-12">
-            <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#1bb4ff' }}>
+            <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#000' }}>
               Transform Health · Women in Digital Health
             </p>
-            <h1 className="text-4xl font-bold text-white leading-tight mb-4" style={{ maxWidth: 640 }}>
+            <h1 className="text-4xl font-bold text-black leading-tight mb-4" style={{ maxWidth: 640 }}>
               Women Leaders in Digital Health
             </h1>
-            <p className="text-base mb-8" style={{ color: '#a8c4d4', maxWidth: 560, lineHeight: 1.7 }}>
+            <p className="text-base mb-8" style={{ color: '#333', maxWidth: 560, lineHeight: 1.7 }}>
               A curated global network of women driving digital transformation across health systems, policy, and innovation.
             </p>
             <div className="flex gap-8">
               <div>
-                <div className="text-3xl font-bold text-white">81</div>
-                <div className="text-xs uppercase tracking-widest mt-1" style={{ color: '#a8c4d4' }}>Leaders</div>
+                <div className="text-3xl font-bold text-black">81</div>
+                <div className="text-xs uppercase tracking-widest mt-1" style={{ color: '#333' }}>Leaders</div>
               </div>
-              <div style={{ borderLeft: '1px solid #1e4a63', paddingLeft: 32 }}>
-                <div className="text-3xl font-bold text-white">15</div>
-                <div className="text-xs uppercase tracking-widest mt-1" style={{ color: '#a8c4d4' }}>Expertise Areas</div>
+              <div style={{ borderLeft: '1px solid #e8c800', paddingLeft: 32 }}>
+                <div className="text-3xl font-bold text-black">15</div>
+                <div className="text-xs uppercase tracking-widest mt-1" style={{ color: '#333' }}>Expertise Areas</div>
               </div>
-              <div style={{ borderLeft: '1px solid #1e4a63', paddingLeft: 32 }}>
-                <div className="text-3xl font-bold text-white">30+</div>
-                <div className="text-xs uppercase tracking-widest mt-1" style={{ color: '#a8c4d4' }}>Organisations</div>
+              <div style={{ borderLeft: '1px solid #e8c800', paddingLeft: 32 }}>
+                <div className="text-3xl font-bold text-black">30+</div>
+                <div className="text-xs uppercase tracking-widest mt-1" style={{ color: '#333' }}>Organisations</div>
               </div>
             </div>
           </div>
@@ -94,30 +94,22 @@ export default function App() {
       )}
 
       <nav className="sticky top-0 z-50" style={{ background: '#FADF56' }}>
-        <div style={{ maxWidth: 1440, margin: '0 auto', padding: '32px 32px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        <div className="max-w-[1440px] mx-auto px-8 pt-8 flex justify-between items-end">
 
           {/* Main tabs */}
-          <div style={{ display: 'flex', gap: 32 }}>
+          <div className="flex gap-8">
             {NAV_ITEMS.filter(item => item.id !== 'admin').map((item) => {
               const active = route === item.id
               return (
                 <button
                   key={item.id}
                   onClick={() => setRoute(item.id)}
+                  className={`font-['Montserrat'] font-medium text-2xl tracking-[0.03em] px-7 py-2.5 whitespace-nowrap leading-7 cursor-pointer rounded-none ${
+                    active ? 'text-white' : 'text-black bg-transparent'
+                  }`}
                   style={{
-                    fontFamily: "'Montserrat', sans-serif",
-                    fontWeight: 500,
-                    fontSize: 24,
-                    letterSpacing: '0.03em',
-                    padding: '10px 28px',
-                    border: 'none',
-                    borderRadius: 0,
-                    cursor: 'pointer',
                     background: active ? '#E8571D' : 'transparent',
-                    color: active ? '#fff' : '#000',
                     clipPath: active ? 'polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%)' : 'none',
-                    whiteSpace: 'nowrap',
-                    lineHeight: '28px',
                   }}
                 >
                   {item.display}
@@ -129,19 +121,13 @@ export default function App() {
           {/* Admin — tucked to the right, smaller */}
           <button
             onClick={() => setRoute('admin')}
+            className={`font-['Montserrat'] font-medium text-xs tracking-[0.08em] uppercase px-3.5 py-1.5 mb-1.5 cursor-pointer rounded ${
+              route === 'admin'
+                ? 'text-white border-transparent'
+                : 'text-[#333] border border-[#555]'
+            }`}
             style={{
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 500,
-              fontSize: 13,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              padding: '6px 14px',
-              marginBottom: 6,
-              border: `1px solid ${route === 'admin' ? 'transparent' : '#555'}`,
-              borderRadius: 4,
-              cursor: 'pointer',
               background: route === 'admin' ? '#E8571D' : 'transparent',
-              color: route === 'admin' ? '#fff' : '#333',
             }}
           >
             Admin
