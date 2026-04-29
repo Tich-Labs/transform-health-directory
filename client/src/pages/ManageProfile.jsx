@@ -183,9 +183,33 @@ export default function ManageProfile({ prefill, onBack }) {
             </div>
           )}
 
-          {step === 2 && (
+          {step === 2 && linkSent ? (
+            <div className="text-center py-4">
+              <div className="text-4xl mb-4">✉</div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">Check your inbox</h2>
+              <p className="text-gray-600 text-sm mb-4">
+                We've sent a link to <span className="font-medium">{email}</span>. Click it to open your profile with all your current details pre-filled, ready to edit.
+              </p>
+              <div className="text-xs text-gray-400 bg-gray-50 p-3 rounded">
+                The link can only be used once. If you don't see it, check your spam folder.
+              </div>
+              <button
+                onClick={() => setLinkSent(false)}
+                className="mt-4 text-sm text-gray-500 hover:text-gray-700 underline"
+              >
+                Wrong email? Try again
+              </button>
+            </div>
+          ) : step === 2 && (
             <div>
-              <h2 className="text-lg font-medium mb-1">Confirm your details</h2>
+              <div className="flex items-center justify-between mb-1">
+                <h2 className="text-lg font-medium">Confirm your details</h2>
+                {isVerified && (
+                  <span className="text-xs font-medium bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                    ✓ Verified via email
+                  </span>
+                )}
+              </div>
               <p className="text-sm text-gray-500 mb-4">
                 So we can locate your profile in the database.
               </p>
@@ -235,6 +259,28 @@ export default function ManageProfile({ prefill, onBack }) {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-400"
                   />
                 </div>
+
+                {!isVerified && (
+                  <div className="pt-2 border-t border-gray-100">
+                    <p className="text-xs text-gray-500 mb-2">
+                      Want to see your current profile details before editing?
+                    </p>
+                    {linkError && (
+                      <p className="text-xs text-red-600 mb-2">{linkError}</p>
+                    )}
+                    <button
+                      type="button"
+                      onClick={requestMagicLink}
+                      disabled={linkLoading || !firstName || !lastName || !email}
+                      className="w-full px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-full hover:border-gray-400 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                    >
+                      {linkLoading ? 'Sending...' : 'Send my profile to this email →'}
+                    </button>
+                    <p className="text-xs text-gray-400 mt-1.5 text-center">
+                      Or fill in your changes below and submit directly
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -245,6 +291,15 @@ export default function ManageProfile({ prefill, onBack }) {
               <p className="text-sm text-gray-500 mb-4">
                 Describe what you'd like updated — role, organisation, bio, expertise, or LinkedIn.
               </p>
+              {isVerified && prefill && !changes && (
+                <div className="mb-3 p-3 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-600 space-y-1">
+                  <p className="font-medium text-gray-500 mb-1">Current profile:</p>
+                  <p><span className="font-medium">Role:</span> {prefill.role || '—'}</p>
+                  <p><span className="font-medium">Organisation:</span> {prefill.organisation || '—'}</p>
+                  <p><span className="font-medium">Bio:</span> {prefill.bio || '—'}</p>
+                  <p><span className="font-medium">Expertise:</span> {prefill.expertise || '—'}</p>
+                </div>
+              )}
               <textarea
                 value={changes}
                 onChange={(e) => setChanges(e.target.value)}

@@ -127,9 +127,9 @@ export default function Analytics() {
               Global distribution of network nodes.
             </div>
 
-            <div className="relative bg-gray-100 rounded-md overflow-hidden min-h-[380px]">
-              <div className="absolute inset-0">
-                <ComposableMap projectionConfig={{ scale: 140 }}>
+            <div className="relative bg-gray-100 rounded-md overflow-hidden" style={{ height: 380 }}>
+              <div className="w-full h-full" style={{ height: 380 }}>
+                <ComposableMap projectionConfig={{ scale: 140 }} width={960} height={500} style={{ width: '100%', height: '100%' }}>
                 <ZoomableGroup zoom={1} minZoom={1} maxZoom={4} center={[10, 20]}>
                   <Geographies geography={GEO_URL}>
                     {({ geographies }) =>
