@@ -126,24 +126,7 @@ export default function Database({ onManageProfile }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-gray-800 text-white">
-        <div className="max-w-6xl mx-auto px-6 py-6 grid grid-cols-3 gap-4">
-          <div className="text-center">
-            <div className="text-4xl font-bold">{stats.total}</div>
-            <div className="text-sm text-gray-300 mt-1">Leaders</div>
-          </div>
-          <div className="text-center border-l border-gray-600">
-            <div className="text-4xl font-bold">-</div>
-            <div className="text-sm text-gray-300 mt-1">Countries</div>
-          </div>
-          <div className="text-center border-l border-gray-600">
-            <div className="text-4xl font-bold">{stats.expertise}</div>
-            <div className="text-sm text-gray-300 mt-1">Expertise Areas</div>
-          </div>
-        </div>
-      </div>
-
+    <div>
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-3 flex flex-wrap gap-3 items-center">
           <div className="flex-1 min-w-[200px] max-w-[320px]">

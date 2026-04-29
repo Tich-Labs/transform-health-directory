@@ -13,67 +13,25 @@ export default function SiteFooter() {
         {/* Content absolutely centred over the SVG — matches parent site's top:45% left:55% */}
         <div style={{
           position: 'absolute',
-          top: '45%',
+          top: '50%',
           left: '55%',
           transform: 'translate(-50%, -50%)',
           maxWidth: '70%',
           width: '100%',
         }}>
-          <div style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
-
-            {/* Left: links — two balanced columns */}
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px' }}>
-                {[
-                  'Policies',
-                  'Media Enquiries',
-                  'Get Involved',
-                  'Opportunities',
-                  'Equity & Inclusion Dashboard',
-                  'Privacy Policy',
-                ].map((link) => (
-                  <a key={link} href="#" style={{ color: '#fff', textDecoration: 'none', fontSize: 14 }}>
-                    {link}
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* Right: newsletter */}
-            <div style={{ flex: 1 }}>
-              <p style={{ fontSize: 20, fontWeight: 400, color: '#fff', marginBottom: 15, marginTop: 0 }}>
-                Subscribe to our Newsletter
-              </p>
-              <div style={{ position: 'relative', maxWidth: 340 }}>
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  style={{
-                    width: '100%',
-                    height: 40,
-                    borderRadius: 10,
-                    padding: '0 50px 0 15px',
-                    border: 0,
-                    fontSize: 15,
-                    boxSizing: 'border-box',
-                  }}
-                />
-                <button style={{
-                  position: 'absolute',
-                  right: 12,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: 16,
-                  color: '#006EA7',
-                }}>
-                  →
-                </button>
-              </div>
-            </div>
-
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {[
+              'Policies',
+              'Media Enquiries',
+              'Get Involved',
+              'Opportunities',
+              'Equity & Inclusion Dashboard',
+              'Privacy Policy',
+            ].map((link) => (
+              <a key={link} href="#" style={{ color: '#fff', textDecoration: 'none', fontSize: 14 }}>
+                {link}
+              </a>
+            ))}
           </div>
         </div>
       </div>

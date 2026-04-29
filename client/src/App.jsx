@@ -93,14 +93,31 @@ export default function App() {
         </div>
       )}
 
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <nav className="sticky top-0 z-50" style={{ background: '#FADF56', borderBottom: '1px solid #e8c800' }}>
         <div className="max-w-6xl mx-auto px-6">
-          <div className="flex items-center h-12">
+          <div className="flex items-center justify-between h-12">
             <div className="flex gap-1">
-              {NAV_ITEMS.map((item) => (
+              {NAV_ITEMS.filter(item => item.id !== 'admin').map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setRoute(item.id)}
+                  style={{ fontFamily: "'Montserrat', sans-serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                  className={`px-4 py-1.5 text-sm font-medium rounded-full transition-colors ${
+                    route === item.id
+                      ? 'bg-gray-800 text-white'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+            <div>
+              {NAV_ITEMS.filter(item => item.id === 'admin').map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setRoute(item.id)}
+                  style={{ fontFamily: "'Montserrat', sans-serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}
                   className={`px-4 py-1.5 text-sm font-medium rounded-full transition-colors ${
                     route === item.id
                       ? 'bg-gray-800 text-white'
