@@ -29,6 +29,8 @@ python3 -m http.server 8000
 
 This repository holds the static UI prototypes and content for the Transform Health Directory. The wireframes demonstrate flows for submitting entries, browsing the directory, and admin analytics.
 
+The client app also includes an admin console for reviewing pending member submissions, handling profile requests, and managing published directory entries. The admin route is presented as a standalone panel with its own header/footer separate from the public site layout.
+
 ## Next steps (suggested)
 
 1. Convert wireframes into a single-page app or server-rendered site with a backend (API + database) for storing entries.

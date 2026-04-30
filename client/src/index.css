@@ -2,10 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Minimal neutral tokens for MVP */
-:root{
+html {
+  font-size: 62.5%;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:root {
   --th-primary: #374151;
   --th-muted: #6b7280;
 }
 
-body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
+body {
+  font-family: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial;
+  font-size: 1.8rem;
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+  color: #000;
+}
+
+:focus-visible {
+  outline: 2px solid #02598e;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(2, 89, 142, 0.25);
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  letter-spacing: -0.042em;
+  line-height: 1.25;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -4rem;
+  left: 0;
+  background: #02598e;
+  color: #fff;
+  padding: 0.8rem 1.6rem;
+  z-index: 100;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 0.4rem 0;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
