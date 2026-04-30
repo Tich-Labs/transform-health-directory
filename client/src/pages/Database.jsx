@@ -438,11 +438,11 @@ export default function Database({ onManageProfile }) {
                           aria-label="LinkedIn"
                           title="Open LinkedIn profile"
                         >
-                          <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                            <path d="M10.5 5.5C11.563 5.5 12.583 5.921 13.334 6.672C14.085 7.423 14.5 8.437 14.5 9.5V14H12.5V9.5C12.5 8.97 12.289 8.461 11.914 8.086C11.539 7.711 11.03 7.5 10.5 7.5C9.97 7.5 9.461 7.711 9.086 8.086C8.711 8.461 8.5 8.97 8.5 9.5V14H6.5V9.5C6.5 8.437 6.915 7.423 7.666 6.672C8.417 5.921 9.437 5.5 10.5 5.5Z" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M1.5 6H4.5V14H1.5V6Z" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <circle cx="3" cy="3" r="1.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
+                           <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                             <path d="M10.5 5.5C11.563 5.5 12.583 5.921 13.334 6.672C14.085 7.423 14.5 8.437 14.5 9.5V14H12.5V9.5C12.5 8.97 12.289 8.461 11.914 8.086C11.539 7.711 11.03 7.5 10.5 7.5C9.97 7.5 9.461 7.711 9.086 8.086C8.711 8.461 8.5 8.97 8.5 9.5V14H6.5V9.5C6.5 8.437 6.915 7.423 7.666 6.672C8.417 5.921 9.437 5.5 10.5 5.5Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                             <path d="M1.5 6H4.5V14H1.5V6Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                             <circle cx="3" cy="3" r="1.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                           </svg>
                         </a>
                       )}
                     </div>
@@ -458,20 +458,20 @@ export default function Database({ onManageProfile }) {
                       <div className="font-semibold text-gray-900 text-[1.6rem] leading-tight flex items-center justify-center gap-1.5">
                         {it.first_name} {it.last_name}
                       </div>
-                      <div className="text-[1.3rem] text-gray-500 mt-1 leading-snug flex items-center justify-center gap-1">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <div className="text-[1.3rem] text-gray-700 mt-1 leading-snug flex items-center justify-center gap-2">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(2, 89, 142)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                           <circle cx="12" cy="7" r="4"/>
                         </svg>
-                        {it.role || <TBC />}
+                        <span className="ml-1">{it.role || <TBC />}</span>
                       </div>
                       {it.organisation && (
-                        <div className="text-[1.2rem] text-gray-400 mt-0.5 flex items-center justify-center gap-1">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <div className="text-[1.2rem] text-gray-600 mt-0.5 flex items-center justify-center gap-2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(2, 89, 142)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
                           </svg>
-                          {it.organisation}
+                          <span className="ml-1">{it.organisation}</span>
                         </div>
                       )}
                     </div>
@@ -480,10 +480,10 @@ export default function Database({ onManageProfile }) {
                     {it.expertise && (
                       <div className="flex flex-wrap gap-1 justify-center mb-4">
                         {it.expertise.split(", ").slice(0, 3).map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-[1.2rem] text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full"
-                          >
+                        <span
+                          key={tag}
+                          className="text-[1.2rem] text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full"
+                        >
                             {tag}
                           </span>
                         ))}
@@ -498,12 +498,12 @@ export default function Database({ onManageProfile }) {
                     {/* Footer: country + read more */}
                     <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
                       {it.country ? (
-                        <span className="text-[1.2rem] text-gray-400 flex items-center gap-1">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <span className="text-[1.2rem] text-gray-600 flex items-center gap-2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(2, 89, 142)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                             <circle cx="12" cy="10" r="3"/>
                           </svg>
-                          {it.country}
+                          <span className="ml-1">{it.country}</span>
                         </span>
                       ) : (
                         <span />
@@ -646,27 +646,27 @@ export default function Database({ onManageProfile }) {
                       className="inline-flex"
                       title="LinkedIn Profile"
                     >
-                      <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
-                        <path d="M10.5 5.5C11.563 5.5 12.583 5.921 13.334 6.672C14.085 7.423 14.5 8.437 14.5 9.5V14H12.5V9.5C12.5 8.97 12.289 8.461 11.914 8.086C11.539 7.711 11.03 7.5 10.5 7.5C9.97 7.5 9.461 7.711 9.086 8.086C8.711 8.461 8.5 8.97 8.5 9.5V14H6.5V9.5C6.5 8.437 6.915 7.423 7.666 6.672C8.417 5.921 9.437 5.5 10.5 5.5Z" stroke="#0A66C2" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M4.5 5.5V14" stroke="#0A66C2" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M3.5 3.5C3.5 3.897 3.342 4.269 3.061 4.561C2.78 4.853 2.398 5.011 2 5.011C1.602 5.011 1.22 4.853 0.939 4.561C0.658 4.269 0.5 3.897 0.5 3.5C0.5 3.103 0.658 2.731 0.939 2.439C1.22 2.147 1.602 1.989 2 1.989C2.398 1.989 2.78 2.147 3.061 2.439C3.342 2.731 3.5 3.103 3.5 3.5Z" stroke="#0A66C2" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                       <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+                         <path d="M10.5 5.5C11.563 5.5 12.583 5.921 13.334 6.672C14.085 7.423 14.5 8.437 14.5 9.5V14H12.5V9.5C12.5 8.97 12.289 8.461 11.914 8.086C11.539 7.711 11.03 7.5 10.5 7.5C9.97 7.5 9.461 7.711 9.086 8.086C8.711 8.461 8.5 8.97 8.5 9.5V14H6.5V9.5C6.5 8.437 6.915 7.423 7.666 6.672C8.417 5.921 9.437 5.5 10.5 5.5Z" stroke="#0A66C2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                         <path d="M4.5 5.5V14" stroke="#0A66C2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                         <path d="M3.5 3.5C3.5 3.897 3.342 4.269 3.061 4.561C2.78 4.853 2.398 5.011 2 5.011C1.602 5.011 1.22 4.853 0.939 4.561C0.658 4.269 0.5 3.897 0.5 3.5C0.5 3.103 0.658 2.731 0.939 2.439C1.22 2.147 1.602 1.989 2 1.989C2.398 1.989 2.78 2.147 3.061 2.439C3.342 2.731 3.5 3.103 3.5 3.5Z" stroke="#0A66C2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                       </svg>
                     </a>
                   )}
                 </h2>
-                <p className="text-[1.4rem] text-gray-700 mt-1 flex items-center gap-1.5">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <p className="text-[1.4rem] text-gray-800 mt-1 flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(2, 89, 142)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
                   </svg>
-                  {selectedProfile.role || <TBC />}
+                  <span className="ml-1">{selectedProfile.role || <TBC />}</span>
                 </p>
-                <p className="text-[1.4rem] text-gray-600 mt-0.5 flex items-center gap-1.5">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <p className="text-[1.4rem] text-gray-700 mt-0.5 flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(2, 89, 142)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
                   </svg>
-                  {selectedProfile.organisation || <TBC />}
+                  <span className="ml-1">{selectedProfile.organisation || <TBC />}</span>
                 </p>
               </div>
             </div>
