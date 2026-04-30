@@ -60,6 +60,7 @@ export default function Submit({ onManageProfile }) {
   const [country, setCountry] = useState("");
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [bio, setBio] = useState("");
+  const [email, setEmail] = useState("");
   const [linkedin, setLinkedin] = useState("");
   const [notableText, setNotableText] = useState("");
   const [notableItems, setNotableItems] = useState([]);
@@ -105,7 +106,7 @@ export default function Submit({ onManageProfile }) {
   }
 
   function bioCharWarning() {
-    return charCount > 0 && (charCount < 100 || charCount > 150);
+    return charCount > 0 && (charCount < 300 || charCount > 500);
   }
 
   function updateNotableItem(index, field, value) {
@@ -193,6 +194,7 @@ export default function Submit({ onManageProfile }) {
         branch,
         firstName,
         lastName,
+        email,
         role,
         organisation: org,
         expertise: expertise.join(", "),
@@ -419,9 +421,10 @@ export default function Submit({ onManageProfile }) {
       (!yearsExp ||
         expertise.length === 0 ||
         selectedCountries.length === 0 ||
+        !email ||
         !bio ||
-        charCount < 100 ||
-        charCount > 150));
+        charCount < 300 ||
+        charCount > 500));
 
   return (
     <div style={{ background: "#f5efe0" }}>
@@ -1512,6 +1515,45 @@ export default function Submit({ onManageProfile }) {
                 )}
               </div>
 
+              {/* Email */}
+              <div style={{ marginBottom: 24 }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "1.6rem",
+                    color: "#111",
+                    marginBottom: 12,
+                  }}
+                >
+                  Email *{" "}
+                  <span
+                    style={{
+                      fontSize: "1.4rem",
+                      color: "#666",
+                      fontWeight: 400,
+                    }}
+                  >
+                    (not publicly displayed)
+                  </span>
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your.email@example.com"
+                  style={{
+                    width: "100%",
+                    padding: "1.4rem 1.6rem",
+                    fontSize: "1.6rem",
+                    borderRadius: 10,
+                    outline: "none",
+                    boxSizing: "border-box",
+                    background: "rgb(238, 243, 251)",
+                    border: "1.5px solid #d1d5db",
+                  }}
+                />
+              </div>
+
               {/* Short bio */}
               <div style={{ marginBottom: 24 }}>
                 <label
@@ -1530,7 +1572,7 @@ export default function Submit({ onManageProfile }) {
                       fontWeight: 400,
                     }}
                   >
-                    (100–150 characters)
+                    (300–500 characters)
                   </span>
                 </label>
                 <textarea
@@ -1558,7 +1600,7 @@ export default function Submit({ onManageProfile }) {
                   </span>
                   {bioCharWarning() && (
                     <span style={{ fontSize: "1.4rem", color: "#ef4444" }}>
-                      Please keep bio between 100–150 characters.
+                      Please keep bio between 300–500 characters.
                     </span>
                   )}
                 </div>
