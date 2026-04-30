@@ -265,8 +265,6 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
         </div>
 
         <div className="p-8 relative overflow-hidden">
-          <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-gray-700 opacity-40 blur-3xl pointer-events-none" />
-
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6 relative z-10">
             <div>
               <div
