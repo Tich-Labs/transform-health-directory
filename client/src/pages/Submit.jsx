@@ -21,6 +21,7 @@ const EXPERTISE_TAGS = [
   "Digital health transformation",
   "Digital health philanthropy",
   "Health workforce",
+  "Other",
 ];
 
 const COUNTRIES = [
@@ -56,6 +57,7 @@ export default function Submit({ onManageProfile }) {
   const [role, setRole] = useState("");
   const [org, setOrg] = useState("");
   const [expertise, setExpertise] = useState([]);
+  const [otherExpertise, setOtherExpertise] = useState("");
   const [geoScope, setGeoScope] = useState("");
   const [country, setCountry] = useState("");
   const [selectedCountries, setSelectedCountries] = useState([]);
@@ -100,7 +102,7 @@ export default function Submit({ onManageProfile }) {
   function toggleExpertise(tag) {
     if (expertise.includes(tag)) {
       setExpertise(expertise.filter((e) => e !== tag));
-    } else if (expertise.length < 3) {
+    } else if (expertise.length < 5) {
       setExpertise([...expertise, tag]);
     }
   }
@@ -197,7 +199,7 @@ export default function Submit({ onManageProfile }) {
         email,
         role,
         organisation: org,
-        expertise: expertise.join(", "),
+        expertise: [...expertise.filter(e => e !== "Other"), otherExpertise ? `Other: ${otherExpertise}` : ""].filter(Boolean).join(", "),
         yearsExp,
         countries: selectedCountries.join(", "),
         bio,
@@ -1386,7 +1388,7 @@ export default function Submit({ onManageProfile }) {
                       fontWeight: 400,
                     }}
                   >
-                    (select up to 3)
+                    (select up to 5)
                   </span>
                 </label>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -1395,7 +1397,7 @@ export default function Submit({ onManageProfile }) {
                       key={tag}
                       onClick={() => toggleExpertise(tag)}
                       disabled={
-                        !expertise.includes(tag) && expertise.length >= 3
+                        !expertise.includes(tag) && expertise.length >= 5
                       }
                       style={{
                         padding: "0.8rem 1.4rem",
@@ -1411,7 +1413,7 @@ export default function Submit({ onManageProfile }) {
                           : "#fff",
                         color: expertise.includes(tag) ? "#fff" : "#333",
                         opacity:
-                          !expertise.includes(tag) && expertise.length >= 3
+                          !expertise.includes(tag) && expertise.length >= 5
                             ? 0.4
                             : 1,
                       }}
@@ -1421,9 +1423,40 @@ export default function Submit({ onManageProfile }) {
                   ))}
                 </div>
                 <p style={{ fontSize: "1.4rem", color: "#666", marginTop: 8 }}>
-                  {expertise.length} of 3 selected
+                  {expertise.length} of 5 selected
                 </p>
               </div>
+
+              {expertise.includes("Other") && (
+                <div style={{ marginBottom: 24 }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "1.6rem",
+                      color: "#111",
+                      marginBottom: 12,
+                    }}
+                  >
+                    Please specify other expertise *
+                  </label>
+                  <input
+                    type="text"
+                    value={otherExpertise}
+                    onChange={(e) => setOtherExpertise(e.target.value)}
+                    placeholder="Enter your area of expertise"
+                    style={{
+                      width: "100%",
+                      padding: "1.4rem 1.6rem",
+                      fontSize: "1.6rem",
+                      borderRadius: 10,
+                      outline: "none",
+                      boxSizing: "border-box",
+                      background: "rgb(238, 243, 251)",
+                      border: "1.5px solid #d1d5db",
+                    }}
+                  />
+                </div>
+              )}
 
               {/* Which country/countries */}
               <div style={{ marginBottom: 24 }}>
