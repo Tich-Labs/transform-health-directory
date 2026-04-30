@@ -441,28 +441,26 @@ export default function Database({ onManageProfile }) {
                 }}>
                   Continent
                 </label>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                <select
+                  value={continentFilter}
+                  onChange={(e) => setContinentFilter(e.target.value || "")}
+                  style={{
+                    width: "100%",
+                    maxWidth: 400,
+                    padding: "1rem 1.6rem",
+                    fontSize: "1.6rem",
+                    borderRadius: 10,
+                    border: "1.5px solid #d1d5db",
+                    background: "#fff",
+                    outline: "none",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <option value="">All continents</option>
                   {CONTINENTS.map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => toggleFilter("continent", c)}
-                      style={{
-                        padding: "0.8rem 1.4rem",
-                        borderRadius: 20,
-                        fontSize: "1.4rem",
-                        fontWeight: 500,
-                        cursor: "pointer",
-                        border: continentFilter === c
-                          ? "1.5px solid #02598e"
-                          : "1.5px solid #d1d5db",
-                        background: continentFilter === c ? "#02598e" : "#fff",
-                        color: continentFilter === c ? "#fff" : "#333",
-                      }}
-                    >
-                      {c}
-                    </button>
+                    <option key={c} value={c}>{c}</option>
                   ))}
-                </div>
+                </select>
               </div>
 
               {/* Country */}
@@ -476,28 +474,26 @@ export default function Database({ onManageProfile }) {
                 }}>
                   Country{continentFilter ? ` — ${continentFilter}` : ""}
                 </label>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                <select
+                  value={countryFilter}
+                  onChange={(e) => setCountryFilter(e.target.value || "")}
+                  style={{
+                    width: "100%",
+                    maxWidth: 400,
+                    padding: "1rem 1.6rem",
+                    fontSize: "1.6rem",
+                    borderRadius: 10,
+                    border: "1.5px solid #d1d5db",
+                    background: "#fff",
+                    outline: "none",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <option value="">All countries</option>
                   {visibleCountries.map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => toggleFilter("country", c)}
-                      style={{
-                        padding: "0.8rem 1.4rem",
-                        borderRadius: 20,
-                        fontSize: "1.4rem",
-                        fontWeight: 500,
-                        cursor: "pointer",
-                        border: countryFilter === c
-                          ? "1.5px solid #02598e"
-                          : "1.5px solid #d1d5db",
-                        background: countryFilter === c ? "#02598e" : "#fff",
-                        color: countryFilter === c ? "#fff" : "#333",
-                      }}
-                    >
-                      {c}
-                    </button>
+                    <option key={c} value={c}>{c}</option>
                   ))}
-                </div>
+                </select>
               </div>
 
               {/* Expertise */}
@@ -511,28 +507,26 @@ export default function Database({ onManageProfile }) {
                 }}>
                   Expertise
                 </label>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                <select
+                  value={expertiseFilter}
+                  onChange={(e) => setExpertiseFilter(e.target.value || "")}
+                  style={{
+                    width: "100%",
+                    maxWidth: 400,
+                    padding: "1rem 1.6rem",
+                    fontSize: "1.6rem",
+                    borderRadius: 10,
+                    border: "1.5px solid #d1d5db",
+                    background: "#fff",
+                    outline: "none",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <option value="">All expertise areas</option>
                   {EXPERTISE_OPTIONS.map((tag) => (
-                    <button
-                      key={tag}
-                      onClick={() => toggleFilter("expertise", tag)}
-                      style={{
-                        padding: "0.8rem 1.4rem",
-                        borderRadius: 20,
-                        fontSize: "1.4rem",
-                        fontWeight: 500,
-                        cursor: "pointer",
-                        border: expertiseFilter === tag
-                          ? "1.5px solid #02598e"
-                          : "1.5px solid #d1d5db",
-                        background: expertiseFilter === tag ? "#02598e" : "#fff",
-                        color: expertiseFilter === tag ? "#fff" : "#333",
-                      }}
-                    >
-                      {tag}
-                    </button>
+                    <option key={tag} value={tag}>{tag}</option>
                   ))}
-                </div>
+                </select>
               </div>
             </div>
           </div>
@@ -775,13 +769,36 @@ export default function Database({ onManageProfile }) {
                     ★ Featured
                   </span>
                 )}
-                <h2 className="text-[2rem] font-semibold text-gray-900">
+                <h2 className="text-[2rem] font-semibold text-gray-900 flex items-center gap-2">
                   {selectedProfile.first_name} {selectedProfile.last_name}
+                  {selectedProfile.linkedin?.trim() && (
+                    <a
+                      href={selectedProfile.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex"
+                      title="LinkedIn Profile"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+                        <path d="M10.5 5.5C11.563 5.5 12.583 5.921 13.334 6.672C14.085 7.423 14.5 8.437 14.5 9.5V14H12.5V9.5C12.5 8.97 12.289 8.461 11.914 8.086C11.539 7.711 11.03 7.5 10.5 7.5C9.97 7.5 9.461 7.711 9.086 8.086C8.711 8.461 8.5 8.97 8.5 9.5V14H6.5V9.5C6.5 8.437 6.915 7.423 7.666 6.672C8.417 5.921 9.437 5.5 10.5 5.5Z" stroke="#0A66C2" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M4.5 5.5V14" stroke="#0A66C2" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M3.5 3.5C3.5 3.897 3.342 4.269 3.061 4.561C2.78 4.853 2.398 5.011 2 5.011C1.602 5.011 1.22 4.853 0.939 4.561C0.658 4.269 0.5 3.897 0.5 3.5C0.5 3.103 0.658 2.731 0.939 2.439C1.22 2.147 1.602 1.989 2 1.989C2.398 1.989 2.78 2.147 3.061 2.439C3.342 2.731 3.5 3.103 3.5 3.5Z" stroke="#0A66C2" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </a>
+                  )}
                 </h2>
-                <p className="text-[1.4rem] text-gray-700 mt-1">
+                <p className="text-[1.4rem] text-gray-700 mt-1 flex items-center gap-1.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
                   {selectedProfile.role || <TBC />}
                 </p>
-                <p className="text-[1.4rem] text-gray-600 mt-0.5">
+                <p className="text-[1.4rem] text-gray-600 mt-0.5 flex items-center gap-1.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                  </svg>
                   {selectedProfile.organisation || <TBC />}
                 </p>
               </div>
