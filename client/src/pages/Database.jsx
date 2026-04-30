@@ -454,15 +454,25 @@ export default function Database({ onManageProfile }) {
                     style={{ paddingTop: 52, paddingLeft: 20, paddingRight: 20, paddingBottom: 20 }}
                   >
                     {/* Name + role + org */}
-                    <div className="text-center mb-3">
-                      <div className="font-semibold text-gray-900 text-[1.6rem] leading-tight">
+                    <div className="text-center mb-3 px-2">
+                      <div className="font-semibold text-gray-900 text-[1.6rem] leading-tight flex items-center justify-center gap-1.5">
                         {it.first_name} {it.last_name}
                       </div>
-                      <div className="text-[1.3rem] text-gray-500 mt-1 leading-snug">
+                      <div className="text-[1.3rem] text-gray-500 mt-1 leading-snug flex items-center justify-center gap-1">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                          <circle cx="12" cy="7" r="4"/>
+                        </svg>
                         {it.role || <TBC />}
                       </div>
                       {it.organisation && (
-                        <div className="text-[1.2rem] text-gray-400 mt-0.5">{it.organisation}</div>
+                        <div className="text-[1.2rem] text-gray-400 mt-0.5 flex items-center justify-center gap-1">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                          </svg>
+                          {it.organisation}
+                        </div>
                       )}
                     </div>
 
@@ -488,7 +498,13 @@ export default function Database({ onManageProfile }) {
                     {/* Footer: country + read more */}
                     <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
                       {it.country ? (
-                        <span className="text-[1.2rem] text-gray-400">{it.country}</span>
+                        <span className="text-[1.2rem] text-gray-400 flex items-center gap-1">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                          </svg>
+                          {it.country}
+                        </span>
                       ) : (
                         <span />
                       )}
