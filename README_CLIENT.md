@@ -11,16 +11,21 @@ A React web application for the Transform Health Women Leaders Directory. It all
 The main public-facing page. Displays all live profiles in a searchable, filterable grid.
 
 **Features:**
-- **Search** — filter by name, role, organisation, or bio keywords
-- **Expertise filter** — narrow by one of 15 expertise areas (AI, Digital health, Health financing, etc.)
-- **Load more** — 9 profiles initially, with a "Load more leaders" button to reveal more
+- **Search bar** — filter by name, role, organisation, or bio keywords
+- **Sort dropdown** — A → Z, Z → A, Latest (newest entries first)
+- **Filters toggle** — opens a collapsible panel with clickable chip buttons:
+  - **Continent** — Africa, Asia, Europe, North America, South America, Oceania (selecting one auto-filters available countries)
+  - **Country** — all available countries; filtered by selected continent
+  - **Expertise** — 15 expertise areas as toggleable pills
+- **Active filter chips** — removable blue pills shown below the toolbar when any filter is active, with "Clear all"
+- **Load more** — 9 profiles initially, with a "Load more leaders" button to reveal more (expands to pagination past 18 entries)
 - **Profile detail modal** — click any card to open a full profile view showing:
   - Name, role, organisation
   - Bio (shows *TBC* if not yet provided)
   - Expertise tags (comma-separated in data, rendered as individual pills)
   - LinkedIn link (shows *TBC* if not provided)
-  - "Update or remove my profile" button to manage the profile
-- **"Already in the database?" link** — at the bottom of the page, routes to the Manage Profile flow
+  - "Update or remove my profile" button to open the profile management modal
+- **"Already in the database?" link** — at the bottom of the page, opens the Manage Profile modal
 
 > Note: The current ~80 members were imported from an existing database and many fields (bio, LinkedIn) are not yet filled. These will be completed as members engage with the app post-launch.
 
@@ -52,10 +57,12 @@ On submission, the form posts to the Apps Script backend and the profile enters 
 
 ### 3. Manage Profile (Update / Remove)
 
-Accessible from:
-- Submit page → "Manage or remove your profile" link
-- Profile detail modal → "Update or remove my profile" button
-- A magic link received by email
+A bottom-sheet modal overlay rendered by `App.jsx`. Opens from:
+- Database page → "Manage or remove your profile" link (bottom of page)
+- Database page → Profile detail modal → "Update or remove my profile" button
+- Analytics page → "Manage or remove your profile" link
+- Submit page → "Manage or remove your profile" link (Step 0)
+- A magic link received by email (`?token=...` opens the modal over the Directory page)
 
 **Step 1 — Identify:**
 - Enter first name, last name, email (optional), LinkedIn (optional)
@@ -155,13 +162,13 @@ Apps Script looks up profile in Google Sheet by name (+ LinkedIn if provided)
 Generates a one-time token → stores in Requests sheet → emails magic link to user
           ↓
 User clicks link: https://yourapp.com?token=abc123
-          ↓
+           ↓
 React app reads token from URL on load → calls Apps Script ?api=profile&token=abc123
-          ↓
+           ↓
 Apps Script returns profile snapshot, marks token as used (cannot be reused)
-          ↓
-ManageProfile opens with profile pre-filled + "Verified via email" badge
-          ↓
+           ↓
+Bottom-sheet modal opens over the Directory page with profile pre-filled + "Verified via email" badge
+           ↓
 User edits changes → submits → stored in Requests sheet → visible in Admin > Requests tab
 ```
 
@@ -272,6 +279,8 @@ npm run build
 ### Completed
 
 - **Admin console scroll isolation** — the entire page used to scroll together, hiding the sidebar and "View directory" button. Now only the content area scrolls. The header, sidebar, filter bar, and footer stay pinned and always visible.
+- **Profile management centralized as bottom-sheet modal** — ManageProfile no longer navigates to a separate `/manage` route. All "Update or remove my profile" flows and magic link tokens now open a consistent bottom-sheet modal over the Directory page, managed centrally in `App.jsx`.
+- **Database filter redesign** — replaced 5 inline dropdowns with a clean, collapsible chip-based filter panel. Row 1 (sticky): search bar, sort dropdown, Filters toggle with badge count. Row 2 (collapsible): Continent, Country, and Expertise as clickable pill buttons matching the Submit form design patterns. Active filters shown as removable blue chips with "Clear all". Sort options: A → Z, Z → A, Latest (array reverse, not ID-based).
 
 ### P1 — Backend Wiring
 
@@ -291,7 +300,7 @@ npm run build
 ### P3 — Nice to Have
 
 - **Admin auth** — the admin panel has no login gate. Add a password prompt before shipping publicly.
-- **Featured only toggle** — the Database page does not yet have a "Featured only" filter toggle, though the data schema supports a `featured` field.
+- **Featured only toggle** — the filter panel could include a "Featured only" checkbox to complement the existing `featured` field in the data schema.
 - **Bio and LinkedIn for existing members** — ~80 current members were imported without bios or LinkedIn URLs. These will be filled via the magic link update flow after launch.
 - **Expertise multi-select migration** — existing Sheet data has one expertise tag per profile; the new form supports up to 3. Will need a migration pass.
-- **Country data for imported profiles** — existing imported profiles do not have country of residence or countries of operation data.
+- **Country data for imported profiles** — existing imported profiles do not have country of residence or countries of operation data. The country/continent filters now work for profiles that have this field.
