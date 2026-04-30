@@ -71,52 +71,57 @@ export default function App() {
       {route !== "admin" && <SiteHeader />}
 
       {route === "database" && (
-        <div className="relative overflow-hidden bg-[#f5efe0] font-['Montserrat']">
-          <div className="relative w-full max-w-[1440px] mx-auto flex flex-col gap-8 items-center justify-center px-8 py-16 md:flex-row md:justify-between md:px-8 md:py-24">
+        <div className="relative bg-[#f5efe0] font-['Montserrat']">
+          <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col gap-8 items-center justify-center px-8 py-16 pb-40 md:flex-row md:items-end md:justify-between md:px-8 md:pt-24 md:pb-48">
             <img
               src="./illustrations/db1-hero.png"
               alt=""
-              className="w-full max-w-[320px] flex-shrink-0"
+              className="w-full max-w-[220px] flex-shrink-0"
               style={{ height: "auto" }}
             />
-            <div className="text-center md:text-left max-w-3xl">
+            <div className="text-center md:text-left">
               <div
-                className="font-bold uppercase text-[clamp(3.6rem,5vw,4.5rem)] leading-[1.25] text-[#00AAFF]"
+                className="font-bold uppercase text-[clamp(3.6rem,6vw,7rem)] leading-[1.1] text-[#00AAFF]"
                 style={{ letterSpacing: "-0.042em" }}
               >
-                <div>Explore the Leaders</div>
-                <div>Bridging the Gap</div>
+                <div>Women Leaders Bridging the Gap</div>
                 <div>in Digital Health</div>
               </div>
             </div>
             <img
               src="./illustrations/db2-hero.png"
               alt=""
-              className="w-full max-w-[300px] flex-shrink-0"
-              style={{ height: "auto" }}
+              className="w-full max-w-[240px] flex-shrink-0 md:mb-8"
+              style={{ height: "auto", transform: "translateX(-3rem)" }}
             />
           </div>
+          <img
+            src="./illustrations/Rectangle 6709-green.svg"
+            alt=""
+            className="absolute bottom-0 left-0 w-full"
+            style={{ display: "block", pointerEvents: "none" }}
+          />
         </div>
       )}
 
       {route === "analytics" && (
-        <div className="relative overflow-hidden bg-[#f5efe0] font-['Montserrat']">
-          <div className="relative w-full max-w-[1440px] mx-auto flex flex-col gap-8 items-center justify-center px-8 py-16 md:flex-row md:justify-between md:px-8 md:py-24">
+        <div className="relative bg-[#f5efe0] font-['Montserrat']">
+          <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col gap-8 items-center justify-center px-8 py-16 pb-40 md:flex-row md:items-end md:justify-between md:px-8 md:pt-24 md:pb-48">
             <img
               src="./illustrations/network2-hero.png"
               alt=""
-              className="w-full max-w-[320px] flex-shrink-0"
+              className="w-full max-w-[220px] flex-shrink-0"
               style={{ height: "auto" }}
             />
-            <div className="text-center md:text-left max-w-3xl">
+            <div className="text-center md:text-left">
               <div
-                className="font-bold uppercase text-[clamp(3.6rem,5vw,4.5rem)] leading-[1.25]"
+                className="font-bold uppercase text-[clamp(3.6rem,6vw,7rem)] leading-[1.1]"
                 style={{ letterSpacing: "-0.042em" }}
               >
                 <div className="text-[#02598e]">Global</div>
                 <div className="text-[#F85A8E]">Network</div>
               </div>
-              <p className="mt-4 max-w-[28rem] text-[1.6rem] leading-[1.5] text-[#333] md:text-[1.8rem]">
+              <p className="mt-6 text-[clamp(1.4rem,1.6vw,2rem)] leading-[1.5] text-[#333]">
                 A curated community of health leaders driving digital
                 transformation
               </p>
@@ -124,25 +129,31 @@ export default function App() {
             <img
               src="./illustrations/network1-hero.png"
               alt=""
-              className="w-full max-w-[300px] flex-shrink-0"
-              style={{ height: "auto" }}
+              className="w-full max-w-[240px] flex-shrink-0 md:mb-8"
+              style={{ height: "auto", transform: "translateX(-3rem)" }}
             />
           </div>
+          <img
+            src="./illustrations/Rectangle 6709-blue.svg"
+            alt=""
+            className="absolute bottom-0 left-0 w-full"
+            style={{ display: "block", pointerEvents: "none" }}
+          />
         </div>
       )}
 
       {route === "submit" && (
-        <div className="relative overflow-hidden bg-[#f5efe0] font-['Montserrat']">
-          <div className="relative w-full max-w-[1440px] mx-auto flex flex-col gap-8 items-center justify-center px-8 py-16 md:flex-row md:justify-between md:px-8 md:py-24">
+        <div className="relative bg-[#f5efe0] font-['Montserrat']">
+          <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col gap-8 items-center justify-center px-8 py-16 pb-40 md:flex-row md:items-end md:justify-between md:px-8 md:pt-24 md:pb-48">
             <img
               src="./illustrations/hero-left.png"
               alt=""
-              className="w-full max-w-[320px] flex-shrink-0"
+              className="w-full max-w-[220px] flex-shrink-0"
               style={{ height: "auto" }}
             />
-            <div className="text-center md:text-left max-w-3xl">
+            <div className="text-center md:text-left">
               <div
-                className="font-bold uppercase text-[clamp(3.6rem,5vw,4.5rem)] leading-[1.25]"
+                className="font-bold uppercase text-[clamp(3.6rem,6vw,7rem)] leading-[1.1]"
                 style={{ letterSpacing: "-0.042em" }}
               >
                 <div className="text-[#02598e]">Join</div>
@@ -153,10 +164,16 @@ export default function App() {
             <img
               src="./illustrations/hero-right.png"
               alt=""
-              className="w-full max-w-[300px] flex-shrink-0"
-              style={{ height: "auto" }}
+              className="w-full max-w-[240px] flex-shrink-0 md:mb-8"
+              style={{ height: "auto", transform: "translateX(-3rem)" }}
             />
           </div>
+          <img
+            src="./illustrations/Rectangle 6709.svg"
+            alt=""
+            className="absolute bottom-0 left-0 w-full"
+            style={{ display: "block", pointerEvents: "none" }}
+          />
         </div>
       )}
 
