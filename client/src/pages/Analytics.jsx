@@ -277,19 +277,7 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
             <div className="flex-shrink-0">
               <button
                 onClick={() => onGoToDirectory?.()}
-                style={{
-                  padding: "1.2rem 2.4rem",
-                  borderRadius: 12,
-                  textAlign: "center",
-                  cursor: "pointer",
-                  background: "#fff",
-                  border: "2px solid #e5e7eb",
-                  fontWeight: 600,
-                  fontSize: "1.2rem",
-                  color: "#111",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                }}
+                className="px-6 py-3 bg-[#E8571D] text-white rounded-lg text-[1.6rem] font-medium hover:bg-[#d64d1f] transition-colors"
               >
                 View Directory
               </button>

@@ -552,55 +552,100 @@ export default function Database({ onManageProfile }) {
                 <div
                   key={it.id}
                   onClick={() => setSelectedProfile(it)}
-                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer flex flex-col"
+                  className="relative cursor-pointer rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
+                  style={{ border: "1px solid #e5e7eb" }}
                 >
-                  <div className="mb-3">
-                    <div className="font-medium text-gray-900 text-[1.6rem] leading-tight">
-                      {it.first_name} {it.last_name}
-                    </div>
-                    <div className="text-[1.4rem] text-gray-700 mt-0.5 leading-tight">
-                      {it.role}
+                  {/* Dark header */}
+                  <div className="h-[120px]" style={{ background: "#333333" }} />
+
+                  {/* Profile photo — straddles header/body boundary */}
+                  <div
+                    className="absolute left-1/2 -translate-x-1/2"
+                    style={{ top: 60, zIndex: 2 }}
+                  >
+                    <div className="relative">
+                      {it.photo_url ? (
+                        <img
+                          src={it.photo_url}
+                          alt={`${it.first_name} ${it.last_name}`}
+                          className="w-[76px] h-[76px] rounded-full object-cover"
+                          style={{ border: "2px solid #F85A8E" }}
+                        />
+                      ) : (
+                        <div
+                          className="w-[76px] h-[76px] rounded-full bg-[#D9D9D9] flex items-center justify-center text-[2rem] font-semibold text-gray-600"
+                          style={{ border: "2px solid #F85A8E" }}
+                        >
+                          {getInitials(it.first_name, it.last_name)}
+                        </div>
+                      )}
+                      {it.linkedin && (
+                        <a
+                          href={it.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="absolute bottom-0 right-[-4px] w-[28px] h-[28px] rounded-full bg-[#02598E] flex items-center justify-center hover:bg-[#024a75] transition-colors"
+                          aria-label="LinkedIn"
+                        >
+                          <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                            <path d="M10.5 5.5C11.563 5.5 12.583 5.921 13.334 6.672C14.085 7.423 14.5 8.437 14.5 9.5V14H12.5V9.5C12.5 8.97 12.289 8.461 11.914 8.086C11.539 7.711 11.03 7.5 10.5 7.5C9.97 7.5 9.461 7.711 9.086 8.086C8.711 8.461 8.5 8.97 8.5 9.5V14H6.5V9.5C6.5 8.437 6.915 7.423 7.666 6.672C8.417 5.921 9.437 5.5 10.5 5.5Z" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M1.5 6H4.5V14H1.5V6Z" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <circle cx="3" cy="3" r="1.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </a>
+                      )}
                     </div>
                   </div>
 
-                  {it.expertise && (
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {it.expertise
-                        .split(", ")
-                        .slice(0, 2)
-                        .map((tag) => (
+                  {/* White body */}
+                  <div
+                    className="bg-white flex flex-col"
+                    style={{ paddingTop: 52, paddingLeft: 20, paddingRight: 20, paddingBottom: 20 }}
+                  >
+                    {/* Name + role + org */}
+                    <div className="text-center mb-3">
+                      <div className="font-semibold text-gray-900 text-[1.6rem] leading-tight">
+                        {it.first_name} {it.last_name}
+                      </div>
+                      <div className="text-[1.3rem] text-gray-500 mt-1 leading-snug">
+                        {it.role || <TBC />}
+                      </div>
+                      {it.organisation && (
+                        <div className="text-[1.2rem] text-gray-400 mt-0.5">{it.organisation}</div>
+                      )}
+                    </div>
+
+                    {/* Expertise tags */}
+                    {it.expertise && (
+                      <div className="flex flex-wrap gap-1 justify-center mb-4">
+                        {it.expertise.split(", ").slice(0, 3).map((tag) => (
                           <span
                             key={tag}
-                            className="text-[1.4rem] text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full"
+                            className="text-[1.2rem] text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full"
                           >
                             {tag}
                           </span>
                         ))}
-                      {it.expertise.split(", ").length > 2 && (
-                        <span className="text-[1.4rem] text-gray-600">
-                          +{it.expertise.split(", ").length - 2}
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="mt-auto flex items-center justify-between gap-2">
-                    {it.linkedin ? (
-                      <a
-                        href={it.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-[1.4rem] text-blue-600 hover:underline"
-                      >
-                        LinkedIn →
-                      </a>
-                    ) : (
-                      <span />
+                        {it.expertise.split(", ").length > 3 && (
+                          <span className="text-[1.2rem] text-gray-500">
+                            +{it.expertise.split(", ").length - 3}
+                          </span>
+                        )}
+                      </div>
                     )}
-                    <span className="text-[1.4rem] text-blue-600 font-medium">
-                      Read more →
-                    </span>
+
+                    {/* Footer: country + read more */}
+                    <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
+                      {it.country ? (
+                        <span className="text-[1.2rem] text-gray-400">{it.country}</span>
+                      ) : (
+                        <span />
+                      )}
+                      <span className="text-[1.3rem] text-[#02598E] font-medium">
+                        Read more →
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -611,7 +656,7 @@ export default function Database({ onManageProfile }) {
                 <div className="flex justify-center mt-6">
                   <button
                     onClick={loadMore}
-                    className="px-6 py-3 bg-[#E8571D] text-white rounded-full text-[1.6rem] font-medium hover:bg-[#d64d1f] transition-colors"
+                    className="px-6 py-3 bg-[#E8571D] text-white rounded-lg text-[1.6rem] font-medium hover:bg-[#d64d1f] transition-colors"
                   >
                     Load more leaders
                   </button>
