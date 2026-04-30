@@ -69,7 +69,6 @@ export default function Database({ onManageProfile }) {
   const [countryFilter, setCountryFilter] = useState("");
   const [continentFilter, setContinentFilter] = useState("");
   const [sortBy, setSortBy] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProfile, setSelectedProfile] = useState(null);
@@ -169,34 +168,6 @@ export default function Database({ onManageProfile }) {
     };
   }, [items]);
 
-  function clearFilters() {
-    setSearch("");
-    setExpertiseFilter("");
-    setCountryFilter("");
-    setContinentFilter("");
-    setSortBy("");
-    setVisibleCount(INITIAL_VISIBLE);
-    setCurrentPage(1);
-    setShowFilters(false);
-  }
-
-  function toggleFilter(type, value) {
-    if (type === "continent") {
-      setContinentFilter(continentFilter === value ? "" : value);
-      if (continentFilter !== value) {
-        setCountryFilter("");
-      }
-    } else if (type === "country") {
-      setCountryFilter(countryFilter === value ? "" : value);
-    } else if (type === "expertise") {
-      setExpertiseFilter(expertiseFilter === value ? "" : value);
-    }
-    setVisibleCount(INITIAL_VISIBLE);
-    setCurrentPage(1);
-  }
-
-  const activeFilterCount = [continentFilter, countryFilter, expertiseFilter].filter(Boolean).length;
-
   const allCountries = Object.keys(COUNTRY_TO_CONTINENT).sort();
   const visibleCountries = continentFilter
     ? allCountries.filter((c) => COUNTRY_TO_CONTINENT[c] === continentFilter)
@@ -248,15 +219,15 @@ export default function Database({ onManageProfile }) {
           position: "sticky",
           top: 0,
           zIndex: 40,
-          borderBottom: showFilters ? "none" : "1px solid #e5e7eb",
+          borderBottom: "1px solid #e5e7eb",
         }}
       >
         {/* Row 1 — always visible */}
         <div className="max-w-[1440px] mx-auto px-8 py-3 flex flex-wrap items-center gap-3">
-          <div className="flex-1 min-w-[200px] max-w-[420px]">
+          <div className="flex-1 min-w-[180px] max-w-[280px]">
             <input
               type="text"
-              placeholder="Search name, organisation, role..."
+              placeholder="Search..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -301,236 +272,83 @@ export default function Database({ onManageProfile }) {
             <option value="latest">Latest</option>
           </select>
 
-          <button
-            onClick={() => setShowFilters(!showFilters)}
+          <select
+            value={continentFilter}
+            onChange={(e) => {
+              setContinentFilter(e.target.value || "");
+              setCountryFilter("");
+              setCurrentPage(1);
+            }}
             style={{
-              padding: "1.0rem 1.8rem",
-              border: "1.5px solid #02598e",
+              padding: "1.0rem 1.6rem",
+              border: "1.5px solid #d1d5db",
               borderRadius: 10,
-              background: showFilters ? "#02598e" : "#fff",
-              color: showFilters ? "#fff" : "#02598e",
               fontSize: "1.4rem",
-              fontWeight: 700,
+              outline: "none",
+              background: "rgb(238, 243, 251)",
               cursor: "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              letterSpacing: "0.02em",
+              fontWeight: 600,
+              color: "#333",
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-              <path d="M2 3h12M4 6.5h8M6 10h4M7.5 13h1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-            Filters
-            {activeFilterCount > 0 && (
-              <span style={{
-                background: showFilters ? "rgba(255,255,255,0.25)" : "#02598e",
-                color: showFilters ? "#fff" : "#fff",
-                borderRadius: 10,
-                padding: "0.1rem 0.55rem",
-                fontSize: "1.2rem",
-                fontWeight: 700,
-                minWidth: 18,
-                textAlign: "center",
-              }}>
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
+            <option value="">Continent: All</option>
+            {CONTINENTS.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+
+          <select
+            value={countryFilter}
+            onChange={(e) => {
+              setCountryFilter(e.target.value || "");
+              setCurrentPage(1);
+            }}
+            style={{
+              padding: "1.0rem 1.6rem",
+              border: "1.5px solid #d1d5db",
+              borderRadius: 10,
+              fontSize: "1.4rem",
+              outline: "none",
+              background: "rgb(238, 243, 251)",
+              cursor: "pointer",
+              fontWeight: 600,
+              color: "#333",
+            }}
+          >
+            <option value="">Country: All</option>
+            {visibleCountries.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+
+          <select
+            value={expertiseFilter}
+            onChange={(e) => {
+              setExpertiseFilter(e.target.value || "");
+              setCurrentPage(1);
+            }}
+            style={{
+              padding: "1.0rem 1.6rem",
+              border: "1.5px solid #d1d5db",
+              borderRadius: 10,
+              fontSize: "1.4rem",
+              outline: "none",
+              background: "rgb(238, 243, 251)",
+              cursor: "pointer",
+              fontWeight: 600,
+              color: "#333",
+            }}
+          >
+            <option value="">Expertise: All</option>
+            {EXPERTISE_OPTIONS.map((tag) => (
+              <option key={tag} value={tag}>{tag}</option>
+            ))}
+          </select>
 
           <div className="ml-auto text-[1.4rem] text-gray-600" style={{ fontWeight: 500 }}>
             {filteredItems.length} of {stats.total} leaders
           </div>
         </div>
-
-        {/* Active filter chips */}
-        {activeFilterCount > 0 && (
-          <div className="max-w-[1440px] mx-auto px-8 pb-3 flex flex-wrap items-center gap-2">
-            <span style={{ fontSize: "1.3rem", color: "#666", fontWeight: 500 }}>Active:</span>
-            {continentFilter && (
-              <span style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "0.4rem 1.0rem",
-                borderRadius: 20,
-                background: "#02598e",
-                color: "#fff",
-                fontSize: "1.3rem",
-                fontWeight: 500,
-              }}>
-                {continentFilter}
-                <button
-                  onClick={() => toggleFilter("continent", continentFilter)}
-                  style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: "1.4rem", lineHeight: 1, padding: 0 }}
-                >×</button>
-              </span>
-            )}
-            {countryFilter && (
-              <span style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "0.4rem 1.0rem",
-                borderRadius: 20,
-                background: "#02598e",
-                color: "#fff",
-                fontSize: "1.3rem",
-                fontWeight: 500,
-              }}>
-                {countryFilter}
-                <button
-                  onClick={() => toggleFilter("country", countryFilter)}
-                  style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: "1.4rem", lineHeight: 1, padding: 0 }}
-                >×</button>
-              </span>
-            )}
-            {expertiseFilter && (
-              <span style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "0.4rem 1.0rem",
-                borderRadius: 20,
-                background: "#02598e",
-                color: "#fff",
-                fontSize: "1.3rem",
-                fontWeight: 500,
-              }}>
-                {expertiseFilter}
-                <button
-                  onClick={() => toggleFilter("expertise", expertiseFilter)}
-                  style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: "1.4rem", lineHeight: 1, padding: 0 }}
-                >×</button>
-              </span>
-            )}
-            <button
-              onClick={clearFilters}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontSize: "1.3rem",
-                color: "#02598e",
-                fontWeight: 600,
-                textDecoration: "underline",
-                padding: "0.4rem 0",
-              }}
-            >
-              Clear all
-            </button>
-          </div>
-        )}
-
-        {/* Row 2 — collapsible filter panel */}
-        {showFilters && (
-          <div style={{
-            background: "rgb(255, 255, 244)",
-            borderTop: "1px solid #e5e7eb",
-            padding: "2.4rem 2.4rem 2rem",
-          }}>
-            <div className="max-w-[1440px] mx-auto space-y-5">
-              {/* Continent */}
-              <div>
-                <label style={{
-                  display: "block",
-                  fontSize: "1.6rem",
-                  color: "#111",
-                  marginBottom: 12,
-                  fontWeight: 600,
-                }}>
-                  Continent
-                </label>
-                <select
-                  value={continentFilter}
-                  onChange={(e) => setContinentFilter(e.target.value || "")}
-                  style={{
-                    width: "100%",
-                    maxWidth: 400,
-                    padding: "1rem 1.6rem",
-                    fontSize: "1.6rem",
-                    borderRadius: 10,
-                    border: "1.5px solid #d1d5db",
-                    background: "#fff",
-                    outline: "none",
-                    boxSizing: "border-box",
-                  }}
-                >
-                  <option value="">All continents</option>
-                  {CONTINENTS.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Country */}
-              <div>
-                <label style={{
-                  display: "block",
-                  fontSize: "1.6rem",
-                  color: "#111",
-                  marginBottom: 12,
-                  fontWeight: 600,
-                }}>
-                  Country{continentFilter ? ` — ${continentFilter}` : ""}
-                </label>
-                <select
-                  value={countryFilter}
-                  onChange={(e) => setCountryFilter(e.target.value || "")}
-                  style={{
-                    width: "100%",
-                    maxWidth: 400,
-                    padding: "1rem 1.6rem",
-                    fontSize: "1.6rem",
-                    borderRadius: 10,
-                    border: "1.5px solid #d1d5db",
-                    background: "#fff",
-                    outline: "none",
-                    boxSizing: "border-box",
-                  }}
-                >
-                  <option value="">All countries</option>
-                  {visibleCountries.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Expertise */}
-              <div>
-                <label style={{
-                  display: "block",
-                  fontSize: "1.6rem",
-                  color: "#111",
-                  marginBottom: 12,
-                  fontWeight: 600,
-                }}>
-                  Expertise
-                </label>
-                <select
-                  value={expertiseFilter}
-                  onChange={(e) => setExpertiseFilter(e.target.value || "")}
-                  style={{
-                    width: "100%",
-                    maxWidth: 400,
-                    padding: "1rem 1.6rem",
-                    fontSize: "1.6rem",
-                    borderRadius: 10,
-                    border: "1.5px solid #d1d5db",
-                    background: "#fff",
-                    outline: "none",
-                    boxSizing: "border-box",
-                  }}
-                >
-                  <option value="">All expertise areas</option>
-                  {EXPERTISE_OPTIONS.map((tag) => (
-                    <option key={tag} value={tag}>{tag}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       <div className="max-w-[1440px] mx-auto px-8 py-6">
