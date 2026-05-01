@@ -155,20 +155,22 @@ client/src/
 | 12 | **SMTP email notifications** | Needs a server (Firebase Function or Node endpoint), email service config, template design |
 | 13 | **Click-through analytics** | Needs an analytics service (Plausible / GA4) or custom event logging — not a one-liner |
 
-### Code Quality / Technical Debt (From Audit)
+### Code Quality / Technical Debt (From Audit) — Updated
 
-| # | Task | Priority |
-|---|---|---|
-| 14 | **Compress Card-top.svg** (1.95MB → <100KB) | 🔴 High — blocks LCP |
-| 15 | **Replace inline styles with Tailwind classes** | 🔴 High — 90% inline styles in Submit.jsx |
-| 16 | **Create reusable UI components** (Button, Input, LeaderCard) | 🔴 High — duplicated in Database/Analytics |
-| 17 | **Centralize API layer** (client/src/api/index.js) | 🔴 High — scattered Axios calls |
-| 18 | **Extract monolithic pages** (Submit.jsx 2000+ lines → steps) | 🔴 High — untestable |
-| 19 | **Add useLeaders / useAdminData custom hooks** | 🟡 Medium — no caching currently |
-| 20 | **Configure tailwind.config.js** with design tokens | 🟡 Medium — arbitrary values everywhere |
-| 21 | **Add React Query / SWR for data fetching** | 🟡 Medium — no caching/stale-while-revalidate |
-| 22 | **Accessibility audit** (aria-labels, focus trap, keyboard nav) | 🟢 Low — fails WCAG 2.1 AA |
-| 23 | **Code splitting / lazy loading** | 🟢 Low — all 4 pages bundled initially |
+| # | Task | Priority | Status |
+|---|---|---|---|
+| 14 | **Compress Card-top.svg** (1.95MB → <100KB) | 🔴 High — blocks LCP | ⚠️ Partial — file modified but still ~1.95MB |
+| 15 | **Replace inline styles with Tailwind classes** | 🔴 High — mixed styles | 🔄 Partial — config created, pages refactored but arbitrary values remain |
+| 16 | **Create reusable UI components** (Button, Input, LeaderCard) | 🔴 High | ✅ **Done** — 3 components created |
+| 17 | **Centralize API layer** (client/src/api/leaders.js) | 🔴 High — scattered Axios calls | ✅ **Done** — centralized with all endpoints |
+| 18 | **Extract monolithic pages** (Submit.jsx 2000+ lines → steps) | 🔴 High — untestable | 🔄 Partial — LeaderCard extracted, pages still large |
+| 19 | **Add useLeaders / useAdminData custom hooks** | 🟡 Medium — no caching | ✅ **Done** — useLeaders.js created (69 lines) |
+| 20 | **Configure tailwind.config.js** with design tokens | 🟡 Medium — arbitrary values | 🔄 Partial — brand colors added, not fully adopted |
+| 21 | **Add React Query / SWR for data fetching** | 🟡 Medium — no caching | ❌ Not started — useLeaders uses raw useEffect |
+| 22 | **Accessibility audit** (aria-labels, focus trap, keyboard nav) | 🟢 Low — fails WCAG 2.1 AA | ❌ Not started |
+| 23 | **Code splitting / lazy loading** | 🟢 Low — all 4 pages bundled | ❌ Not started |
+| 24 | **DRY up icons** (LeaderCard + ProfileModal duplicate SVG) | 🟡 Medium | ❌ Not started — same icons defined twice |
+| 25 | **Move COUNTRY_TO_CONTINENT out of hook** | 🟡 Medium | ❌ Not started — exported from useLeaders.js |
 
 ### Recommended Order for Thursday–Sunday
 - **Today (Thursday):** Items 8–9 (profile modal, analytics region filter)
