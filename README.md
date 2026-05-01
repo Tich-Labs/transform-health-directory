@@ -10,6 +10,168 @@ A project to increase visibility, representation, and engagement of women leader
 
 ---
 
+## 🚀 Quick Setup Guide (For Handover)
+
+### Prerequisites
+- Node.js 18+ installed
+- Google account (for Sheets + Apps Script)
+- Firebase project (for profile photo storage)
+- GitHub account (for hosting)
+
+---
+
+### Step 1: Clone & Install
+
+```bash
+git clone https://github.com/Tich-Labs/transform-health-directory.git
+cd transform-health-directory
+cd client
+npm install
+```
+
+---
+
+### Step 2: Google Sheets + Apps Script Setup
+
+1. **Create a new Google Sheet** (this will store all leader profiles)
+   - Name it: `Transform Health Directory - Live`
+   - Copy the Sheet ID from the URL: `https://docs.google.com/spreadsheets/d/{SHEET_ID}/edit`
+
+2. **Create Apps Script project:**
+   - In the Google Sheet, go to **Extensions → Apps Script**
+   - Paste the code from `apps-script/Code.gs`
+   - Click **Project Settings (gear icon) → Script Properties**
+   - Add these properties:
+     ```
+     TARGET_SHEET_ID   = {your Sheet ID from step 1}
+     ADMIN_PASSWORD    = {choose a secure admin password}
+     SITE_URL          = {your deployed site URL, e.g. https://yourname.github.io/transform-health-directory}
+     ```
+
+3. **Deploy the Apps Script:**
+   - Click **Deploy → New Deployment**
+   - Type: **Web app**
+   - Execute as: **Me**
+   - Who has access: **Anyone** (this allows the frontend to call it)
+   - Copy the **Web app URL** (looks like `https://script.google.com/macros/s/.../exec`)
+
+4. **Test the API:**
+   ```bash
+   # Test GET entries
+   curl "{YOUR_APPS_SCRIPT_URL}?api=entries&status=live"
+   
+   # Should return: [] (empty array, no entries yet)
+   ```
+
+---
+
+### Step 3: Firebase Setup (Profile Photos)
+
+1. **Create Firebase project:**
+   - Go to [console.firebase.google.com](https://console.firebase.google.com)
+   - Click **Add project → Create a project**
+   - Name it: `transform-health-directory`
+
+2. **Enable Storage:**
+   - In Firebase console, go to **Build → Storage**
+   - Click **Get started**
+   - Start in **test mode** (or set up security rules)
+
+3. **Register web app:**
+   - Go to **Project Settings (gear icon) → General**
+   - Scroll to **Your apps → Add app → Web**
+   - Register app (no need to set up Firebase Hosting)
+   - Copy the config values
+
+4. **Add Firebase config to `.env`:**
+   ```bash
+   cd client
+   cp .env.example .env
+   ```
+   
+   Edit `.env` and add:
+   ```
+   VITE_FIREBASE_API_KEY=your_api_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=your_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
+   ```
+
+---
+
+### Step 4: Connect Frontend to Backend
+
+Edit `client/.env` and add your Apps Script URL:
+```
+VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/.../exec
+```
+
+**Test locally:**
+```bash
+cd client
+npm run dev
+```
+- Open `http://localhost:5173`
+- Submit a test profile via the "SUBMIT PROFILE" tab
+- Check your Google Sheet — a new row should appear with status "pending"
+- Go to "ADMIN" tab, enter your admin password
+- Approve the test submission
+- Check "DATABASE" tab — your test profile should appear
+
+---
+
+### Step 5: Deploy to GitHub Pages
+
+1. **Push to main branch:**
+   ```bash
+   git add .
+   git commit -m "Initial setup"
+   git push origin main
+   ```
+
+2. **Enable GitHub Pages:**
+   - Go to your GitHub repo → **Settings → Pages**
+   - Source: **GitHub Actions**
+   - The workflow in `.github/workflows/deploy.yml` will auto-deploy
+
+3. **Update Apps Script SITE_URL:**
+   - Go back to Apps Script → **Project Settings → Script Properties**
+   - Update `SITE_URL` to your GitHub Pages URL:
+     ```
+     SITE_URL = https://yourusername.github.io/transform-health-directory
+     ```
+
+4. **Redeploy Apps Script** (to pick up new SITE_URL):
+   - Click **Deploy → Manage deployments → Edit**
+   - Version: **New version**
+   - Click **Deploy**
+
+---
+
+### Step 6: Test Email Magic Links
+
+1. Submit a profile with your email address
+2. Approve it in Admin
+3. Use "Manage your profile" link on the site
+4. Enter your email → Check inbox for magic link
+5. Click the link → Should open your profile for editing
+
+---
+
+### Troubleshooting
+
+| Issue | Solution |
+|---|---|
+| Apps Script returns 403 | Redeploy as "Anyone" access |
+| Firebase permission denied | Check Storage rules, switch to test mode |
+| Sheet not found | Verify TARGET_SHEET_ID in Script Properties |
+| Magic link not working | Check SITE_URL in Script Properties, redeploy |
+| Photos not uploading | Verify Firebase config in `.env` |
+
+---
+
 ## Client App — Quick Start
 
 ### 1) Install dependencies
