@@ -166,7 +166,7 @@ client/src/
 | 18 | **Extract monolithic pages** (Submit.jsx → steps) | 🔴 High | ✅ **Done** — Submit.jsx → SubmitSteps.jsx (280 lines) |
 | 19 | **Add useLeaders / useAdminData custom hooks** | 🟡 Medium | ✅ **Done** — useLeaders.js (69 lines) |
 | 20 | **Configure tailwind.config.js** with design tokens | 🟡 Medium | ✅ **Done** — brand colors added |
-| 21 | **Add React Query / SWR for data fetching** | 🟡 Medium | ❌ Not started — useLeaders uses raw useEffect |
+| 21 | **Add React Query / SWR for data fetching** | 🟡 Medium | ✅ **Done** — commit, useQuery with 5min stale time |
 | 22 | **Accessibility audit** (aria-labels, focus trap, keyboard nav) | 🟢 Low | ❌ Not started — ProfileModal has no focus trap |
 | 23 | **Code splitting / lazy loading** | 🟢 Low | ❌ Not started — App.jsx imports all pages directly |
 | 24 | **DRY up icons** (LeaderCard + ProfileModal duplicate SVG) | 🟡 Medium | ✅ **Done** — commit `b31a6c1`, icons.jsx created |
