@@ -1,9 +1,12 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "../api/leaders";
 import { COUNTRY_TO_CONTINENT } from "../utils/countries";
 
 /**
  * useLeaders — single source of truth for leader data.
+ *
+ * Uses TanStack Query for caching, stale-while-revalidate, and background updates.
  *
  * All params are optional primitives so useMemo deps stay stable
  * across renders without needing deep-equality.
@@ -21,16 +24,12 @@ export function useLeaders({
   continent = "",
   sort      = "",
 } = {}) {
-  const [allLeaders, setAllLeaders] = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [error,      setError]      = useState(null);
-
-  useEffect(() => {
-    api.getLeaders()
-      .then(setAllLeaders)
-      .catch((e) => { console.error("useLeaders: fetch failed", e); setError(e); })
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: allLeaders = [], isLoading: loading, error } = useQuery({
+    queryKey: ["leaders"],
+    queryFn: () => api.getLeaders(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
+  });
 
   const leaders = useMemo(() => {
     let result = allLeaders;
@@ -54,5 +53,5 @@ export function useLeaders({
     return result;
   }, [allLeaders, search, expertise, country, continent, sort]);
 
-  return { leaders, allLeaders, loading, error };
+  return { leaders, allLeaders, loading, error: error || null };
 }

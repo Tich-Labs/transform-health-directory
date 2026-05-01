@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Database from "./pages/Database";
 import Submit from "./pages/Submit";
 import Admin from "./pages/Admin";
@@ -8,6 +9,8 @@ import ManageProfile from "./pages/ManageProfile";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 
+const queryClient = new QueryClient();
+
 const NAV_ITEMS = [
   { id: "database", label: "Database", display: "DATABASE" },
   { id: "analytics", label: "Analytics", display: "ANALYTICS" },
@@ -15,7 +18,7 @@ const NAV_ITEMS = [
   { id: "admin", label: "Admin", display: "ADMIN" },
 ];
 
-export default function App() {
+function App() {
   const [route, setRoute] = useState("database");
   const [managePrefill, setManagePrefill] = useState(null);
   const [showManageModal, setShowManageModal] = useState(false);
@@ -281,8 +284,17 @@ export default function App() {
             </div>
           </div>
         )}
-      </main>
+       </main>
       {route !== "admin" && <SiteFooter />}
     </div>
+  );
+}
+
+// Wrapper with React Query provider
+export default function AppWithQuery() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
   );
 }

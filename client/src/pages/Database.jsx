@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { useLeaders, COUNTRY_TO_CONTINENT } from "../hooks/useLeaders";
+import { useLeaders } from "../hooks/useLeaders";
+import { COUNTRY_TO_CONTINENT } from "../utils/countries";
 import LeaderCard from "../components/LeaderCard";
 import ProfileModal from "../components/ProfileModal";
 

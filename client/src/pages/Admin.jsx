@@ -294,14 +294,6 @@ export default function Admin({ onGoToDirectory }) {
       setActionMessage("Unable to complete bulk deletion. Please try again.");
     }
   }
-      setRequests((current) => current.map((r) => selectedDeletes.includes(r.id) ? { ...r, status: "approved" } : r));
-      setActionMessage(`${selectedDeletes.length} deletion request(s) approved.`);
-      setSelectedDeletes([]);
-    } catch (e) {
-      console.error(e);
-      setActionMessage("Unable to complete bulk deletion. Please try again.");
-    }
-  }
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
