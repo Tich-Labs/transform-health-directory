@@ -1,4 +1,5 @@
 import React from "react";
+import { LinkedInIcon, PersonIcon, OrgIcon } from "./icons";
 
 function TBC() {
   return <span className="italic text-gray-400">TBC</span>;
@@ -7,28 +8,6 @@ function TBC() {
 function getInitials(first, last) {
   return ((first?.[0] || "") + (last?.[0] || "")).toUpperCase();
 }
-
-const PersonIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#02598E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
-  </svg>
-);
-
-const OrgIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#02598E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-  </svg>
-);
-
-const LinkedInIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
-    <path d="M10.5 5.5C11.563 5.5 12.583 5.921 13.334 6.672C14.085 7.423 14.5 8.437 14.5 9.5V14H12.5V9.5C12.5 8.97 12.289 8.461 11.914 8.086C11.539 7.711 11.03 7.5 10.5 7.5C9.97 7.5 9.461 7.711 9.086 8.086C8.711 8.461 8.5 8.97 8.5 9.5V14H6.5V9.5C6.5 8.437 6.915 7.423 7.666 6.672C8.417 5.921 9.437 5.5 10.5 5.5Z" stroke="#0A66C2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M4.5 5.5V14" stroke="#0A66C2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M3.5 3.5C3.5 3.897 3.342 4.269 3.061 4.561C2.78 4.853 2.398 5.011 2 5.011C1.602 5.011 1.22 4.853 0.939 4.561C0.658 4.269 0.5 3.897 0.5 3.5C0.5 3.103 0.658 2.731 0.939 2.439C1.22 2.147 1.602 1.989 2 1.989C2.398 1.989 2.78 2.147 3.061 2.439C3.342 2.731 3.5 3.103 3.5 3.5Z" stroke="#0A66C2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
 
 function MetaRow({ label, children }) {
   return (
@@ -39,10 +18,6 @@ function MetaRow({ label, children }) {
   );
 }
 
-/**
- * ProfileModal — full-detail overlay for a selected leader.
- * Rendered at the page level; separate from LeaderCard.
- */
 export default function ProfileModal({ leader, onClose, onManage }) {
   if (!leader) return null;
 
@@ -75,7 +50,7 @@ export default function ProfileModal({ leader, onClose, onManage }) {
                 className="w-20 h-20 rounded-full object-cover"
               />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center text-[2rem] font-semibold text-gray-700">
+              <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center text-[2rem] font-bold text-gray-700">
                 {getInitials(leader.first_name, leader.last_name)}
               </div>
             )}
@@ -87,7 +62,7 @@ export default function ProfileModal({ leader, onClose, onManage }) {
                 ★ Featured
               </span>
             )}
-            <h2 className="text-[2rem] font-semibold text-gray-900 flex items-center gap-2">
+            <h2 className="text-[2rem] font-bold text-gray-900 flex items-center gap-2">
               {leader.first_name} {leader.last_name}
               {leader.linkedin?.trim() && (
                 <a href={leader.linkedin} target="_blank" rel="noopener noreferrer" title="LinkedIn Profile" className="inline-flex">
@@ -96,12 +71,10 @@ export default function ProfileModal({ leader, onClose, onManage }) {
               )}
             </h2>
             <p className="text-[1.4rem] text-gray-800 mt-1 flex items-center gap-2">
-              <PersonIcon />
-              <span>{leader.role || <TBC />}</span>
+              <PersonIcon /> <span>{leader.role || <TBC />}</span>
             </p>
             <p className="text-[1.4rem] text-gray-700 mt-0.5 flex items-center gap-2">
-              <OrgIcon />
-              <span>{leader.organisation || <TBC />}</span>
+              <OrgIcon /> <span>{leader.organisation || <TBC />}</span>
             </p>
           </div>
         </div>
@@ -157,7 +130,7 @@ export default function ProfileModal({ leader, onClose, onManage }) {
             <div className="space-y-2">
               {leader.notableItems.map((item, i) => (
                 <div key={i} className="flex items-start gap-2 text-[1.6rem]">
-                  <span className="text-[1.2rem] font-semibold text-gray-600 mt-0.5 w-5">{i + 1}.</span>
+                  <span className="text-[1.2rem] font-bold text-gray-600 mt-0.5 w-5">{i + 1}.</span>
                   <div className="flex-1">
                     <div className="text-gray-900 font-medium">
                       {item.link ? (
