@@ -27,6 +27,19 @@ module.exports = {
         },
         gray: {
           300: '#D9D9D9',
+          500: '##666',
+          600: '##444',
+          50:  '#e5e7eb',
+          100: '#f3f4f6',
+          200: '#e5e7eb',
+        },
+        amber: {
+          200: '#fde68a',
+        },
+        accent: {
+          amber:   '#b8860b',
+          purple:  '##9d174d',
+          pink:    '##be185d',
         },
       },
       fontSize: {

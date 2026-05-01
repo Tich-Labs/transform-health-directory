@@ -421,7 +421,7 @@ export default function Admin({ onGoToDirectory }) {
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-lg font-medium transition-colors ${
                     isActive
                       ? "bg-brand-blue-tint text-brand-navy border border-brand-blue-border"
-                      : "bg-transparent text-gray-500 border border-transparent hover:bg-[#f9fafb]"
+                      : "bg-transparent text-gray-500 border border-transparent hover:bg-gray-50"
                   }`}
                 >
                   <span className={isActive ? "text-brand-navy" : "text-gray-400"}>
@@ -430,7 +430,7 @@ export default function Admin({ onGoToDirectory }) {
                   <span className="flex-1 text-left">{item.label}</span>
                   {item.count !== undefined && (
                     <span className={`text-[1.4rem] font-semibold px-2 py-0.5 rounded-full ${
-                      isActive ? "bg-brand-navy text-white" : "bg-[#e5e7eb] text-gray-500"
+                      isActive ? "bg-brand-navy text-white" : "bg-gray-200 text-gray-500"
                     }`}>
                       {item.count}
                     </span>
@@ -464,8 +464,8 @@ export default function Admin({ onGoToDirectory }) {
               </div>
               <div className="grid grid-cols-3 gap-3 text-center sm:text-right">
                 <div className="bg-brand-parchment rounded-xl px-[1.6rem] py-[1.2rem] border border-[#f0c64a]">
-                  <div className="text-[1.2rem] uppercase tracking-wider text-[#b8860b]">Pending</div>
-                  <div className="text-xl font-semibold text-[#b8860b]">{pendingCount}</div>
+                  <div className="text-[1.2rem] uppercase tracking-wider text-accent-amber">Pending</div>
+                  <div className="text-xl font-semibold text-accent-amber">{pendingCount}</div>
                 </div>
                 <div className="bg-brand-parchment rounded-xl px-[1.6rem] py-[1.2rem] border border-green-300">
                   <div className="text-[1.2rem] uppercase tracking-wider text-green-600">Live</div>
@@ -557,7 +557,7 @@ export default function Admin({ onGoToDirectory }) {
                   >
                     Updates
                     <span className={`ml-2 text-[1.3rem] font-medium px-2 py-0.5 rounded-full ${
-                      requestSubTab === "updates" ? "bg-brand-blue-tint text-brand-navy" : "bg-[#e5e7eb] text-gray-500"
+                      requestSubTab === "updates" ? "bg-brand-blue-tint text-brand-navy" : "bg-gray-200 text-gray-500"
                     }`}>
                       {updateRequests.length}
                     </span>
@@ -572,7 +572,7 @@ export default function Admin({ onGoToDirectory }) {
                   >
                     Deletes
                     <span className={`ml-2 text-[1.3rem] font-medium px-2 py-0.5 rounded-full ${
-                      requestSubTab === "deletes" ? "bg-red-50 text-red-600" : "bg-[#e5e7eb] text-gray-500"
+                      requestSubTab === "deletes" ? "bg-red-50 text-red-600" : "bg-gray-200 text-gray-500"
                     }`}>
                       {deleteRequests.length}
                     </span>
@@ -588,7 +588,7 @@ export default function Admin({ onGoToDirectory }) {
                       </div>
                     ) : (
                       <>
-                        <div className="flex items-center justify-between px-5 py-3 border-b bg-[#fef3c7] border-amber-200">
+                        <div className="flex items-center justify-between px-5 py-3 border-b bg-amber-50 border-amber-200">
                           <div className="text-[1.4rem] font-semibold text-amber-600">
                             {updateRequests.length} update request(s) — send self-service links
                           </div>
@@ -622,7 +622,7 @@ export default function Admin({ onGoToDirectory }) {
                                 </div>
                                 <div className="flex items-center gap-3 flex-shrink-0">
                                   {linkSent && (
-                                    <span className="text-[1.2rem] font-medium px-2 py-1 rounded-full bg-[#e5e7eb] text-gray-500">Link sent</span>
+                                    <span className="text-[1.2rem] font-medium px-2 py-1 rounded-full bg-gray-200 text-gray-500">Link sent</span>
                                   )}
                                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={`text-gray-400 transition-transform ${isSelected ? "rotate-180" : "rotate-0"}`}>
                                     <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -652,7 +652,7 @@ export default function Admin({ onGoToDirectory }) {
                                       disabled={actionId === req.id}
                                       className={`px-5 py-2.5 text-[1.5rem] font-medium rounded-full transition-colors disabled:opacity-50 ${
                                         linkSent
-                                          ? "bg-brand-blue-tint text-brand-navy border-[1.5px] border-brand-blue-border hover:bg-[#dbeafe]"
+                                          ? "bg-brand-blue-tint text-brand-navy border-[1.5px] border-brand-blue-border hover:bg-blue-50"
                                           : "bg-brand-navy text-white hover:bg-brand-navy-hover"
                                       }`}
                                     >
@@ -803,10 +803,10 @@ export default function Admin({ onGoToDirectory }) {
               ) : (
                 <div className="rounded-lg overflow-hidden border-[1.5px] border-brand-warm-border bg-brand-parchment">
                   <div className="flex items-center justify-between px-5 py-3 border-b bg-pink-light border-[#f9a8d4]">
-                    <div className="text-[1.4rem] font-semibold text-[#be185d]">
+                    <div className="text-[1.4rem] font-semibold text-accent-pink">
                       {nominatedList.length} nominations to reach out to
                     </div>
-                    <div className="text-[1.2rem] text-[#9d174d]">
+                    <div className="text-[1.2rem] text-accent-purple">
                       Click a nominee to view details &amp; outreach message
                     </div>
                   </div>
@@ -825,7 +825,7 @@ export default function Admin({ onGoToDirectory }) {
                           <div className="flex-shrink-0 mr-4">
                             <div className="w-2.5 h-2.5 rounded-full bg-brand-pink" />
                           </div>
-                          <div className="w-10 h-10 rounded-full flex items-center justify-center text-[1.4rem] font-medium flex-shrink-0 mr-4 bg-pink-light text-[#be185d]">
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center text-[1.4rem] font-medium flex-shrink-0 mr-4 bg-pink-light text-accent-pink">
                             {getInitials(item.first_name, item.last_name)}
                           </div>
                           <div className="flex-1 min-w-0 mr-4">
@@ -844,7 +844,7 @@ export default function Admin({ onGoToDirectory }) {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={e => e.stopPropagation()}
-                                className="text-[1.2rem] font-medium px-2.5 py-1 rounded-full bg-brand-blue-tint text-brand-navy hover:bg-[#dbeafe] transition-colors"
+                                className="text-[1.2rem] font-medium px-2.5 py-1 rounded-full bg-brand-blue-tint text-brand-navy hover:bg-blue-50 transition-colors"
                               >
                                 LinkedIn ↗
                               </a>
@@ -868,12 +868,12 @@ export default function Admin({ onGoToDirectory }) {
                                 </div>
                               </div>
                               <div className="rounded-lg p-4 bg-brand-parchment border border-[#f9a8d4]">
-                                <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-2 text-[#be185d]">Contact</div>
+                                <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-2 text-accent-pink">Contact</div>
                                 <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
-                                  <div><span className="text-[#be185d] font-semibold">Nominator: </span>{item.editor_email || item.editorEmail || "—"}</div>
+                                  <div><span className="text-accent-pink font-semibold">Nominator: </span>{item.editor_email || item.editorEmail || "—"}</div>
                                   {item.linkedin && (
                                     <div>
-                                      <span className="text-[#be185d] font-semibold">LinkedIn: </span>
+                                      <span className="text-accent-pink font-semibold">LinkedIn: </span>
                                       <a href={item.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline text-brand-navy">{item.linkedin}</a>
                                     </div>
                                   )}
@@ -890,11 +890,11 @@ export default function Admin({ onGoToDirectory }) {
 
                             <div className="rounded-lg overflow-hidden border-[1.5px] border-[#f9a8d4]">
                               <div className="flex items-center justify-between px-4 py-3 bg-pink-light">
-                                <div className="text-[1.4rem] font-semibold text-[#be185d]">Outreach message</div>
+                                <div className="text-[1.4rem] font-semibold text-accent-pink">Outreach message</div>
                                 <button
                                   onClick={() => handleCopyMessage(item)}
                                   className={`px-3 py-1.5 text-[1.3rem] font-semibold rounded-full transition-colors ${
-                                    isCopied ? "bg-green-600 text-white" : "bg-[#be185d] text-white hover:bg-[#9d174d]"
+                                    isCopied ? "bg-green-600 text-white" : "bg-accent-purple text-white hover:bg-accent-purple-light"
                                   }`}
                                 >
                                   {isCopied ? "✓ Copied" : "Copy message"}
@@ -943,7 +943,7 @@ export default function Admin({ onGoToDirectory }) {
               ) : (
                 <div className="rounded-lg overflow-hidden border-[1.5px] border-brand-warm-border bg-brand-parchment">
                   {/* Inbox header */}
-                  <div className="flex items-center justify-between px-5 py-3 border-b bg-[#fef3c7] border-amber-200">
+                  <div className="flex items-center justify-between px-5 py-3 border-b bg-amber-50 border-amber-200">
                     <div className="flex items-center gap-3">
                       <div className="text-[1.4rem] font-semibold text-amber-600">
                         {filteredPending.length} pending review
@@ -988,7 +988,7 @@ export default function Admin({ onGoToDirectory }) {
                       <div key={item.id}>
                         <div
                           className={`flex items-center px-5 cursor-pointer transition-colors min-h-[64px] border-b border-brand-warm-row-border ${
-                            isExpanded ? "bg-brand-warm-row" : isChecked ? "bg-[#fefce8]" : "bg-white hover:bg-brand-warm-bg"
+                            isExpanded ? "bg-brand-warm-row" : isChecked ? "bg-brand-warm-bg" : "bg-white hover:bg-brand-warm-bg"
                           }`}
                           onClick={() => setExpandedId(isExpanded ? null : item.id)}
                         >
@@ -1139,7 +1139,7 @@ export default function Admin({ onGoToDirectory }) {
                                   item.status === "live"
                                     ? "bg-green-100 text-green-600"
                                     : item.status === "pending"
-                                    ? "bg-[#fef3c7] text-amber-600"
+                                    ? "bg-amber-50 text-amber-600"
                                     : "bg-red-50 text-red-600"
                                 }`}>
                                   {item.status}
