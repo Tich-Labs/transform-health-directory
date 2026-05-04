@@ -8,10 +8,9 @@ import {
 import { useLeaders } from "../hooks/useLeaders";
 import { COUNTRY_TO_REGION, REGION_LABELS, REGION_MARKERS } from "../utils/countries";
 import LeaderCard from "../components/LeaderCard";
+import ProfileModal from "../components/ProfileModal";
 
 const BAR_COLORS = ["#F97316","#18181B","#1E3A5F","#EAB308","#22C55E","#38BDF8","#EC4899","#166534"];
-
-const FEATURED_IDS = ["th_38", "th_46", "th_52", "th_80"];
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
@@ -24,6 +23,7 @@ function toTitleCase(str) {
 
 export default function Analytics({ onManageProfile, onGoToDirectory }) {
   const [selectedRegion, setSelectedRegion] = useState("latin_america");
+  const [selectedProfile, setSelectedProfile] = useState(null);
 
   const { allLeaders, loading } = useLeaders();
 
@@ -49,11 +49,6 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
       color: BAR_COLORS[i % BAR_COLORS.length],
     }));
   }, [stats]);
-
-  const featured = useMemo(() => {
-    const picked = allLeaders.filter((l) => FEATURED_IDS.includes(l.id));
-    return [...picked].sort(() => Math.random() - 0.5).slice(0, 3);
-  }, [allLeaders]);
 
   const countryRegionMap = useMemo(() => {
     const map = {};
@@ -92,11 +87,11 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
 
   return (
     <div className="min-h-screen bg-brand-sand">
-      <div className="max-w-[1440px] mx-auto px-8 py-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-8">
 
         {/* Section heading */}
         <div className="mb-8">
-          <h2 className="text-[3rem] font-bold text-gray-900 tracking-heading">
+          <h2 className="text-[2rem] sm:text-[3rem] font-bold text-gray-900 tracking-heading">
             Key Highlights from the Database
           </h2>
           <p className="text-1.6 text-gray-600 mt-2 leading-relaxed">
@@ -172,7 +167,7 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
               <div className="absolute inset-x-0 top-1/2 -translate-y-1/2">
                 <div className="h-px border-t border-dashed border-brand-orange-light opacity-50" />
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 relative z-10">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 relative z-10">
                 {REGION_MARKERS.map((region) => (
                   <button
                     key={region.key}
@@ -237,46 +232,24 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {regionLeaders.map((l) => (
-                <LeaderCard key={l.id} leader={l} />
+                <LeaderCard key={l.id} leader={l} onSelect={setSelectedProfile} />
               ))}
             </div>
           </div>
         )}
 
-        {/* Emerging Voices */}
-        <div className="p-8 relative overflow-hidden">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6">
-            <div className="text-2.4 font-bold tracking-heading text-brand-blue">
-              Emerging Voices in Practice
-            </div>
-            <div className="flex-shrink-0">
-              <button
-                onClick={() => onGoToDirectory?.()}
-                className="px-6 py-3 bg-brand-orange text-white rounded-lg text-1.6 font-medium hover:bg-brand-orange-hover transition-colors"
-              >
-                View Directory
-              </button>
-            </div>
-          </div>
-
-          {featured.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {featured.map((l) => (
-                // No onSelect — Analytics cards are display-only until profile modal is wired here
-                <LeaderCard key={l.id} leader={l} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 text-gray-500 text-1.4">
-              No featured leaders configured.
-            </div>
-          )}
-        </div>
-
         <p className="text-center text-1.1 text-gray-600 mt-6">
           Data sourced from the Transform Health Women Leaders Database · {stats.total} verified profiles
         </p>
       </div>
+
+      {selectedProfile && (
+        <ProfileModal
+          leader={selectedProfile}
+          onClose={() => setSelectedProfile(null)}
+          onManageProfile={onManageProfile}
+        />
+      )}
 
       {/* Manage profile footer */}
       <div className="text-center pt-[2.4rem] pb-[3.2rem] font-sans">

@@ -61,8 +61,7 @@ export function Step0Branch({ branch, setBranch, nominateLink, setNominateLink, 
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-5">
-        {/* Branch cards — custom layout, intentionally raw <button> */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
         <button
           onClick={() => setBranch("self")}
           className={`pt-[3.6rem] px-[2.4rem] pb-[2.8rem] rounded-xl text-center cursor-pointer bg-white border-2 ${
@@ -189,7 +188,7 @@ export function Step1Consent({ consent, setConsent, onBack, onContinue }) {
 }
 
 // ─── Step 2: Basic information ────────────────────────────────────────────────
-export function Step2BasicInfo({ firstName, setFirstName, lastName, setLastName, photoPreview, onPhotoUpload, country, setCountry, org, setOrg, role, setRole, onBack, onContinue }) {
+export function Step2BasicInfo({ firstName, setFirstName, lastName, setLastName, email, setEmail, photoPreview, onPhotoUpload, country, setCountry, org, setOrg, role, setRole, onBack, onContinue }) {
   return (
     <div>
       <h2 className="text-4xl font-bold text-brand-navy mb-2 tracking-heading">Basic information</h2>
@@ -197,7 +196,7 @@ export function Step2BasicInfo({ firstName, setFirstName, lastName, setLastName,
         Tell us who you are. Your email will never be published — it's used only for profile updates.
       </p>
 
-      <div className="grid grid-cols-2 gap-4 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
         <div>
           <label className={LABEL_CLASS}>First name *</label>
           <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="e.g Anet" className={F_INPUT} />
@@ -206,6 +205,11 @@ export function Step2BasicInfo({ firstName, setFirstName, lastName, setLastName,
           <label className={LABEL_CLASS}>Last name *</label>
           <Input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="e.g Clinton" className={F_INPUT} />
         </div>
+      </div>
+
+      <div className="mb-5">
+        <label className={LABEL_CLASS}>Email * <span className="text-1.4 text-gray-500 font-normal">(not publicly displayed)</span></label>
+        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your.email@example.com" className={F_INPUT} />
       </div>
 
       <div className="mb-5">
@@ -239,7 +243,7 @@ export function Step2BasicInfo({ firstName, setFirstName, lastName, setLastName,
         </Select>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         <div>
           <label className={LABEL_CLASS}>Organisation / Institution</label>
           <Input value={org} onChange={(e) => setOrg(e.target.value)} placeholder="e.g WHO" className={F_INPUT} />
@@ -252,14 +256,14 @@ export function Step2BasicInfo({ firstName, setFirstName, lastName, setLastName,
 
       <div className="flex justify-between items-center pt-5">
         <Button variant="ghost" size="sm" className={BACK_CLS} onClick={onBack}>← BACK</Button>
-        <Button variant="ghost" size="sm" className={CONT_CLS} disabled={!firstName || !lastName || !country} onClick={onContinue}>CONTINUE →</Button>
+        <Button variant="ghost" size="sm" className={CONT_CLS} disabled={!firstName || !lastName || !email || !country} onClick={onContinue}>CONTINUE →</Button>
       </div>
     </div>
   );
 }
 
 // ─── Step 3: Profile details ──────────────────────────────────────────────────
-export function Step3ProfileDetails({ yearsExp, setYearsExp, expertise, toggleExpertise, otherExpertise, setOtherExpertise, selectedCountries, setSelectedCountries, email, setEmail, bio, setBio, charCount, bioCharWarning, onBack, onContinue, nextDisabled }) {
+export function Step3ProfileDetails({ yearsExp, setYearsExp, expertise, toggleExpertise, otherExpertise, setOtherExpertise, selectedCountries, setSelectedCountries, bio, setBio, charCount, bioCharWarning, onBack, onContinue, nextDisabled }) {
   return (
     <div>
       <h2 className="text-4xl font-bold text-brand-navy mb-7 tracking-heading">Profile details</h2>
@@ -267,7 +271,7 @@ export function Step3ProfileDetails({ yearsExp, setYearsExp, expertise, toggleEx
       <div className="mb-6">
         <label className={`${LABEL_CLASS} mb-3`}>Years of experience in digital health *</label>
         {/* Segmented pill selector — custom layout, intentionally raw <button> */}
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {["0-2 yrs", "3-7 yrs", "8-15 yrs", "15+ yrs"].map((opt) => (
             <button
               key={opt}
@@ -351,15 +355,7 @@ export function Step3ProfileDetails({ yearsExp, setYearsExp, expertise, toggleEx
           </div>
         )}
       </div>
-
-      <div className="mb-6">
-        <label className={`${LABEL_CLASS} mb-3`}>
-          Email *{" "}
-          <span className="text-1.4 text-gray-500 font-normal">(not publicly displayed)</span>
-        </label>
-        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your.email@example.com" className={F_INPUT} />
-      </div>
-
+      
       <div className="mb-6">
         <label className={`${LABEL_CLASS} mb-3`}>
           Short bio *{" "}
@@ -433,7 +429,7 @@ export function Step4Links({ linkedin, setLinkedin, notableItems, addNotableItem
                   Remove
                 </Button>
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-1.4 text-brand-dark mb-1.5">Title</label>
                   <Input value={item.title} onChange={(e) => updateNotableItem(index, "title", e.target.value)} placeholder="e.g. Global Health Report" className={F_INPUT} />

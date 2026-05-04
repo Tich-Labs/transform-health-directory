@@ -24,6 +24,17 @@ function App() {
   const [showManageModal, setShowManageModal] = useState(false);
   const [tokenLoading, setTokenLoading] = useState(false);
   const [tokenError, setTokenError] = useState("");
+  const [chromeHidden, setChromeHidden] = useState(
+    () => localStorage.getItem("th-chrome-hidden") === "true"
+  );
+
+  function toggleChrome() {
+    setChromeHidden((prev) => {
+      const next = !prev;
+      localStorage.setItem("th-chrome-hidden", String(next));
+      return next;
+    });
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -71,7 +82,7 @@ function App() {
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
-      {route !== "admin" && <SiteHeader />}
+      {route !== "admin" && !chromeHidden && <SiteHeader />}
 
       {route === "database" && (
         <div className="relative bg-brand-sand font-sans">
@@ -79,10 +90,10 @@ function App() {
             <img
               src="./illustrations/db1-hero.png"
               alt=""
-              className="w-full max-w-[220px] flex-shrink-0 h-auto"
+              className="w-full max-w-[160px] sm:max-w-[220px] flex-shrink-0 h-auto"
             />
             <div className="text-center md:text-left">
-              <div className="font-bold uppercase text-[clamp(3.6rem,6vw,7rem)] leading-[1.1] text-brand-blue-bright tracking-heading">
+              <div className="font-bold uppercase text-[clamp(2.8rem,6vw,7rem)] leading-[1.1] text-brand-blue-bright tracking-heading">
                 <div>Women Leaders Bridging the Gap</div>
                 <div>in Digital Health</div>
               </div>
@@ -90,7 +101,7 @@ function App() {
             <img
               src="./illustrations/db2-hero.png"
               alt=""
-              className="w-full max-w-[240px] flex-shrink-0 md:mb-8 h-auto -translate-x-12"
+              className="w-full max-w-[160px] sm:max-w-[240px] flex-shrink-0 md:mb-8 h-auto md:-translate-x-12"
             />
           </div>
           <img
@@ -107,10 +118,10 @@ function App() {
             <img
               src="./illustrations/network2-hero.png"
               alt=""
-              className="w-full max-w-[220px] flex-shrink-0 h-auto"
+              className="w-full max-w-[160px] sm:max-w-[220px] flex-shrink-0 h-auto"
             />
             <div className="text-center md:text-left">
-              <div className="font-bold uppercase text-[clamp(3.6rem,6vw,7rem)] leading-[1.1] tracking-heading">
+              <div className="font-bold uppercase text-[clamp(2.8rem,6vw,7rem)] leading-[1.1] tracking-heading">
                 <div className="text-brand-navy">Global</div>
                 <div className="text-brand-pink">Network</div>
               </div>
@@ -122,7 +133,7 @@ function App() {
             <img
               src="./illustrations/network1-hero.png"
               alt=""
-              className="w-full max-w-[240px] flex-shrink-0 md:mb-8 h-auto -translate-x-12"
+              className="w-full max-w-[160px] sm:max-w-[240px] flex-shrink-0 md:mb-8 h-auto md:-translate-x-12"
             />
           </div>
           <img
@@ -139,10 +150,10 @@ function App() {
             <img
               src="./illustrations/hero-left.png"
               alt=""
-              className="w-full max-w-[220px] flex-shrink-0 h-auto"
+              className="w-full max-w-[160px] sm:max-w-[220px] flex-shrink-0 h-auto"
             />
             <div className="text-center md:text-left">
-              <div className="font-bold uppercase text-[clamp(3.6rem,6vw,7rem)] leading-[1.1] tracking-heading">
+              <div className="font-bold uppercase text-[clamp(2.8rem,6vw,7rem)] leading-[1.1] tracking-heading">
                 <div className="text-brand-navy">Join</div>
                 <div className="text-brand-pink">The</div>
                 <div className="text-brand-pink">Database</div>
@@ -151,7 +162,7 @@ function App() {
             <img
               src="./illustrations/hero-right.png"
               alt=""
-              className="w-full max-w-[240px] flex-shrink-0 md:mb-8 h-auto -translate-x-12"
+              className="w-full max-w-[160px] sm:max-w-[240px] flex-shrink-0 md:mb-8 h-auto md:-translate-x-12"
             />
           </div>
           <img
@@ -168,9 +179,9 @@ function App() {
           role="navigation"
           aria-label="Main navigation"
         >
-          <div className="max-w-[1440px] mx-auto px-8 pt-6 pb-0 flex justify-between items-end">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-8 pt-3 sm:pt-6 pb-0 flex justify-between items-end overflow-x-auto">
             {/* Main tabs */}
-            <div className="flex gap-6 items-end" role="tablist">
+            <div className="flex gap-1 sm:gap-6 items-end" role="tablist">
               {NAV_ITEMS.filter((item) => item.id !== "admin").map((item) => {
                 const active = route === item.id;
                 return (
@@ -179,7 +190,7 @@ function App() {
                     onClick={() => setRoute(item.id)}
                     role="tab"
                     aria-selected={active}
-                    className={`font-['Montserrat'] font-medium text-[2rem] tracking-[0.03em] px-8 h-[4.4rem] whitespace-nowrap cursor-pointer ${
+                    className={`font-['Montserrat'] font-medium text-[1.3rem] sm:text-[2rem] tracking-[0.03em] px-3 sm:px-8 h-[3.6rem] sm:h-[4.4rem] whitespace-nowrap cursor-pointer ${
                       active
                         ? "text-white bg-brand-orange -skew-x-[10deg] rounded-t-lg"
                         : "text-black bg-transparent"
@@ -196,7 +207,7 @@ function App() {
             {/* Admin — tucked to the right, smaller */}
             <button
               onClick={() => setRoute("admin")}
-              className={`font-['Montserrat'] font-medium text-[1.2rem] tracking-[0.08em] uppercase px-3.5 py-1.5 mb-1.5 cursor-pointer rounded ${
+              className={`font-['Montserrat'] font-medium text-[1.2rem] tracking-[0.08em] uppercase px-3.5 py-1.5 mb-1.5 cursor-pointer rounded flex-shrink-0 ${
                 route === "admin"
                   ? "text-white border-transparent bg-brand-orange"
                   : "text-brand-dark border border-gray-500 bg-transparent"
@@ -289,7 +300,32 @@ function App() {
           </div>
         )}
        </main>
-      {route !== "admin" && <SiteFooter />}
+      {route !== "admin" && !chromeHidden && <SiteFooter />}
+
+      {/* Chrome toggle — fixed bottom-right, always visible */}
+      {route !== "admin" && (
+        <button
+          onClick={toggleChrome}
+          title={chromeHidden ? "Show site header & footer" : "Hide site header & footer"}
+          aria-label={chromeHidden ? "Show site header & footer" : "Hide site header & footer"}
+          className="fixed bottom-5 right-5 z-[9999] w-10 h-10 rounded-full bg-brand-navy text-white shadow-lg flex items-center justify-center hover:bg-brand-navy-dark transition-colors"
+        >
+          {chromeHidden ? (
+            /* eye-open */
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          ) : (
+            /* eye-off */
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+              <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          )}
+        </button>
+      )}
     </div>
   );
 }

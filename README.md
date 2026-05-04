@@ -334,17 +334,26 @@ client/src/
 
 | # | Task | Why Harder | Status |
 |---|---|---|---|
-| 8 | **Profile detail modal** | New component, needs to pull all fields and lay them out well | ✅ **Done** — ProfileModal.jsx complete |
-| 9 | **Analytics region → show leader cards below map** | Need to wire `selectedRegion` into a filtered list render | ⏳ Pending |
-| 10 | **Admin view new fields** | Extend existing admin card — no new backend, just UI columns | ✅ **Done** — commit, yearsExp + countries added |
+| 8 | **Profile detail modal** | New component, needs to pull all fields and lay them out well | ✅ **Done** — ProfileModal.jsx exists and wired in Database.jsx |
+| 9 | **Analytics: region drilldown → show leader cards** | Need to wire `selectedRegion` into a filtered list render | ✅ **Done** — regionLeaders + LeaderCard grid renders below map in Analytics.jsx |
+| 10 | **Admin view new fields** | Extend existing admin card — no new backend, just UI columns | ✅ **Done** — yearsExp + countries + region fields added |
 
 ### Post-Pilot (Needs Backend / External Services)
 
-| # | Task | Why It Takes More Time |
-|---|---|---|
-| 11 | **Google Sheets integration** | Needs a backend proxy or Apps Script web app — can't call Sheets API direct from browser securely |
-| 12 | **SMTP email notifications** | Needs a server (Firebase Function or Node endpoint), email service config, template design |
-| 13 | **Click-through analytics** | Needs an analytics service (Plausible / GA4) or custom event logging — not a one-liner |
+| # | Task | Status | Notes |
+|---|---|---|---|
+| 11 | **Google Sheets integration** | ✅ **Done** | Apps Script (`Code.gs`) fully wired; `leaders.js` API layer calls it; falls back to mock data only if `VITE_APPS_SCRIPT_URL` is empty |
+| 12 | **SMTP email notifications** | ⏳ **Pending** | Uses `MailApp.sendEmail()` (Google Apps Script) for now; needs production SMTP (SendGrid, Mailgun, etc.) |
+| 13 | **Click-through analytics (GA4 / Plausible)** | ⏳ **Pending** | No GA4, Plausible, or custom event logging found in client code |
+| 17 | **LinkedIn / website click tracking** | ⏳ **Pending** | Track clicks on LinkedIn and website links to measure database usefulness; needs: (1) onClick handlers in `LeaderCard.jsx` + `ProfileModal.jsx`, (2) Apps Script endpoint to log clicks to a Sheet, (3) dashboard to display counts |
+
+### Pending Tasks (Not Yet Started)
+
+| # | Task | Status | Notes |
+|---|---|---|---|
+| 14 | **Country-level drilldown on analytics map** | ⏳ **Pending** | `Analytics.jsx` has region-level buttons only; map itself is not clickable at country level |
+| 15 | **Analytics: filter profiles by region + show corresponding women leaders** | ✅ **Done** | `regionLeaders` + `LeaderCard` grid renders below map when region selected (`Analytics.jsx:77-83, 238-243`) |
+| 16 | **Clean up and update profile details in admin view** | ✅ **Done** | Expanded card shows Profile (role, org, country, countries of operation, years exp, expertise), Contact, and Bio sections (`Admin.jsx:854-882`) |
 
 ### Code Quality / Technical Debt (From Audit) — Final Status
 

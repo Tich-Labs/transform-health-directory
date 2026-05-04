@@ -259,17 +259,18 @@ function createSubmission(payload) {
     payload.organisation || payload.org || '',
     payload.bio || '',
     payload.linkedin || '',
-    payload.photo_url || payload.photo || '',
+    payload.photo_url || payload.photoUrl || payload.photo || '',
     'pending',
     generateToken(),
     payload.editor_email || payload.email || '',
-    payload.internal_note || ''
+    payload.internal_note || '',
+    payload.country || ''
   ];
 
   var ss    = SpreadsheetApp.openById(getSheetId());
   var sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(['id','created_at','branch','first_name','last_name','role','organisation','bio','linkedin','photo_url','status','admin_token','editor_email','internal_note']);
+    sheet.appendRow(['id','created_at','branch','first_name','last_name','role','organisation','bio','linkedin','photo_url','status','admin_token','editor_email','internal_note','country']);
   }
   sheet.appendRow(row);
   return { ok: true, id: id };

@@ -115,6 +115,7 @@ export default function Submit({ onManageProfile }) {
       const payload = {
         branch, firstName, lastName, email, role,
         organisation: org,
+        country,
         expertise: [...expertise.filter(e => e !== "Other"), otherExpertise ? `Other: ${otherExpertise}` : ""].filter(Boolean).join(", "),
         yearsExp,
         countries: selectedCountries.join(", "),
@@ -133,12 +134,12 @@ export default function Submit({ onManageProfile }) {
 
   const step3Invalid =
     !yearsExp || expertise.length === 0 || selectedCountries.length === 0 ||
-    !email || !bio || charCount < 300 || charCount > 500;
+    !bio || charCount < 300 || charCount > 500;
 
   if (status === "submitted") {
     return (
       <div className="bg-brand-sand min-h-screen font-sans">
-        <div className="max-w-[600px] mx-auto px-[2.4rem] pt-[6.4rem]">
+        <div className="max-w-[600px] mx-auto px-4 sm:px-[2.4rem] pt-[6.4rem]">
           <div className="text-center mb-10">
             <p className="text-1.4 text-brand-pink font-semibold tracking-[0.04em] mb-3">
               Submission received
@@ -168,7 +169,7 @@ export default function Submit({ onManageProfile }) {
           </div>
         </div>
 
-        <div className="flex justify-end items-center max-w-[600px] mx-auto px-[2.4rem] py-8 border-t border-gray-200">
+        <div className="flex justify-end items-center max-w-[600px] mx-auto px-4 sm:px-[2.4rem] py-8 border-t border-gray-200">
           <Button variant="ghost" size="sm" className="font-bold tracking-[0.06em] uppercase" onClick={resetForm}>
             SUBMIT ANOTHER PROFILE →
           </Button>
@@ -179,7 +180,7 @@ export default function Submit({ onManageProfile }) {
 
   return (
     <div className="bg-brand-sand">
-      <div className="max-w-[1440px] mx-auto px-8 py-6">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-6">
 
         {/* Progress bar (steps 1–4) */}
         {step >= 1 && step <= 4 && (
@@ -194,7 +195,7 @@ export default function Submit({ onManageProfile }) {
                 </React.Fragment>
               ))}
             </div>
-            <div className="flex justify-between mt-2 text-1.2 text-gray-600">
+            <div className="flex justify-between mt-2 text-[1rem] sm:text-1.2 text-gray-600">
               {STEP_LABELS.map((label, i) => <span key={i}>{label}</span>)}
             </div>
           </div>
@@ -219,6 +220,7 @@ export default function Submit({ onManageProfile }) {
             <Step2BasicInfo
               firstName={firstName} setFirstName={setFirstName}
               lastName={lastName} setLastName={setLastName}
+              email={email} setEmail={setEmail}
               photoPreview={photoPreview} onPhotoUpload={handlePhotoUpload}
               country={country} setCountry={setCountry}
               org={org} setOrg={setOrg}
@@ -232,7 +234,6 @@ export default function Submit({ onManageProfile }) {
               expertise={expertise} toggleExpertise={toggleExpertise}
               otherExpertise={otherExpertise} setOtherExpertise={setOtherExpertise}
               selectedCountries={selectedCountries} setSelectedCountries={setSelectedCountries}
-              email={email} setEmail={setEmail}
               bio={bio} setBio={setBio}
               charCount={charCount} bioCharWarning={bioCharWarning}
               onBack={() => goStep(2)} onContinue={() => goStep(4)}

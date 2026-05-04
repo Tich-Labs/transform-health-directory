@@ -85,7 +85,7 @@
 
   <header>
     <h1>Transform Health Women Leaders Database</h1>
-    <p>Internal talking points — build status, roadmap, and open challenges &nbsp;·&nbsp; April 2026</p>
+    <p>Internal talking points — build status, roadmap, and open challenges &nbsp;·&nbsp; May 2026</p>
   </header>
 
   <!-- WHAT WE BUILT -->
@@ -98,8 +98,9 @@
         <h3>Directory</h3>
         <ul>
           <li>Searchable, filterable leader cards</li>
+          <li>Dropdown filters for continent, country, expertise</li>
+          <li>Icons on profile cards (name, title, location)</li>
           <li>Sort by Latest / A–Z / Expertise</li>
-          <li>Chip-based collapsible filter panel</li>
           <li>Load-more pagination</li>
         </ul>
       </div>
@@ -110,6 +111,7 @@
         <ul>
           <li>Interactive world map by region</li>
           <li>Clickable region tabs with leader counts</li>
+          <li>Region drilldown → shows leader cards below map</li>
           <li>Expertise bar chart (Specialisation)</li>
           <li>"Emerging Voices" featured profiles</li>
         </ul>
@@ -121,8 +123,22 @@
         <ul>
           <li>Self-submit or nominate someone else</li>
           <li>Multi-step form with consent gate</li>
-          <li>Photo upload via Firebase Storage</li>
+          <li>"Other" specialisation + 5 selection limit</li>
+          <li>Bio character limit: 300–500 characters</li>
+          <li>Regions of operation field (multi-select)</li>
+          <li>Optional country specification field</li>
+          <li>Photo upload via Firebase Storage (5MB cap)</li>
           <li>Image compression before upload</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="tag done">Done</span>
+        <h3>Profile Modal</h3>
+        <ul>
+          <li>Larger modal window for profile details</li>
+          <li>Shows all fields: role, org, country, bio, expertise</li>
+          <li>LinkedIn link + Manage Profile button</li>
         </ul>
       </div>
 
@@ -130,9 +146,9 @@
         <span class="tag done">Done</span>
         <h3>Manage Profile</h3>
         <ul>
-          <li>Bottom-sheet modal (not a separate page)</li>
-          <li>Update or delete request flow</li>
           <li>LinkedIn-based identity lookup</li>
+          <li>Update or delete request flow</li>
+          <li>Magic link sent via email</li>
         </ul>
       </div>
 
@@ -140,19 +156,21 @@
         <span class="tag done">Done</span>
         <h3>Admin Console</h3>
         <ul>
-          <li>Pending requests queue</li>
+          <li>Pending requests queue with search/filter</li>
+          <li>Expanded view: role, org, countries, years exp, expertise, bio</li>
           <li>Approve / reject / send edit-link actions</li>
-          <li>Locked scroll, separate from public UI</li>
+          <li>Separate route, locked from public UI</li>
         </ul>
       </div>
 
       <div class="card">
         <span class="tag done">Done</span>
-        <h3>Deploy / Hosting</h3>
+        <h3>Backend / Integrations</h3>
         <ul>
-          <li>GitHub Pages (static client)</li>
-          <li>Relative asset paths for subdirectory deploy</li>
-          <li>Mock data layer decoupled from live API</li>
+          <li>Google Sheets integration via Apps Script</li>
+          <li>Magic link emails via Apps Script MailApp</li>
+          <li>Firebase Storage for profile photos</li>
+          <li>GitHub Pages deployment (CI/CD)</li>
         </ul>
       </div>
 
@@ -166,38 +184,44 @@
 
       <div class="card">
         <span class="tag todo">To do</span>
-        <h3>Live database connection</h3>
-        <p>Replace <code>mockData.js</code> with real API calls to Google Sheets or a backend. All UI is ready — it's a data-layer swap.</p>
+        <h3>Country-level map drilldown</h3>
+        <p>Analytics map supports region-level selection. Next step: click a region → show countries; click a country → filter leader cards.</p>
       </div>
 
       <div class="card">
         <span class="tag todo">To do</span>
-        <h3>Admin authentication</h3>
-        <p>Admin console is currently unprotected. Needs a simple auth layer (Firebase Auth or magic-link) before going live.</p>
+        <h3>LinkedIn / website click tracking</h3>
+        <p>Track clicks on LinkedIn and website links to measure database usefulness. Needs onClick handlers + Apps Script logging endpoint.</p>
       </div>
 
       <div class="card">
         <span class="tag todo">To do</span>
-        <h3>Email notifications</h3>
-        <p>Confirm receipt of submissions and send edit-links to verified leaders. Likely SendGrid or a Firebase Function trigger.</p>
+        <h3>Production SMTP emails</h3>
+        <p>Magic links currently use Apps Script <code>MailApp</code>. Needs production SMTP (SendGrid, Mailgun) for reliability at scale.</p>
       </div>
 
       <div class="card">
         <span class="tag todo">To do</span>
-        <h3>Profile detail page</h3>
-        <p>"Read more" button exists on cards but no destination yet. A full profile modal or route is needed.</p>
+        <h3>Click-through analytics (GA4 / Plausible)</h3>
+        <p>Add analytics service to track page views, searches, and filter usage across the directory.</p>
       </div>
 
       <div class="card">
         <span class="tag todo">To do</span>
-        <h3>Photo moderation</h3>
-        <p>Uploaded photos go straight to Firebase Storage. A review step in the admin queue before photos go live would reduce risk.</p>
-      </div>
-
-      <div class="card">
-        <span class="tag todo">To do</span>
-        <h3>Southeast Asia countries</h3>
+        <h3>Southeast Asia countries on map</h3>
         <p>Map region "South & SE Asia" only highlights South Asian countries. SEA countries (Thailand, Vietnam, Indonesia, etc.) not yet mapped.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag caution">Caution</span>
+        <h3>Admin authentication</h3>
+        <p>Admin console uses a simple password gate. Consider Firebase Auth or a more robust auth layer before wider rollout.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag caution">Caution</span>
+        <h3>Photo moderation</h3>
+        <p>Uploaded photos go straight to Firebase Storage. An admin review step before photos go live is recommended.</p>
       </div>
 
     </div>
@@ -262,7 +286,7 @@
   </section>
 
   <footer>
-    Transform Health · Internal use only · Generated April 2026
+    Transform Health · Internal use only · Updated May 2026
   </footer>
 
 </div>

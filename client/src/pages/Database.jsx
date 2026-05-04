@@ -109,71 +109,85 @@ export default function Database({ onManageProfile }) {
   return (
     <div>
       {/* Page title */}
-      <div className="max-w-[1440px] mx-auto px-8 py-6">
-        <h1 className="text-[3rem] font-bold text-brand-navy mb-[1.6rem] tracking-heading">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-6">
+        <h1 className="text-[2.2rem] sm:text-[3rem] font-bold text-brand-navy mb-[1.6rem] tracking-heading">
           Women Leaders in Digital Health Database
         </h1>
       </div>
 
       {/* Sticky filter bar */}
       <div className="bg-brand-sand sticky top-0 z-40 border-b border-gray-200">
-        <div className="max-w-[1440px] mx-auto px-8 py-3 flex flex-wrap items-center gap-3">
-          {/* Search */}
-          <div className="flex-1 min-w-[180px] max-w-[280px]">
-            <label htmlFor="leader-search" className="sr-only">Search leaders</label>
-            <input
-              id="leader-search"
-              type="text"
-              placeholder="Search..."
-              value={search}
-              onChange={handleSearch}
-              className="w-full px-[1.6rem] py-[1.0rem] border-[1.5px] border-gray-300 rounded-[10px] text-[1.6rem] outline-none bg-brand-blue-tint"
-              aria-label="Search leaders by name, role, organisation, or bio"
-            />
-          </div>
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-3">
+          {/*
+            Layout strategy:
+            • Mobile  — flex-col: two stacked rows. Inner divs are normal flex rows.
+            • Desktop — the two inner divs become `display:contents` so their
+              children join the outer sm:flex-row as a single line (original layout).
+          */}
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
 
-          <select value={sortBy}          onChange={handleSort}      className={SELECT_CLASS} aria-label="Sort leaders">
-            <option value="">Sort by</option>
-            <option value="az">A → Z</option>
-            <option value="za">Z → A</option>
-            <option value="latest">Latest</option>
-          </select>
+            {/* ── Row 1 on mobile / flattened on desktop ── */}
+            <div className="flex items-center gap-3 mb-2 sm:mb-0 sm:contents">
+              <label htmlFor="leader-search" className="sr-only">Search leaders</label>
+              <input
+                id="leader-search"
+                type="text"
+                placeholder="Search..."
+                value={search}
+                onChange={handleSearch}
+                className="flex-1 sm:flex-none sm:min-w-[180px] sm:max-w-[280px] px-[1.6rem] py-[1.0rem] border-[1.5px] border-gray-300 rounded-[10px] text-[1.6rem] outline-none bg-brand-blue-tint"
+                aria-label="Search leaders by name, role, organisation, or bio"
+              />
+              {/* Count: inline on mobile, pushed to far right on desktop */}
+              <div className="flex-shrink-0 sm:order-last sm:ml-auto text-[1.3rem] sm:text-[1.4rem] text-gray-600 font-medium">
+                {leaders.length} of {allLeaders.length}
+              </div>
+            </div>
 
-          <select value={continentFilter} onChange={handleContinent} className={SELECT_CLASS} aria-label="Filter by continent">
-            <option value="">Continent: All</option>
-            {CONTINENTS.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
+            {/* ── Row 2 on mobile / flattened on desktop ── */}
+            <div className="flex flex-wrap items-center gap-2 sm:contents">
+              <select value={sortBy}          onChange={handleSort}      className={SELECT_CLASS + " flex-1 sm:flex-none"} aria-label="Sort leaders">
+                <option value="">Sort by</option>
+                <option value="az">A → Z</option>
+                <option value="za">Z → A</option>
+                <option value="latest">Latest</option>
+              </select>
 
-          <select value={countryFilter}   onChange={handleCountry}   className={SELECT_CLASS} aria-label="Filter by country">
-            <option value="">Country: All</option>
-            {visibleCountries.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
+              <select value={continentFilter} onChange={handleContinent} className={SELECT_CLASS + " flex-1 sm:flex-none"} aria-label="Filter by continent">
+                <option value="">Continent: All</option>
+                {CONTINENTS.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
 
-          <select value={expertiseFilter} onChange={handleExpertise} className={SELECT_CLASS} aria-label="Filter by expertise">
-            <option value="">Expertise: All</option>
-            {EXPERTISE_OPTIONS.map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
+              <select value={countryFilter}   onChange={handleCountry}   className={SELECT_CLASS + " flex-1 sm:flex-none"} aria-label="Filter by country">
+                <option value="">Country: All</option>
+                {visibleCountries.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
 
-          {isFiltered && (
-            <button
-              onClick={resetFilters}
-              className="px-[1.8rem] py-[1.0rem] border-[1.5px] border-red-400 rounded-[10px] bg-white text-red-400 text-[1.4rem] font-bold cursor-pointer inline-flex items-center gap-1.5 tracking-[0.02em]"
-            >
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M12 4L4 12M4 4l8 8"/>
-              </svg>
-              Clear
-            </button>
-          )}
+              <select value={expertiseFilter} onChange={handleExpertise} className={SELECT_CLASS + " flex-1 sm:flex-none"} aria-label="Filter by expertise">
+                <option value="">Expertise: All</option>
+                {EXPERTISE_OPTIONS.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
 
-          <div className="ml-auto text-[1.4rem] text-gray-600 font-medium">
-            {leaders.length} of {allLeaders.length} leaders
+              {/* Clear button: full-width on its own row on mobile, normal size on desktop */}
+              {isFiltered && (
+                <button
+                  onClick={resetFilters}
+                  className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-[1.8rem] py-[1.0rem] border-[1.5px] border-red-400 rounded-[10px] bg-white text-red-400 text-[1.4rem] font-bold cursor-pointer tracking-[0.02em] flex-shrink-0"
+                >
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M12 4L4 12M4 4l8 8"/>
+                  </svg>
+                  Clear filters
+                </button>
+              )}
+            </div>
+
           </div>
         </div>
       </div>
 
       {/* Card grid */}
-      <div className="max-w-[1440px] mx-auto px-8 py-6">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-6">
         {leaders.length === 0 ? (
           <div className="text-center py-12 text-gray-600">
             <div className="text-[3rem] mb-2">No leaders found</div>

@@ -850,17 +850,17 @@ export default function Admin({ onGoToDirectory }) {
                         {isExpanded && (
                           <div className="px-5 py-4 bg-brand-warm-bg border-b border-brand-warm-border">
                             <div className="grid gap-4 mb-4 md:grid-cols-2">
-                               <div className="rounded-lg p-4 bg-brand-parchment border border-brand-blue-border">
-                                 <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-2 text-brand-navy">Profile</div>
-                                 <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
-                                   <div><span className="text-brand-navy font-semibold">Role: </span>{item.role || "—"}</div>
-                                   <div><span className="text-brand-navy font-semibold">Org: </span>{item.organisation || "—"}</div>
-                                   <div><span className="text-brand-navy font-semibold">Country: </span>{item.country || "—"}</div>
-                                   <div><span className="text-brand-navy font-semibold">Countries of operation: </span>{item.selectedCountries || "—"}</div>
-                                   <div><span className="text-brand-navy font-semibold">Years of experience: </span>{item.yearsExp || "—"}</div>
-                                   <div><span className="text-brand-navy font-semibold">Expertise: </span>{item.expertise || "—"}</div>
-                                 </div>
-                               </div>
+                                <div className="rounded-lg p-4 bg-brand-parchment border border-brand-blue-border">
+                                  <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-2 text-brand-navy">Profile</div>
+                                  <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
+                                    <div><span className="text-brand-navy font-semibold">Role: </span>{item.role || "—"}</div>
+                                    <div><span className="text-brand-navy font-semibold">Org: </span>{item.organisation || "—"}</div>
+                                    <div><span className="text-brand-navy font-semibold">Country: </span>{item.country || "—"}</div>
+                                    <div><span className="text-brand-navy font-semibold">Countries of operation: </span>{item.selectedCountries || "—"}</div>
+                                    <div><span className="text-brand-navy font-semibold">Years of experience: </span>{item.yearsExp || "—"}</div>
+                                    <div><span className="text-brand-navy font-semibold">Expertise: </span>{item.expertise || "—"}</div>
+                                  </div>
+                                </div>
                               <div className="rounded-lg p-4 bg-brand-parchment border border-brand-pink-border">
                                 <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-2 text-accent-pink">Contact</div>
                                 <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
