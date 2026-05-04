@@ -134,7 +134,7 @@ export default function Submit({ onManageProfile }) {
 
   const step3Invalid =
     !yearsExp || expertise.length === 0 || selectedCountries.length === 0 ||
-    !bio || charCount < 300 || charCount > 500;
+    !bio || charCount < 300 || charCount > 500 || !photo;
 
   if (status === "submitted") {
     return (

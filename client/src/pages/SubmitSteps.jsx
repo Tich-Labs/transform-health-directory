@@ -212,8 +212,8 @@ export function Step2BasicInfo({ firstName, setFirstName, lastName, setLastName,
         <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your.email@example.com" className={F_INPUT} />
       </div>
 
-      <div className="mb-5">
-        <label className={LABEL_CLASS}>Profile photo (optional)</label>
+        <div className="mb-5">
+          <label className={LABEL_CLASS}>Profile photo *</label>
         <label className="flex flex-col items-center justify-center bg-brand-blue-tint border-[1.5px] border-brand-blue-border rounded-xl py-[5.2rem] px-[2.4rem] cursor-pointer w-full">
           {photoPreview ? (
             <img src={photoPreview} alt="Preview" className="w-[80px] h-[80px] rounded-full object-cover mb-3" />
