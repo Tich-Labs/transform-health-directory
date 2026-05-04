@@ -391,22 +391,41 @@
       <div class="card">
         <span class="tag done">Flow</span>
         <h3>The Full Data Flow</h3>
-        <p style="font-family: monospace; font-size: 0.85rem; line-height: 1.8; background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
-          Submit form → Firebase (photo) + Apps Script (profile row, status: pending)<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Admin reviews<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Approve → status: live → appears in Directory<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reject → status: rejected → gone from public view<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Leader requests update → Requests sheet (pending)<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Admin sends magic link → one-time token emailed<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Leader clicks link → edits profile → new pending submission<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Admin approves again → goes live
-        </p>
+
+        <div class="card" style="border-left: 4px solid #24588A;">
+          <h3 style="font-size: 0.9rem; color: #24588A;">① Submit Form</h3>
+          <p>Submit form → Firebase (photo) + Apps Script (profile row, <code>status: pending</code>)</p>
+        </div>
+
+        <div style="text-align: center; font-size: 1.2rem; color: #9ca3af;">↓</div>
+
+        <div class="card" style="border-left: 4px solid #F8571D;">
+          <h3 style="font-size: 0.9rem; color: #F8571D;">② Admin Reviews</h3>
+          <p>Approve → <code>status: live</code> → appears in Directory<br/>
+          Reject → <code>status: rejected</code> → gone from public view</p>
+        </div>
+
+        <div style="text-align: center; font-size: 1.2rem; color: #9ca3af;">↓</div>
+
+        <div class="card" style="border-left: 4px solid #7C3AED;">
+          <h3 style="font-size: 0.9rem; color: #7C3AED;">③ Leader Requests Update</h3>
+          <p>Leader requests update → Requests sheet (<code>pending</code>)<br/>
+          Admin sends magic link → one-time token emailed</p>
+        </div>
+
+        <div style="text-align: center; font-size: 1.2rem; color: #9ca3af;">↓</div>
+
+        <div class="card" style="border-left: 4px solid #10b981;">
+          <h3 style="font-size: 0.9rem; color: #10b981;">④ Leader Edits Profile</h3>
+          <p>Leader clicks link → edits profile → new pending submission</p>
+        </div>
+
+        <div style="text-align: center; font-size: 1.2rem; color: #9ca3af;">↓</div>
+
+        <div class="card" style="border-left: 4px solid #059669;">
+          <h3 style="font-size: 0.9rem; color: #059669;">⑤ Admin Approves Again</h3>
+          <p>Admin approves again → goes live in Directory</p>
+        </div>
       </div>
 
       <footer>Transform Health · Internal use only · Updated May 2026</footer>
