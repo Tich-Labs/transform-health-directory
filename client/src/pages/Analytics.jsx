@@ -6,7 +6,7 @@ import {
   Annotation,
 } from "react-simple-maps";
 import { useLeaders } from "../hooks/useLeaders";
-import { COUNTRY_TO_REGION, REGION_LABELS, REGION_MARKERS, ATLAS_TO_CANONICAL, EXCLUDE_FROM_MAP_HIGHLIGHT } from "../utils/countries";
+import { COUNTRY_TO_REGION, REGION_LABELS, REGION_MARKERS, ATLAS_TO_CANONICAL } from "../utils/countries";
 import LeaderCard from "../components/LeaderCard";
 import ProfileModal from "../components/ProfileModal";
 
@@ -64,49 +64,25 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
      }));
    }, [allLeaders, selectedRegion]);
 
-  // Build map of atlas country name → region key
-  // ATLAS_TO_CANONICAL handles mismatches (e.g. "United States of America" → "United States")
-  const countryRegionMap = useMemo(() => {
-    const map = {};
+  // Build set of atlas country names that have leaders in the selected region
+  // This ensures only countries with actual leader data get highlighted
+  const highlightedCountryNames = useMemo(() => {
+    const names = new Set();
     allLeaders.forEach((l) => {
-      if (l.country && COUNTRY_TO_REGION[l.country]) {
-        const r = COUNTRY_TO_REGION[l.country];
-        if (!selectedRegion || r === selectedRegion) {
-          // Map canonical name to atlas name for map highlighting
-          const atlasName = Object.keys(ATLAS_TO_CANONICAL).find(k => ATLAS_TO_CANONICAL[k] === l.country) || l.country;
-          map[atlasName] = r;
-          // Also store canonical name in case atlas uses it directly
-          map[l.country] = r;
-        }
+      if (!l.country) return;
+      const r = l.region || COUNTRY_TO_REGION[l.country];
+      if (!r) return;
+      // Only include if this matches the selected region (or all if no region selected)
+      if (!selectedRegion || r === selectedRegion) {
+        // Map canonical name to atlas name
+        const atlasName = Object.keys(ATLAS_TO_CANONICAL).find(k => ATLAS_TO_CANONICAL[k] === l.country) || l.country;
+        names.add(atlasName);
+        // Also add canonical name in case atlas uses it
+        names.add(l.country);
       }
     });
-    return map;
+    return names;
   }, [allLeaders, selectedRegion]);
-
-  const regionTotals = useMemo(() => {
-    const totals = { north_america: 0, latin_america: 0, europe: 0, sub_saharan_africa: 0, south_asia: 0 };
-    allLeaders.forEach((l) => {
-      const key = l.region || COUNTRY_TO_REGION[l.country?.trim()];
-      if (key && key in totals) totals[key]++;
-    });
-    return totals;
-  }, [allLeaders]);
-
-  const filteredLeaders = useMemo(() => {
-    return allLeaders.filter((l) => {
-      const matchRegion = !selectedRegion ||
-        (l.region || COUNTRY_TO_REGION[l.country?.trim()]) === selectedRegion;
-      const matchSpec = !selectedSpecialisation ||
-        toTags(l.expertise).some((e) => {
-          const trimmed = e.trim();
-          if (selectedSpecialisation === "Other") {
-            return trimmed === "Other" || trimmed.startsWith("Other:");
-          }
-          return trimmed === selectedSpecialisation;
-        });
-      return matchRegion && matchSpec;
-    });
-  }, [allLeaders, selectedRegion, selectedSpecialisation]);
 
   // Which regions to highlight on the map
   const highlightedRegions = useMemo(() => {
@@ -114,7 +90,7 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
       const regions = new Set();
       allLeaders
         .filter((l) =>
-          toTags(l.expertise).some((e) => e.trim() === selectedSpecialisation)
+          (l.expertise || "").split(/,\s*/).some((e) => e.trim() === selectedSpecialisation)
         )
         .forEach((l) => {
           const r = l.region || COUNTRY_TO_REGION[l.country?.trim()];
@@ -122,6 +98,7 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
         });
       return regions;
     }
+    // Only highlight the exact selected region
     return selectedRegion ? new Set([selectedRegion]) : new Set();
   }, [allLeaders, selectedSpecialisation, selectedRegion]);
 
@@ -161,19 +138,14 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
               <Geographies geography={GEO_URL}>
                 {({ geographies }) =>
                   geographies.map((geo) => {
-                    // Atlas name → canonical name → region key
                     const atlasName = geo.properties.name;
                     const canonicalName = ATLAS_TO_CANONICAL[atlasName] || atlasName;
-                    const regionKey = countryRegionMap[canonicalName] || countryRegionMap[atlasName];
-                    // Skip countries that cause cross-region highlighting (e.g. France = France + French Guiana)
-                    const countryName = canonicalName;
-                    const shouldHighlight = regionKey && highlightedRegions.has(regionKey) &&
-                      !EXCLUDE_FROM_MAP_HIGHLIGHT.includes(countryName);
+                    const isHighlighted = highlightedCountryNames.has(canonicalName) || highlightedCountryNames.has(atlasName);
                     return (
                       <Geography
                         key={geo.rsmKey}
                         geography={geo}
-                        fill={shouldHighlight ? "#F97A1A" : "#D4D4D8"}
+                        fill={isHighlighted ? "#F97A1A" : "#D4D4D8"}
                         stroke="#FFFFFF"
                         strokeWidth={0.7}
                         style={{

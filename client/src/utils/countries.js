@@ -20,8 +20,7 @@ export const COUNTRY_TO_CONTINENT = {
   Australia:      "Oceania",
 };
 
-// Analytics page region keys (different grouping)
-// Uses canonical country names (same as COUNTRY_TO_CONTINENT keys)
+// Analytics page: canonical country name → region key
 export const COUNTRY_TO_REGION = {
   "United States": "north_america", Canada: "north_america", Mexico: "north_america",
   Brazil: "latin_america", Argentina: "latin_america", Colombia: "latin_america",
@@ -36,7 +35,8 @@ export const COUNTRY_TO_REGION = {
   "Sri Lanka": "south_asia", Nepal: "south_asia", Bhutan: "south_asia",
 };
 
-// Region metadata for Analytics page
+// No manual exclusions needed — highlighting is driven by actual leader data (country field)
+
 export const REGION_LABELS = {
   north_america:    "North America",
   latin_america:    "Latin America",
@@ -44,10 +44,6 @@ export const REGION_LABELS = {
   sub_saharan_africa: "Sub-Saharan Africa",
   south_asia:       "South & SE Asia",
 };
-
-// Countries to exclude from map highlighting (overseas territories cause cross-region highlighting)
-// France includes French Guiana (Latin America), UK includes Falkland Islands, etc.
-export const EXCLUDE_FROM_MAP_HIGHLIGHT = ["France", "United Kingdom"];
 
 export const REGION_MARKERS = [
   { key: "north_america",     coordinates: [-95, 40],  dx: -105, dy: -90, oceanCoords: [-110, 42] },  // Atlantic left of N. America (visible)
