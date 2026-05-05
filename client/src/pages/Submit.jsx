@@ -212,7 +212,8 @@ export default function Submit({ onManageProfile }) {
           </div>
         )}
 
-        <div className="bg-transparent rounded-lg p-6 md:p-8">
+        <div className="bg-transparent rounded-lg p-6 md:p-8 flex gap-8 items-start">
+        <div className="flex-1 min-w-0">
           {step === 0 && (
             <Step0Branch
               branch={branch} setBranch={setBranch}
@@ -267,6 +268,16 @@ export default function Submit({ onManageProfile }) {
             />
           )}
         </div>
+
+        {step >= 1 && step <= 4 && (
+          <div className="hidden lg:flex flex-shrink-0 w-[280px] sticky top-6 self-start">
+            <div className="relative w-full aspect-square rounded-2xl bg-brand-blue-tint flex items-center justify-center">
+              <img src="./illustrations/self.png" alt="" className="w-[70%] h-auto object-contain opacity-60" />
+              <div className="absolute inset-0 bg-gradient-to-br from-brand-blue-tint/80 to-transparent rounded-2xl" />
+            </div>
+          </div>
+        )}
+      </div>
       </div>
 
       {showNoConsentModal && (
