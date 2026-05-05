@@ -72,7 +72,10 @@ function Avatar() {
             href={l.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              import("../api/leaders").then(({ api }) => api.trackLinkedInClick(l.id));
+            }}
             className="absolute bottom-0 right-[-4px] w-[28px] h-[28px] rounded-full bg-brand-navy flex items-center justify-center hover:bg-navy-dark transition-colors"
             aria-label="LinkedIn profile"
             title="Open LinkedIn profile"

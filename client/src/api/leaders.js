@@ -123,4 +123,21 @@ export const api = {
       .getPublicUrl(data.path);
     return publicUrl;
   },
+
+  trackLinkedInClick: async (leaderId) => {
+    // First get current count
+    const { data, error: fetchError } = await supabase
+      .from("leaders")
+      .select("linkedin_clicks")
+      .eq("id", leaderId)
+      .single();
+    if (fetchError) throw fetchError;
+    const current = data?.linkedin_clicks || 0;
+    const { error } = await supabase
+      .from("leaders")
+      .update({ linkedin_clicks: current + 1 })
+      .eq("id", leaderId);
+    if (error) throw error;
+    return { ok: true };
+  },
 };

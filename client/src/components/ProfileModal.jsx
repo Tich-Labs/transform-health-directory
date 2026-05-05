@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { LinkedInIcon, PersonIcon, OrgIcon } from "./icons";
+import { LinkedInIcon } from "./icons";
 import { useFocusTrap } from "../hooks/useFocusTrap";
 
 function getInitials(first, last) {
@@ -55,18 +55,18 @@ export default function ProfileModal({ leader, onClose, onManage }) {
     >
       <div
         ref={modalRef}
-        className="bg-white rounded-2xl w-full max-w-4xl relative shadow-2xl overflow-hidden"
+        className="bg-white rounded-2xl w-full max-w-4xl relative shadow-2xl"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="profile-modal-title"
       >
-        {/* ── ILLUSTRATION STRIP — same as LeaderCard ── */}
+        {/* ── ILLUSTRATION STRIP — same as grid card ── */}
         <div className="relative">
           <img
             src="./illustrations/Card-top.svg"
             alt=""
-            className="w-full h-[200px] object-cover"
+            className="w-full h-[120px] object-cover rounded-t-2xl"
           />
           <button
             onClick={onClose}
@@ -77,117 +77,118 @@ export default function ProfileModal({ leader, onClose, onManage }) {
           </button>
         </div>
 
-        {/* ── PHOTO — overlaps strip bottom ── */}
-        <div className="flex justify-center -mt-[80px] mb-4 relative z-10">
-          {leader.photo_url ? (
-            <img
-              src={leader.photo_url}
-              alt={`${leader.first_name} ${leader.last_name}`}
-              className="w-[160px] h-[160px] rounded-full object-cover border-4 border-brand-pink shadow-lg"
-            />
-          ) : (
-            <div className="w-[160px] h-[160px] rounded-full bg-gray-300 border-4 border-brand-pink flex items-center justify-center text-[3.6rem] font-semibold text-gray-600 shadow-lg">
-              {getInitials(leader.first_name, leader.last_name)}
-            </div>
-          )}
-        </div>
-
-        {/* ── NAME + ROLE + ORG ── */}
-        <div className="text-center px-8 mb-5">
-          {isFeatured && (
-            <span className="text-[1.1rem] font-semibold bg-brand-pink text-white px-3 py-1 rounded-full mb-3 inline-block tracking-wide">
-              ★ Featured
-            </span>
-          )}
-          <h2
-            id="profile-modal-title"
-            className="text-[2.6rem] font-bold text-brand-navy leading-tight tracking-heading mb-1 flex items-center justify-center gap-3 flex-wrap"
-          >
-            {leader.first_name} {leader.last_name}
-            {leader.linkedin?.trim() && (
-              <a
-                href={leader.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="LinkedIn Profile"
-                className="inline-flex opacity-70 hover:opacity-100 transition-opacity"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <LinkedInIcon />
-              </a>
-            )}
-          </h2>
-          {leader.role && (
-            <div className="text-[1.4rem] text-gray-700 flex items-center justify-center gap-1.5 mt-1">
-              <PersonIcon /> <span>{leader.role}</span>
-            </div>
-          )}
-          {leader.organisation && (
-            <div className="text-[1.3rem] text-gray-600 flex items-center justify-center gap-1.5 mt-0.5">
-              <OrgIcon /> <span>{leader.organisation}</span>
-            </div>
-          )}
-        </div>
-
-        {/* ── META ROW ── */}
-        {(leader.country || yearsExp || countriesList.length > 0) && (
-          <div className="mx-8 mb-5 bg-gray-50 rounded-xl px-6 py-4 flex flex-wrap gap-x-8 gap-y-3 border border-gray-100">
-            {leader.country && (
-              <div>
-                <div className="text-[1.0rem] font-bold uppercase tracking-[0.1em] text-gray-400 mb-0.5">Based in</div>
-                <div className="text-[1.4rem] text-brand-navy font-medium">{leader.country}</div>
-              </div>
-            )}
-            {yearsExp && (
-              <div>
-                <div className="text-[1.0rem] font-bold uppercase tracking-[0.1em] text-gray-400 mb-0.5">Experience</div>
-                <div className="text-[1.4rem] text-brand-navy font-medium">{yearsExp}</div>
-              </div>
-            )}
-            {countriesList.length > 0 && (
-              <div>
-                <div className="text-[1.0rem] font-bold uppercase tracking-[0.1em] text-gray-400 mb-0.5">Works across</div>
-                <div className="text-[1.4rem] text-brand-navy font-medium">{countriesList.join(", ")}</div>
+        {/* ── HEADER ── */}
+        <div className="px-10 pt-6 pb-6 flex items-start gap-7">
+          {/* Photo — overlaps strip bottom */}
+          <div className="flex-shrink-0 -mt-[52px] relative z-10">
+            {leader.photo_url ? (
+              <img
+                src={leader.photo_url}
+                alt={`${leader.first_name} ${leader.last_name}`}
+                className="w-40 h-40 rounded-full object-cover border-4 border-brand-pink shadow-md"
+              />
+            ) : (
+              <div className="w-40 h-40 rounded-full bg-brand-navy flex items-center justify-center text-[3.2rem] font-bold text-white border-4 border-brand-pink shadow-md">
+                {getInitials(leader.first_name, leader.last_name)}
               </div>
             )}
           </div>
-        )}
 
-        {/* ── EXPERTISE TAGS ── */}
-        {expertiseTags.length > 0 && (
-          <div className="px-8 mb-5">
-            <SectionLabel>Expertise</SectionLabel>
+          {/* Name + role + org */}
+          <div className="flex-1 min-w-0 pt-1">
+            {isFeatured && (
+              <span className="text-[1.1rem] font-semibold bg-brand-navy text-white px-3 py-1 rounded-full mb-3 inline-block tracking-wide">
+                ★ Featured
+              </span>
+            )}
+            <h2
+              id="profile-modal-title"
+              className="text-[2.8rem] font-bold text-brand-navy leading-[1.1] tracking-heading mb-2 flex items-center gap-3 flex-wrap"
+            >
+              {leader.first_name} {leader.last_name}
+              {leader.linkedin?.trim() && (
+                <a
+                  href={leader.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="LinkedIn Profile"
+                  className="inline-flex opacity-80 hover:opacity-100 transition-opacity"
+                  onClick={() => {
+                    import("../api/leaders").then(({ api }) => api.trackLinkedInClick(leader.id));
+                  }}
+                >
+                  <LinkedInIcon />
+                </a>
+              )}
+            </h2>
+            <p className="text-[1.6rem] font-semibold text-brand-dark mb-1">
+              {leader.role || <TBC />}
+            </p>
+            <p className="text-[1.5rem] text-gray-600">
+              {leader.organisation || <TBC />}
+            </p>
+          </div>
+        </div>
+
+        {/* ── META STRIP — always shown ── */}
+        <div className="mx-10 mb-6 bg-brand-parchment rounded-xl px-6 py-4 flex flex-wrap gap-x-8 gap-y-3 border border-brand-parchment-border">
+          <div>
+            <div className="text-[1.1rem] font-bold uppercase tracking-[0.1em] text-brand-navy mb-0.5">Based in</div>
+            {leader.country
+              ? <div className="text-[1.4rem] text-brand-dark">{leader.country}</div>
+              : <TBC />}
+          </div>
+          <div>
+            <div className="text-[1.1rem] font-bold uppercase tracking-[0.1em] text-brand-navy mb-0.5">Experience</div>
+            {yearsExp
+              ? <div className="text-[1.4rem] text-brand-dark">{yearsExp}</div>
+              : <TBC />}
+          </div>
+          <div>
+            <div className="text-[1.1rem] font-bold uppercase tracking-[0.1em] text-brand-navy mb-0.5">Works across</div>
+            {countriesList.length > 0
+              ? <div className="text-[1.4rem] text-brand-dark">{countriesList.join(", ")}</div>
+              : <TBC />}
+          </div>
+        </div>
+
+        {/* ── EXPERTISE TAGS — always shown ── */}
+        <div className="px-10 mb-6">
+          <SectionLabel>Expertise</SectionLabel>
+          {expertiseTags.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {expertiseTags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[1.2rem] text-gray-700 bg-gray-100 px-3 py-1 rounded-full"
+                  className="text-[1.3rem] font-medium bg-brand-blue-light text-brand-navy px-3 py-1.5 rounded-full border border-brand-blue-border"
                 >
                   {tag}
                 </span>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <TBC />
+          )}
+        </div>
 
-        {/* ── BIO ── */}
-        {leader.bio && (
-          <div className="px-8 mb-5">
-            <SectionLabel>About</SectionLabel>
-            <p className="text-[1.6rem] text-gray-700 leading-[1.8]">{leader.bio}</p>
-          </div>
-        )}
+        {/* ── BIO — always shown ── */}
+        <div className="px-10 mb-6">
+          <SectionLabel>About</SectionLabel>
+          {leader.bio
+            ? <p className="text-[1.6rem] text-brand-dark leading-[1.8]">{leader.bio}</p>
+            : <TBC />}
+        </div>
 
-        {/* ── PUBLICATIONS ── */}
-        {notableItems.length > 0 && (
-          <div className="px-8 mb-5">
-            <SectionLabel>Publications</SectionLabel>
+        {/* ── PUBLICATIONS — always shown, "None" when empty ── */}
+        <div className="px-10 mb-6">
+          <SectionLabel>Publications</SectionLabel>
+          {notableItems.length > 0 ? (
             <div className="flex flex-col gap-3">
               {notableItems.map((item, i) => (
-                <div key={i} className="flex gap-4 bg-gray-50 rounded-xl px-5 py-4 border border-gray-100">
+                <div key={i} className="flex gap-4 bg-brand-parchment rounded-xl px-5 py-4 border border-brand-parchment-border">
                   <span className="text-[1.4rem] font-bold text-brand-navy flex-shrink-0 w-6">{i + 1}.</span>
                   <div>
-                    <div className="text-[1.4rem] font-semibold text-gray-800">
+                    <div className="text-[1.5rem] font-semibold text-brand-dark">
                       {item.link ? (
                         <a href={item.link} target="_blank" rel="noopener noreferrer" className="hover:underline text-brand-navy">
                           {item.title}
@@ -196,20 +197,22 @@ export default function ProfileModal({ leader, onClose, onManage }) {
                         item.title
                       )}
                     </div>
-                    {item.type && <div className="text-[1.2rem] text-gray-500 mt-0.5">{item.type}</div>}
+                    {item.type && <div className="text-[1.3rem] text-gray-600 mt-0.5">{item.type}</div>}
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <span className="text-[1.4rem] text-gray-400 italic">None</span>
+          )}
+        </div>
 
         {/* ── FOOTER CTA ── */}
-        <div className="px-8 py-6 border-t border-gray-100">
-          <p className="text-[1.3rem] text-gray-500 mb-3 text-center">Is this your profile?</p>
+        <div className="px-10 py-6 border-t border-brand-parchment-border">
+          <p className="text-[1.4rem] text-gray-600 mb-3 text-center">Is this your profile?</p>
           <button
             onClick={() => { onClose(); onManage(leader); }}
-            className="w-full px-6 py-3 border-2 border-brand-navy text-brand-navy text-[1.4rem] font-semibold rounded-full hover:bg-brand-navy hover:text-white transition-colors cursor-pointer"
+            className="w-full px-6 py-3 border-2 border-brand-navy text-brand-navy text-[1.5rem] font-semibold rounded-full hover:bg-brand-navy hover:text-white transition-colors cursor-pointer"
           >
             Update or remove my profile
           </button>

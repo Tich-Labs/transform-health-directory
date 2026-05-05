@@ -1037,13 +1037,13 @@ export default function Admin({ onGoToDirectory }) {
               <>
                 <div className="rounded-lg overflow-hidden border-[1.5px] border-brand-warm-border bg-brand-parchment">
                   <table className="w-full">
-                    <thead className="border-b border-brand-blue-border bg-brand-blue-tint">
-                      <tr>
-                        {["Name", "Role", "Organisation", "Status"].map((h) => (
-                          <th key={h} className="text-left text-[1.4rem] font-semibold uppercase tracking-wider px-5 py-3 text-brand-navy">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
+                      <thead className="border-b border-brand-blue-border bg-brand-blue-tint">
+                        <tr>
+                          {["Name", "Role", "Organisation", "LinkedIn Clicks", "Status"].map((h) => (
+                            <th key={h} className="text-left text-[1.4rem] font-semibold uppercase tracking-wider px-5 py-3 text-brand-navy">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
                     <tbody className="divide-y divide-[#f0ebe0]">
                       {filteredAll.slice((allPage - 1) * PAGE_SIZE, allPage * PAGE_SIZE).map((item) => {
                         const isExpanded = expandedAllId === item.id;
@@ -1061,6 +1061,7 @@ export default function Admin({ onGoToDirectory }) {
                               </td>
                               <td className="px-5 py-3.5 text-lg text-gray-600">{item.role}</td>
                               <td className="px-5 py-3.5 text-lg text-gray-600">{item.organisation}</td>
+                              <td className="px-5 py-3.5 text-lg text-gray-600 text-center">{item.linkedin_clicks || 0}</td>
                               <td className="px-5 py-3.5">
                                 <span className={`text-[1.2rem] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${
                                   item.status === "live"

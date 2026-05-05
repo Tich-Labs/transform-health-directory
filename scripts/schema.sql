@@ -136,3 +136,15 @@ grant all on public.test_results to anon;
 -- 1. Drop "Admin test mode: read all leaders" policy
 -- 2. Create a real admin user in Supabase Auth
 -- 3. Re-enable the Admin auth gate in Admin.jsx
+
+-- Track LinkedIn clicks
+ALTER TABLE leaders ADD COLUMN IF NOT EXISTS linkedin_clicks integer DEFAULT 0;
+
+-- Optional: detailed click log (uncomment to enable)
+-- CREATE TABLE IF NOT EXISTS leader_clicks (
+--   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+--   leader_id text REFERENCES leaders(id) ON DELETE CASCADE,
+--   clicked_at timestamptz DEFAULT now(),
+--   user_agent text,
+--   referrer text
+-- );
