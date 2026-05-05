@@ -66,7 +66,7 @@ export default function ProfileModal({ leader, onClose, onManage }) {
           <img
             src="./illustrations/Card-top.svg"
             alt=""
-            className="w-full h-[140px] object-cover"
+            className="w-full h-[200px] object-cover"
           />
           <button
             onClick={onClose}
@@ -77,16 +77,16 @@ export default function ProfileModal({ leader, onClose, onManage }) {
           </button>
         </div>
 
-        {/* ── AVATAR — overlaps strip bottom ── */}
-        <div className="flex justify-center -mt-[52px] mb-4 relative z-10">
+        {/* ── PHOTO — overlaps strip bottom ── */}
+        <div className="flex justify-center -mt-[80px] mb-4 relative z-10">
           {leader.photo_url ? (
             <img
               src={leader.photo_url}
               alt={`${leader.first_name} ${leader.last_name}`}
-              className="w-[104px] h-[104px] rounded-full object-cover border-[3px] border-brand-pink shadow-md"
+              className="w-[160px] h-[160px] rounded-full object-cover border-4 border-brand-pink shadow-lg"
             />
           ) : (
-            <div className="w-[104px] h-[104px] rounded-full bg-gray-300 border-[3px] border-brand-pink flex items-center justify-center text-[2.8rem] font-semibold text-gray-600 shadow-md">
+            <div className="w-[160px] h-[160px] rounded-full bg-gray-300 border-4 border-brand-pink flex items-center justify-center text-[3.6rem] font-semibold text-gray-600 shadow-lg">
               {getInitials(leader.first_name, leader.last_name)}
             </div>
           )}
