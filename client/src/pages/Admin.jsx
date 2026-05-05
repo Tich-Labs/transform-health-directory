@@ -6,6 +6,7 @@ const SIDEBAR_ITEMS = [
   { id: "nominated", label: "Nominated",            icon: "user-plus" },
   { id: "requests",  label: "Profile Requests",     icon: "mail"      },
   { id: "all",       label: "All Entries",           icon: "list"      },
+  { id: "tests",     label: "Test Results",          icon: "test"      },
 ];
 
 function InboxIcon() {
@@ -50,7 +51,16 @@ function UserPlusIcon() {
   );
 }
 
-const ICONS = { inbox: InboxIcon, mail: MailIcon, list: ListIcon, "user-plus": UserPlusIcon };
+function TestIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 11l3 3L22 4" />
+      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+    </svg>
+  );
+}
+
+const ICONS = { inbox: InboxIcon, mail: MailIcon, list: ListIcon, "user-plus": UserPlusIcon, test: TestIcon };
 
 function getInitials(first, last) {
   return ((first?.[0] || "") + (last?.[0] || "")).toUpperCase();
@@ -68,6 +78,7 @@ export default function Admin({ onGoToDirectory }) {
   const [nominated,        setNominated]        = useState([]);
   const [all,              setAll]              = useState([]);
   const [requests,         setRequests]         = useState([]);
+  const [testResults,      setTestResults]      = useState([]);
   const [loading,          setLoading]          = useState(true);
   const [activeTab,        setActiveTab]        = useState("pending");
   const [requestSubTab,    setRequestSubTab]    = useState("updates");
@@ -95,15 +106,17 @@ export default function Admin({ onGoToDirectory }) {
   async function loadData() {
     setLoading(true);
     try {
-      const [allLeaders, reqs] = await Promise.all([
+      const [allLeaders, reqs, tests] = await Promise.all([
         api.getLeaders("all"),
         api.getRequests(),
+        api.getTestResults(),
       ]);
       const leaders = allLeaders || [];
       setPending(leaders.filter(l => l.status === "pending" && l.branch !== "nominate"));
       setNominated(leaders.filter(l => l.status === "pending" && l.branch === "nominate"));
       setAll(leaders);
       if (reqs?.length) setRequests(reqs);
+      if (tests?.length) setTestResults(tests);
     } catch (e) {
       console.error("Failed to load admin data:", e);
     } finally {
@@ -349,6 +362,7 @@ export default function Admin({ onGoToDirectory }) {
     { ...SIDEBAR_ITEMS[1], count: nominatedCount },
     { ...SIDEBAR_ITEMS[2], count: requestsCount  },
     { ...SIDEBAR_ITEMS[3], count: allCount       },
+    { ...SIDEBAR_ITEMS[4], count: testResults.length },
   ];
 
   return (
@@ -1166,6 +1180,84 @@ export default function Admin({ onGoToDirectory }) {
                     </button>
                   </div>
                 )}
+              </>
+            ) : activeTab === "tests" ? (
+              <>
+                <div className="px-8 py-6 border-b border-brand-warm-border">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <h2 className="text-3xl font-semibold text-brand-navy tracking-heading">Test Results</h2>
+                      <p className="text-lg text-gray-600 mt-1">View testing results submitted by the team via the testing sheet.</p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3 text-center sm:text-right">
+                      <div className="bg-brand-parchment rounded-xl px-[1.6rem] py-[1.2rem] border border-green-300">
+                        <div className="text-[1.2rem] uppercase tracking-wider text-green-600">Pass</div>
+                        <div className="text-xl font-semibold text-green-600">{testResults.filter(r => r.status === "pass").length}</div>
+                      </div>
+                      <div className="bg-brand-parchment rounded-xl px-[1.6rem] py-[1.2rem] border border-red-300">
+                        <div className="text-[1.2rem] uppercase tracking-wider text-red-600">Fail</div>
+                        <div className="text-xl font-semibold text-red-600">{testResults.filter(r => r.status === "fail").length}</div>
+                      </div>
+                      <div className="bg-brand-parchment rounded-xl px-[1.6rem] py-[1.2rem] border border-amber-300">
+                        <div className="text-[1.2rem] uppercase tracking-wider text-amber-600">Pending</div>
+                        <div className="text-xl font-semibold text-amber-600">{testResults.filter(r => r.status === "pending").length}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-auto px-8 py-6">
+                  {testResults.length === 0 ? (
+                    <div className="text-center py-20">
+                      <div className="text-[4.8rem] mb-4 text-gray-300">📋</div>
+                      <div className="text-lg text-gray-500">No test results yet. Testers can submit results via the <a href="./testing-sheet.html" target="_blank" rel="noopener noreferrer" className="text-brand-navy underline">Testing Sheet</a>.</div>
+                    </div>
+                  ) : (
+                    <div className="rounded-lg overflow-hidden border-[1.5px] border-brand-warm-border bg-brand-parchment">
+                      <table className="w-full">
+                        <thead className="border-b border-brand-blue-border bg-brand-blue-tint">
+                          <tr>
+                            {["Tester", "Section", "Feature", "Scenario", "Priority", "Status", "Notes", "Date"].map((h) => (
+                              <th key={h} className="text-left text-[1.4rem] font-semibold uppercase tracking-wider px-5 py-3 text-brand-navy">{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#f0ebe0]">
+                          {testResults.map((r) => (
+                            <tr key={r.id} className="transition-colors hover:bg-brand-warm-row">
+                              <td className="px-5 py-3.5 text-lg text-gray-700">{r.tester_name || "—"}</td>
+                              <td className="px-5 py-3.5 text-lg text-gray-600">{r.section || "—"}</td>
+                              <td className="px-5 py-3.5 text-lg font-medium text-brand-dark">{r.feature || "—"}</td>
+                              <td className="px-5 py-3.5 text-lg text-gray-600 max-w-[300px]">{r.scenario || "—"}</td>
+                              <td className="px-5 py-3.5">
+                                <span className={`text-[1.2rem] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                                  r.priority === "critical" ? "bg-red-100 text-red-600" :
+                                  r.priority === "important" ? "bg-amber-50 text-amber-600" :
+                                  "bg-gray-100 text-gray-600"
+                                }`}>
+                                  {r.priority || "—"}
+                                </span>
+                              </td>
+                              <td className="px-5 py-3.5">
+                                <span className={`text-[1.2rem] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                                  r.status === "pass" ? "bg-green-100 text-green-600" :
+                                  r.status === "fail" ? "bg-red-100 text-red-600" :
+                                  "bg-amber-50 text-amber-600"
+                                }`}>
+                                  {r.status || "—"}
+                                </span>
+                              </td>
+                              <td className="px-5 py-3.5 text-lg text-gray-600 max-w-[250px] truncate">{r.notes || "—"}</td>
+                              <td className="px-5 py-3.5 text-[1.4rem] text-gray-400">
+                                {r.created_at ? new Date(r.created_at).toLocaleDateString() : "—"}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
               </>
             ) : null}
           </div>

@@ -154,4 +154,13 @@ export const api = {
     
     return { ok: true };
   },
+
+  getTestResults: async () => {
+    const { data, error } = await supabase
+      .from("test_results")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
 };
