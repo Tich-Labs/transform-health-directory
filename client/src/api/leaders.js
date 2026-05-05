@@ -22,6 +22,7 @@ export const api = {
       photo_url: formData.photoUrl || null,
       status: "pending",
       editor_email: formData.email || null,
+      nominator_name: formData.nominatorName || null,
       country: formData.country || null,
       nominate_link: formData.nominateLink || null,
       expertise: formData.expertise

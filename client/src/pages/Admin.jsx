@@ -785,10 +785,9 @@ export default function Admin({ onGoToDirectory }) {
                           <div className="flex-1 min-w-0 mr-4">
                             <div className="flex items-center gap-3">
                               <span className="font-semibold text-lg truncate text-brand-dark">{item.first_name} {item.last_name}</span>
-                              <span className="text-[1.4rem] truncate flex-shrink-0 text-gray-500">{item.role || 'No role'} · {item.organisation || 'No org'}</span>
                             </div>
                             <div className="text-[1.4rem] truncate mt-0.5 text-gray-400">
-                              {item.bio?.slice(0, 100) || "No bio provided"}
+                              Nominated by {item.nominator_name || item.editor_email || "—"}
                             </div>
                           </div>
                           <div className="flex items-center gap-3 flex-shrink-0">
@@ -812,52 +811,24 @@ export default function Admin({ onGoToDirectory }) {
                         {isExpanded && (
                           <div className="px-5 py-4 bg-brand-warm-bg border-b border-brand-warm-border">
                             <div className="grid gap-4 mb-4 md:grid-cols-2">
-                                <div className="rounded-lg p-4 bg-brand-parchment border border-brand-blue-border">
-                                  <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-2 text-brand-navy">Profile</div>
-                                  <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
-                                    <div><span className="text-brand-navy font-semibold">Role: </span>{item.role || "—"}</div>
-                                    <div><span className="text-brand-navy font-semibold">Org: </span>{item.organisation || "—"}</div>
-                                    <div><span className="text-brand-navy font-semibold">Country: </span>{item.country || "—"}</div>
-                                    <div><span className="text-brand-navy font-semibold">Countries of operation: </span>{item.selectedCountries || "—"}</div>
-                                    <div><span className="text-brand-navy font-semibold">Years of experience: </span>{item.yearsExp || "—"}</div>
-                                    <div><span className="text-brand-navy font-semibold">Expertise: </span>{toTags(item.expertise).join(", ") || "—"}</div>
+                              <div className="rounded-lg p-4 bg-brand-parchment border border-brand-pink-border">
+                                <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-3 text-accent-pink">Nominator</div>
+                                <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
+                                  <div><span className="text-accent-pink font-semibold">Full name: </span>{item.nominator_name || "—"}</div>
+                                  <div><span className="text-accent-pink font-semibold">Email: </span>{item.editor_email || "—"}</div>
+                                </div>
+                              </div>
+                              <div className="rounded-lg p-4 bg-brand-parchment border border-brand-blue-border">
+                                <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-3 text-brand-navy">Nominee</div>
+                                <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
+                                  <div><span className="text-brand-navy font-semibold">Full name: </span>{item.first_name} {item.last_name}</div>
+                                  <div>
+                                    <span className="text-brand-navy font-semibold">Profile link: </span>
+                                    {item.nominate_link
+                                      ? <a href={item.nominate_link} target="_blank" rel="noopener noreferrer" className="hover:underline text-brand-navy break-all">{item.nominate_link}</a>
+                                      : "—"}
                                   </div>
                                 </div>
-                              <div className="rounded-lg p-4 bg-brand-parchment border border-brand-pink-border">
-                                <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-2 text-accent-pink">Contact</div>
-                                <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
-                                  <div><span className="text-accent-pink font-semibold">Nominator: </span>{item.editor_email || item.editorEmail || "—"}</div>
-                                  {item.linkedin && (
-                                    <div>
-                                      <span className="text-accent-pink font-semibold">LinkedIn: </span>
-                                      <a href={item.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline text-brand-navy">{item.linkedin}</a>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-
-                            {item.bio && (
-                              <div className="rounded-lg p-4 mb-4 bg-brand-parchment border border-brand-blue-border">
-                                <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-2 text-brand-navy">Bio</div>
-                                <div className="text-lg text-brand-dark-blue leading-[1.7]">{item.bio}</div>
-                              </div>
-                            )}
-
-                            <div className="rounded-lg overflow-hidden border-[1.5px] border-brand-pink-border">
-                              <div className="flex items-center justify-between px-4 py-3 bg-pink-light">
-                                <div className="text-[1.4rem] font-semibold text-accent-pink">Outreach message</div>
-                                <button
-                                  onClick={() => handleCopyMessage(item)}
-                                  className={`px-3 py-1.5 text-[1.3rem] font-semibold rounded-full transition-colors ${
-                                    isCopied ? "bg-green-600 text-white" : "bg-accent-purple text-white hover:bg-accent-purple-light"
-                                  }`}
-                                >
-                                  {isCopied ? "✓ Copied" : "Copy message"}
-                                </button>
-                              </div>
-                              <div className="px-4 py-3 text-[1.5rem] bg-brand-parchment text-gray-700 leading-[1.7] whitespace-pre-wrap">
-                                {buildOutreachMessage(item)}
                               </div>
                             </div>
 

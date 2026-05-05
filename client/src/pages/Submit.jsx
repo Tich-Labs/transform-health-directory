@@ -16,6 +16,10 @@ export default function Submit({ onManageProfile }) {
   const [step,              setStep]              = useState(0);
   const [branch,            setBranch]            = useState("self");
   const [nominateLink,      setNominateLink]      = useState("");
+  const [nominatorName,     setNominatorName]     = useState("");
+  const [nominatorEmail,    setNominatorEmail]    = useState("");
+  const [nomineeFirstName,  setNomineeFirstName]  = useState("");
+  const [nomineeLastName,   setNomineeLastName]   = useState("");
   const [consent,           setConsent]           = useState(null);
   const [firstName,         setFirstName]         = useState("");
   const [lastName,          setLastName]          = useState("");
@@ -41,8 +45,26 @@ export default function Submit({ onManageProfile }) {
   function goStep(n) { if (n >= 0 && n <= 5) setStep(n); }
 
   function handleStep0Continue() {
-    if (branch === "nominate" && nominateLink) { submit(); return; }
+    if (branch === "nominate") { submitNomination(); return; }
     goStep(1);
+  }
+
+  async function submitNomination() {
+    setStatus("submitting");
+    try {
+      await api.submitProfile({
+        branch: "nominate",
+        firstName: nomineeFirstName,
+        lastName: nomineeLastName,
+        nominateLink,
+        nominatorName,
+        email: nominatorEmail,
+      });
+      setStatus("submitted");
+    } catch (err) {
+      console.error(err);
+      setStatus("error");
+    }
   }
 
   function handleConsent() {
@@ -195,6 +217,10 @@ export default function Submit({ onManageProfile }) {
             <Step0Branch
               branch={branch} setBranch={setBranch}
               nominateLink={nominateLink} setNominateLink={setNominateLink}
+              nominatorName={nominatorName} setNominatorName={setNominatorName}
+              nominatorEmail={nominatorEmail} setNominatorEmail={setNominatorEmail}
+              nomineeFirstName={nomineeFirstName} setNomineeFirstName={setNomineeFirstName}
+              nomineeLastName={nomineeLastName} setNomineeLastName={setNomineeLastName}
               onContinue={handleStep0Continue}
               onManageProfile={onManageProfile}
             />

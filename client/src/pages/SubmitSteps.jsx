@@ -36,7 +36,22 @@ const BACK_CLS   = "font-bold tracking-[0.06em] text-1.4 text-gray-900 hover:no-
 const CONT_CLS   = "font-bold tracking-[0.06em] text-1.4";
 
 // ─── Step 0: Branch selection ────────────────────────────────────────────────
-export function Step0Branch({ branch, setBranch, nominateLink, setNominateLink, onContinue, onManageProfile }) {
+export function Step0Branch({
+  branch, setBranch,
+  nominateLink, setNominateLink,
+  nominatorName, setNominatorName,
+  nominatorEmail, setNominatorEmail,
+  nomineeFirstName, setNomineeFirstName,
+  nomineeLastName, setNomineeLastName,
+  onContinue, onManageProfile,
+}) {
+  const nominateValid =
+    nomineeFirstName.trim() &&
+    nomineeLastName.trim() &&
+    nominatorName.trim() &&
+    nominatorEmail.trim() &&
+    nominateLink.trim();
+
   return (
     <div>
       <h2 className="text-4xl font-bold text-brand-navy mb-4 tracking-heading">
@@ -86,23 +101,80 @@ export function Step0Branch({ branch, setBranch, nominateLink, setNominateLink, 
       </div>
 
       {branch === "nominate" && (
-        <div className="mb-5">
-          <label className={LABEL_CLASS}>Public profile link of the person you are nominating *</label>
-          <p className="text-1.4 text-gray-500 mb-2">e.g. LinkedIn URL or professional website</p>
-          <Input
-            value={nominateLink}
-            onChange={(e) => setNominateLink(e.target.value)}
-            placeholder="https://linkedin.com/in/…"
-            className={F_INPUT}
-          />
+        <div className="flex flex-col gap-5 mb-5">
+          {/* Nominator */}
+          <div>
+            <label className={LABEL_CLASS}>Your full name *</label>
+            <Input
+              value={nominatorName}
+              onChange={(e) => setNominatorName(e.target.value)}
+              placeholder="Your full name"
+              className={F_INPUT}
+            />
+          </div>
+          <div>
+            <label className={LABEL_CLASS}>Your email address *</label>
+            <p className="text-1.4 text-gray-500 mb-2">This will not be shared — only used if we need to contact you about this nomination.</p>
+            <Input
+              type="email"
+              value={nominatorEmail}
+              onChange={(e) => setNominatorEmail(e.target.value)}
+              placeholder="your@email.com"
+              className={F_INPUT}
+            />
+          </div>
+
+          <hr className="border-gray-200" />
+
+          {/* Nominee */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className={LABEL_CLASS}>Nominee first name *</label>
+              <Input
+                value={nomineeFirstName}
+                onChange={(e) => setNomineeFirstName(e.target.value)}
+                placeholder="First name"
+                className={F_INPUT}
+              />
+            </div>
+            <div>
+              <label className={LABEL_CLASS}>Nominee last name *</label>
+              <Input
+                value={nomineeLastName}
+                onChange={(e) => setNomineeLastName(e.target.value)}
+                placeholder="Last name"
+                className={F_INPUT}
+              />
+            </div>
+          </div>
+          <div>
+            <label className={LABEL_CLASS}>Public profile link *</label>
+            <p className="text-1.4 text-gray-500 mb-2">e.g. LinkedIn URL or professional website</p>
+            <Input
+              value={nominateLink}
+              onChange={(e) => setNominateLink(e.target.value)}
+              placeholder="https://linkedin.com/in/…"
+              className={F_INPUT}
+            />
+          </div>
         </div>
       )}
 
       <div className="flex justify-between items-center mt-2">
-        <p className="text-1.4 text-gray-600 flex items-center gap-1.5">
-          <span>⏱</span> This form takes 3–5 minutes.
-        </p>
-        <Button variant="ghost" size="sm" className={CONT_CLS} onClick={onContinue}>
+        {branch === "self" ? (
+          <p className="text-1.4 text-gray-600 flex items-center gap-1.5">
+            <span>⏱</span> This form takes 3–5 minutes.
+          </p>
+        ) : (
+          <span />
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          className={CONT_CLS}
+          onClick={onContinue}
+          disabled={branch === "nominate" && !nominateValid}
+        >
           {branch === "nominate" ? "SUBMIT NOMINATION →" : "CONTINUE →"}
         </Button>
       </div>
