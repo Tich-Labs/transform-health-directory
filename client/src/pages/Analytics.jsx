@@ -84,6 +84,15 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
     return names;
   }, [allLeaders, selectedRegion]);
 
+  const regionTotals = useMemo(() => {
+    const totals = { north_america: 0, latin_america: 0, europe: 0, sub_saharan_africa: 0, south_asia: 0 };
+    allLeaders.forEach((l) => {
+      const key = l.region || COUNTRY_TO_REGION[l.country?.trim()];
+      if (key && key in totals) totals[key]++;
+    });
+    return totals;
+  }, [allLeaders]);
+
   // Which regions to highlight on the map
   const highlightedRegions = useMemo(() => {
     if (selectedSpecialisation) {
