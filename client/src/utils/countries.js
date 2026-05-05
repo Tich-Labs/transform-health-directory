@@ -37,11 +37,11 @@ export const REGION_LABELS = {
 };
 
 export const REGION_MARKERS = [
-  { key: "north_america",     coordinates: [-95, 40],  dx: -105, dy: -90, oceanCoords: [-155, 40]  },  // Pacific left of N. America
-  { key: "latin_america",     coordinates: [-55, -10], dx: -55,  dy: 80,  oceanCoords: [-80, -5]   },  // Pacific left of S. America
-  { key: "europe",            coordinates: [10, 50],   dx: 60,   dy: 80,  oceanCoords: [-30, 48]  },  // Atlantic between Americas & Europe
-  { key: "sub_saharan_africa",coordinates: [20, 5],    dx: 60,   dy: 55,  oceanCoords: [30, -35]  },  // Below South Africa
-  { key: "south_asia",        coordinates: [80, 20],   dx: 85,   dy: -55, oceanCoords: [75, -10]  },  // Indian Ocean between Africa & Australia
+  { key: "north_america",     coordinates: [-95, 40],  dx: -105, dy: -90, oceanCoords: [-110, 42] },  // Atlantic left of N. America (visible)
+  { key: "latin_america",     coordinates: [-55, -10], dx: -55,  dy: 80,  oceanCoords: [-75, -8]  },  // Pacific left of S. America (visible)
+  { key: "europe",            coordinates: [10, 50],   dx: 60,   dy: 80,  oceanCoords: [-25, 44]  },  // Atlantic between Americas & Europe
+  { key: "sub_saharan_africa",coordinates: [20, 5],    dx: 60,   dy: 55,  oceanCoords: [18, -38]  },  // South Atlantic below SA
+  { key: "south_asia",        coordinates: [80, 20],   dx: 85,   dy: -55, oceanCoords: [78, -12]  },  // Indian Ocean (user confirmed working)
 ];
 
 export const CONTINENTS = ["Africa", "Asia", "Europe", "North America", "South America", "Oceania"];
