@@ -669,12 +669,14 @@
 <body>
 <div class="page">
 
-  <!-- TOP NAV -->
-  <nav>
-    <a href="talking-points.html" class="nav-tp">Back to Talking Points</a>
-    <a href="#summary" class="nav-talk">Summary</a>
-    <a href="#tests" class="nav-ts">Test Cases</a>
-  </nav>
+    <!-- TOP NAV -->
+    <nav>
+      <a href="talking-points.html" class="nav-tp">Back to Talking Points</a>
+      <a href="#summary" class="nav-talk">Summary</a>
+      <a href="#tests" class="nav-ts">Test Cases</a>
+      <a href="https://tich-labs.github.io/transform-health-directory/" target="_blank" rel="noopener noreferrer" class="nav-talk" style="margin-left:auto;">🔗 Live App</a>
+      <a href="admin.html" target="_blank" rel="noopener noreferrer" class="nav-ts">Admin Console ↗</a>
+    </nav>
 
   <div class="main">
 
@@ -687,7 +689,7 @@
     <!-- APP URL BANNER -->
     <div class="app-banner">
       <h3>Live App URL</h3>
-      <div class="app-url">[TBD — update this before sharing with testers]</div>
+      <div class="app-url">https://tich-labs.github.io/transform-health-directory/</div>
       <div class="app-banner-note">Update this URL before sharing with testers — paste the GitHub Pages URL here.</div>
       <div class="section-links">
         <span style="font-size:0.8rem; font-weight:600; color:#444; line-height:28px; margin-right:4px;">Jump to section:</span>
@@ -744,6 +746,18 @@
           <!-- Rows rendered by JS -->
         </tbody>
       </table>
+    </div>
+
+    <!-- TESTING NOTES -->
+    <div class="card" style="border-left: 4px solid #F8571D;">
+      <h3 style="font-size: 0.9rem; color: #F8571D;">Testing Notes</h3>
+      <ul style="padding-left:18px; margin-top:6px;">
+        <li style="font-size:0.875rem; color:#444; margin-bottom:4px;"><strong>How test data is saved:</strong> Results auto-save to your browser localStorage as you tick pass/fail. Click "Save Results Now" to push to Supabase <code>test_results</code> table.</li>
+        <li style="font-size:0.875rem; color:#444; margin-bottom:4px;"><strong>Share with team:</strong> Send the Live App URL + this testing sheet URL to Tejas and the team. They can open the app, test features, and record results.</li>
+        <li style="font-size:0.875rem; color:#444; margin-bottom:4px;"><strong>Admin Console:</strong> Opens in a new tab via the nav link ↑. Test the "All Entries" tab — check the "LinkedIn Clicks" column and try the "Most clicked" / "Least clicked" filters.</li>
+        <li style="font-size:0.875rem; color:#444; margin-bottom:4px;"><strong>Live App:</strong> Opens in a new tab via the nav link ↑. All public features (Directory, Analytics, Submit Profile) can be tested by anyone — no login needed.</li>
+        <li style="font-size:0.875rem; color:#444; margin-bottom:4px;"><strong>Supabase storage:</strong> Photos upload to <code>profile-photos</code> bucket. Check the Supabase dashboard → Storage to verify uploads are working.</li>
+      </ul>
     </div>
 
     <!-- ACTIONS -->
