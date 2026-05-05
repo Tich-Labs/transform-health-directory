@@ -72,7 +72,7 @@ export function Step0Branch({
         engagement in leadership, policy, and technical spaces.
       </p>
 
-      <div className="border-l-4 border-brand-navy bg-brand-blue-tint rounded-lg px-[2.4rem] py-[2rem] mb-8 flex flex-col gap-[10px] max-w-[640px]">
+      <div className="border-l-4 border-brand-navy bg-brand-blue-tint rounded-lg px-[2.4rem] py-[2rem] mb-8 flex flex-col gap-[10px]">
         <p className="text-lg text-gray-800 leading-[1.7] m-0">
           Information submitted may be featured in a publicly accessible database.
         </p>
@@ -85,7 +85,7 @@ export function Step0Branch({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5 max-w-[640px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
         <button
           onClick={() => setBranch("self")}
           className={`pt-[4.8rem] px-[2.4rem] pb-[4rem] rounded-xl text-center cursor-pointer bg-white border-2 ${
@@ -110,7 +110,7 @@ export function Step0Branch({
       </div>
 
       {branch === "nominate" && (
-        <div className="flex flex-col gap-5 mb-5 max-w-[640px]">
+        <div className="flex flex-col gap-5 mb-5">
           {/* Nominator */}
           <div>
             <label className={LABEL_CLASS}>Your full name *</label>

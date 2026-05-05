@@ -129,7 +129,7 @@ function Tags() {
     <div className="flex flex-wrap gap-1 justify-center mb-4">
       {tags.slice(0, 3).map((tag) => (
         <span key={tag} className="text-[1.2rem] text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full">
-          {tag}
+          {tag.replace(/\b\w/g, (c) => c.toUpperCase())}
         </span>
       ))}
       {tags.length > 3 && (

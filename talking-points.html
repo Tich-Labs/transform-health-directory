@@ -181,8 +181,8 @@
           <ul>
             <li>Self-submit or nominate someone else</li>
             <li>Multi-step form with consent gate</li>
-            <li>Geographical scope dropdown: Africa, Americas, Asia, Europe, Oceania, National only</li>
-            <li>Country of residence now optional (required only for National scope)</li>
+            <li>Geographical scope dropdown: Africa, Americas, Asia, Europe, Oceania, National only — collected in Profile Details (Step 3)</li>
+            <li>Country of residence mandatory in Basic Info (Step 2)</li>
             <li>Email field in Basic Info (required, not publicly displayed)</li>
             <li>Card dimensions increased (pt-[4.8rem]) + reduced width (max-w-[640px])</li>
             <li>Right-side texture mask (card-top-texture-0.png) centered, no blue-tint</li>
@@ -451,8 +451,8 @@
           <ul>
             <li>Hits <strong>Submit Profile</strong> tab → sees two cards: "I am nominating myself" vs "Nominating someone else" — picks <strong>myself</strong></li>
             <li><strong>Consent gate</strong> — must click "Yes I consent" to proceed. Declining ends the flow</li>
-            <li><strong>Basic Info</strong> — first name, last name, <strong>email (private, not public)</strong>, profile photo <strong>(MANDATORY, 5MB cap, compressed)</strong>, <strong>geographical scope</strong> (Africa/Americas/Asia/Europe/Oceania/National), country of residence (optional unless National scope), org, role</li>
-            <li><strong>Profile Details</strong> — years of experience (pill selector), up to 5 expertise tags, "Other" with free-text, countries of operation (multi-select), bio (300–500 chars enforced)</li>
+            <li><strong>Basic Info</strong> — first name, last name, <strong>email (private, not public)</strong>, profile photo <strong>(MANDATORY, 5MB cap, compressed)</strong>, country of residence <strong>(mandatory)</strong>, org, role</li>
+            <li><strong>Profile Details</strong> — years of experience (pill selector), up to 5 expertise tags, "Other" with free-text, <strong>geographical scope</strong> (Africa/Americas/Asia/Europe/Oceania/National), countries of operation (multi-select, optional), bio (300–500 chars enforced)</li>
             <li><strong>Links & Achievements</strong> — LinkedIn URL, up to 3 notable items (title, link, type)</li>
             <li>Hits <strong>Submit Profile</strong> → payload written directly to Supabase <code>leaders</code> table via anon insert with <code>status: pending</code> · photo uploads to Supabase Storage <code>profile-photos</code> bucket</li>
             <li>Sees a thank-you screen: "profile under review, 3–5 business days"</li>

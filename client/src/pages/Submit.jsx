@@ -215,8 +215,8 @@ export default function Submit({ onManageProfile }) {
           </div>
         )}
 
-        <div className="flex gap-8 items-stretch">
-        <div className="flex-1 min-w-0">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10 items-start">
+        <div className="min-w-0 max-w-[640px]">
           {step === 0 && (
             <Step0Branch
               branch={branch} setBranch={setBranch}
@@ -274,11 +274,11 @@ export default function Submit({ onManageProfile }) {
         </div>
 
         {step >= 0 && step <= 4 && (
-          <div className="hidden lg:flex flex-shrink-0 w-[240px] flex-col items-center justify-center py-8">
+          <div className="hidden lg:flex flex-col items-end justify-center sticky top-8 self-stretch py-8">
             <img
               src="./illustrations/card-top-texture-0.png"
               alt=""
-              className="w-[420px] h-auto translate-x-20"
+              className="w-[380px] max-w-none h-auto ml-[40px] mr-[-144px] opacity-60"
             />
           </div>
         )}
