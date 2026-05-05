@@ -5,11 +5,14 @@
 import { createClient } from '@supabase/supabase-js';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
+import ws from 'ws';
 
 const SUPABASE_URL = 'https://bahoslsvhwqybqkjonvb.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_5ZfvUrNW983egwvEmfZAYA_igo9CMvT';
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  realtime: { transport: ws },
+});
 
 const seed = JSON.parse(
   readFileSync(new URL('./seed-data.json', import.meta.url))
