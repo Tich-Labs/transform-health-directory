@@ -38,8 +38,9 @@ export default function ProfileModal({ leader, onClose, onManage }) {
   if (!leader) return null;
 
   const expertiseTags  = toTags(leader.expertise);
-  const countriesList  = toList(leader.countries);
+  const countriesList  = toList(leader.countries || leader.selectedCountries);
   const yearsExp       = leader.years_experience || leader.yearsExp;
+  const notableItems   = leader.notable_items || leader.notableItems || [];
   const isFeatured     = leader.featured === true || leader.featured === "true";
 
   return (
@@ -168,11 +169,11 @@ export default function ProfileModal({ leader, onClose, onManage }) {
         )}
 
         {/* ── NOTABLE ACHIEVEMENTS ── */}
-        {leader.notableItems?.length > 0 && (
+        {notableItems.length > 0 && (
           <div className="px-10 mb-6">
             <SectionLabel>Notable achievements</SectionLabel>
             <div className="flex flex-col gap-3">
-              {leader.notableItems.map((item, i) => (
+              {notableItems.map((item, i) => (
                 <div key={i} className="flex gap-4 bg-brand-parchment rounded-xl px-5 py-4 border border-brand-parchment-border">
                   <span className="text-[1.4rem] font-bold text-brand-navy flex-shrink-0 w-6">{i + 1}.</span>
                   <div>

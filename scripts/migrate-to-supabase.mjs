@@ -44,12 +44,12 @@ function transformLeader(raw) {
       ? raw.expertise.split(/,\s*/).filter(Boolean)
       : [],
     years_experience: raw.years_experience || raw.yearsExp || null,
-    countries: raw.countries
-      ? (Array.isArray(raw.countries)
-          ? raw.countries
-          : raw.countries.split(/,\s*/).filter(Boolean))
+    countries: (raw.countries || raw.selectedCountries)
+      ? (Array.isArray(raw.countries || raw.selectedCountries)
+          ? (raw.countries || raw.selectedCountries)
+          : (raw.countries || raw.selectedCountries).split(/,\s*/).filter(Boolean))
       : [],
-    notable_items: raw.notable_items || null,
+    notable_items: raw.notable_items || raw.notableItems || null,
     editor_email: raw.editor_email || null,
     branch: raw.branch || "self",
     nominate_link: raw.nominate_link || null,
