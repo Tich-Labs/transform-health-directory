@@ -276,21 +276,9 @@
       </div>
 
       <div class="card">
-        <span class="tag todo">To do</span>
-        <h3>Profile modal — wider with improved UI</h3>
-        <p>Current modal is functional but narrow (~672px). Needs wider window and better visual design.</p>
-      </div>
-
-      <div class="card">
-        <span class="tag todo">To do</span>
-        <h3>Regions of operation field</h3>
-        <p>Currently implemented as country selector. Update to "global, UN regions, national" multi-select as originally specified.</p>
-      </div>
-
-      <div class="card">
         <span class="tag done">Done</span>
-        <h3>Photo storage — Live</h3>
-        <p>Supabase Storage wired. Photos upload on submission for the first time. Stored in <code>profile-photos</code> bucket; URL written to leader row on approval.</p>
+        <h3>Profile modal — wider with improved UI</h3>
+        <p>Now 1200px wide with brand colours, better spacing, and improved visual design. Commit <code>55ba487</code>.</p>
       </div>
 
       <div class="card">
@@ -301,8 +289,44 @@
 
       <div class="card">
         <span class="tag done">Done</span>
+        <h3>Photo storage — Live</h3>
+        <p>Supabase Storage wired. Photos upload on submission for the first time. Stored in <code>profile-photos</code> bucket; URL written to leader row on approval.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag done">Done</span>
         <h3>Nominations — Submitter info</h3>
         <p>Nominator name and email are collected and saved to the database. Displayed in Admin Console under the Nominated tab for outreach context.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag done">Done</span>
+        <h3>Expertise "Other" in Analytics filter</h3>
+        <p>"Other: X" tags normalize to "Other" in bar chart. Clicking "Other" filters all related tags. Capitalization fixed (Digital Health Policy, Health Financing, etc.).</p>
+      </div>
+
+      <div class="card">
+        <span class="tag done">Done</span>
+        <h3>Map legend — ocean placement</h3>
+        <p>Region labels now sit directly on the ocean (no connector lines). North/South America on Pacific left side, Europe in Atlantic, Africa & South Asia in Indian Ocean.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag done">Done</span>
+        <h3>Map highlighting — data-driven</h3>
+        <p>Now based on actual leader <code>country</code> field. Fixed Europe/French Guiana cross-highlight bug. Commit <code>bb78f03</code>.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag done">Done</span>
+        <h3>Clear Region button</h3>
+        <p>Moved underneath the map as a centered, styled "✕ Clear region" button — always visible when a region is selected.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag done">Done</span>
+        <h3>Pink accent banner</h3>
+        <p>Accent design element (<code>Rectangle 6709.svg</code>) uses <code>#F85A8E</code> (brand-pink), consistent with policy brief.</p>
       </div>
 
       <div class="card">
@@ -321,6 +345,12 @@
         <span class="tag todo">Before launch</span>
         <h3>Update GitHub Actions CI secrets</h3>
         <p>Add <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code> to GitHub Actions secrets. Remove <code>VITE_APPS_SCRIPT_URL</code> and any Firebase vars that are no longer needed.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag todo">Action needed</span>
+        <h3>Replace pixelated illustrations</h3>
+        <p>Current PNGs in <code>client/public/illustrations/</code> are low-res (4–17KB). Please replace with high-res versions from your design folders.</p>
       </div>
 
       <footer>Transform Health · Internal use only · Updated May 2026</footer>
