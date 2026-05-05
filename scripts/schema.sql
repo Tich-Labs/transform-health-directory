@@ -57,12 +57,26 @@ create policy "Admin read all leaders"
   to authenticated
   using (true);
 
--- Leaders: test mode — allow anon to read all statuses so admin works without auth
--- Remove this policy before launch and replace with proper admin auth
+-- TEST MODE POLICIES — remove all three before launch
+-- Allow anon to read all statuses (admin needs pending/rejected too)
 create policy "Admin test mode: read all leaders"
   on public.leaders for select
   to public
   using (true);
+
+-- Allow anon to approve / reject (update status)
+create policy "Admin test mode: update leaders"
+  on public.leaders for update
+  to public
+  using (true)
+  with check (true);
+
+-- Allow anon to update request status (approve/dismiss)
+create policy "Admin test mode: update requests"
+  on public.requests for update
+  to public
+  using (true)
+  with check (true);
 
 -- Leaders: anyone can submit (insert pending entry)
 create policy "Anyone can submit"
