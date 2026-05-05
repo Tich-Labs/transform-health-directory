@@ -102,6 +102,9 @@ export default function Admin({ onGoToDirectory }) {
   const [pendingSort,      setPendingSort]      = useState("name_az");
   const [expandedTester,   setExpandedTester]   = useState(null);
   const [expandedTestSection, setExpandedTestSection] = useState(null);
+  const [testFilterTester, setTestFilterTester] = useState("");
+  const [testFilterStatus, setTestFilterStatus] = useState("");
+  const [testFilterSearch, setTestFilterSearch] = useState("");
   const PAGE_SIZE = 15;
 
   useEffect(() => { loadData(); }, []);
@@ -1195,16 +1198,6 @@ export default function Admin({ onGoToDirectory }) {
                 )}
               </>
             ) : activeTab === "tests" ? (() => {
-                // Group rows by tester
-                const byTester = testResults.reduce((acc, r) => {
-                  const key = r.tester_name || "Unknown";
-                  if (!acc[key]) acc[key] = [];
-                  acc[key].push(r);
-                  return acc;
-                }, {});
-                const testerNames = Object.keys(byTester).sort();
-
-                // Section display order + labels
                 const SECTION_LABELS = {
                   setup: "Setup Check", dir: "Directory", analytics: "Analytics",
                   submit: "Submit & Nominate", manage: "Manage Profile", admin: "Admin Console",
@@ -1226,22 +1219,48 @@ export default function Admin({ onGoToDirectory }) {
                   return <span className={`text-[1.1rem] font-semibold px-2 py-0.5 rounded-full ${cls}`}>{p || "—"}</span>;
                 };
 
-                const overallPass    = testResults.filter(r => r.status === "pass").length;
-                const overallFail    = testResults.filter(r => r.status === "fail").length;
-                const overallPending = testResults.filter(r => r.status === "pending").length;
+                // Apply filters
+                const searchLower = testFilterSearch.toLowerCase();
+                const filteredResults = testResults.filter(r => {
+                  if (testFilterTester && r.tester_name !== testFilterTester) return false;
+                  if (testFilterStatus && r.status !== testFilterStatus) return false;
+                  if (searchLower && !(
+                    r.scenario?.toLowerCase().includes(searchLower) ||
+                    r.notes?.toLowerCase().includes(searchLower)
+                  )) return false;
+                  return true;
+                });
+
+                const hasFilters = testFilterTester || testFilterStatus || testFilterSearch;
+
+                // Group filtered rows by tester
+                const byTester = filteredResults.reduce((acc, r) => {
+                  const key = r.tester_name || "Unknown";
+                  if (!acc[key]) acc[key] = [];
+                  acc[key].push(r);
+                  return acc;
+                }, {});
+                const testerNames = Object.keys(byTester).sort();
+                const allTesterNames = [...new Set(testResults.map(r => r.tester_name || "Unknown"))].sort();
+
+                const overallPass    = filteredResults.filter(r => r.status === "pass").length;
+                const overallFail    = filteredResults.filter(r => r.status === "fail").length;
+                const overallPending = filteredResults.filter(r => r.status === "pending").length;
 
                 return (
                   <>
                     {/* Header */}
                     <div className="px-8 py-6 border-b border-brand-warm-border">
-                      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                         <div>
                           <h2 className="text-3xl font-semibold text-brand-navy tracking-heading">Test Results</h2>
                           <p className="text-lg text-gray-600 mt-1">
-                            {testerNames.length} tester{testerNames.length !== 1 ? "s" : ""} · {testResults.length} test cases recorded
+                            {hasFilters
+                              ? `${filteredResults.length} matching test case${filteredResults.length !== 1 ? "s" : ""} across ${testerNames.length} tester${testerNames.length !== 1 ? "s" : ""}`
+                              : `${allTesterNames.length} tester${allTesterNames.length !== 1 ? "s" : ""} · ${testResults.length} test cases recorded`}
                           </p>
                         </div>
-                        <div className="flex gap-3">
+                        <div className="flex gap-3 flex-shrink-0">
                           <div className="bg-brand-parchment rounded-xl px-5 py-3 border border-green-200 text-center min-w-[72px]">
                             <div className="text-[1.1rem] uppercase tracking-wider text-green-600 font-semibold">Pass</div>
                             <div className="text-[2rem] font-bold text-green-600 leading-none mt-0.5">{overallPass}</div>
@@ -1256,67 +1275,109 @@ export default function Admin({ onGoToDirectory }) {
                           </div>
                         </div>
                       </div>
+
+                      {/* Filters */}
+                      <div className="flex flex-wrap gap-3 mt-5">
+                        {/* Tester filter */}
+                        <select
+                          value={testFilterTester}
+                          onChange={e => setTestFilterTester(e.target.value)}
+                          className="px-3 py-2 border border-gray-200 rounded-lg text-[1.4rem] text-gray-700 bg-white cursor-pointer focus:outline-none focus:border-brand-navy"
+                        >
+                          <option value="">All testers</option>
+                          {allTesterNames.map(n => <option key={n} value={n}>{n}</option>)}
+                        </select>
+
+                        {/* Status filter */}
+                        <select
+                          value={testFilterStatus}
+                          onChange={e => setTestFilterStatus(e.target.value)}
+                          className="px-3 py-2 border border-gray-200 rounded-lg text-[1.4rem] text-gray-700 bg-white cursor-pointer focus:outline-none focus:border-brand-navy"
+                        >
+                          <option value="">All statuses</option>
+                          <option value="pass">✅ Pass</option>
+                          <option value="fail">❌ Fail</option>
+                          <option value="pending">⏳ Pending</option>
+                        </select>
+
+                        {/* Search */}
+                        <input
+                          type="text"
+                          placeholder="Search scenario or notes…"
+                          value={testFilterSearch}
+                          onChange={e => setTestFilterSearch(e.target.value)}
+                          className="px-3 py-2 border border-gray-200 rounded-lg text-[1.4rem] text-gray-700 bg-white focus:outline-none focus:border-brand-navy flex-1 min-w-[200px]"
+                        />
+
+                        {/* Clear */}
+                        {hasFilters && (
+                          <button
+                            onClick={() => { setTestFilterTester(""); setTestFilterStatus(""); setTestFilterSearch(""); }}
+                            className="px-3 py-2 text-[1.3rem] font-semibold text-red-500 border border-red-200 rounded-lg bg-white hover:bg-red-50 transition-colors cursor-pointer"
+                          >
+                            Clear filters
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Tester cards */}
                     <div className="flex-1 overflow-auto px-8 py-6 space-y-4">
-                      {testerNames.length === 0 ? (
+                      {testResults.length === 0 ? (
                         <div className="text-center py-20">
                           <div className="text-[4.8rem] mb-4 text-gray-300">📋</div>
                           <div className="text-lg text-gray-500">No test results yet. Testers can submit via the <a href="./testing-sheet.html" target="_blank" rel="noopener noreferrer" className="text-brand-navy underline">Testing Sheet</a>.</div>
                         </div>
+                      ) : testerNames.length === 0 ? (
+                        <div className="text-center py-16">
+                          <div className="text-[3rem] mb-3 text-gray-300">🔍</div>
+                          <div className="text-lg text-gray-500">No results match your filters.</div>
+                          <button onClick={() => { setTestFilterTester(""); setTestFilterStatus(""); setTestFilterSearch(""); }} className="mt-3 text-[1.4rem] text-brand-navy underline cursor-pointer bg-transparent border-0">Clear filters</button>
+                        </div>
                       ) : testerNames.map((name) => {
                         const rows = byTester[name];
-                        const pass    = rows.filter(r => r.status === "pass").length;
-                        const fail    = rows.filter(r => r.status === "fail").length;
-                        const pending = rows.filter(r => r.status === "pending").length;
-                        const total   = rows.length;
+                        // Counts from full (unfiltered) tester data for the summary bar
+                        const allRows = testResults.filter(r => r.tester_name === name);
+                        const pass    = allRows.filter(r => r.status === "pass").length;
+                        const fail    = allRows.filter(r => r.status === "fail").length;
+                        const pending = allRows.filter(r => r.status === "pending").length;
+                        const total   = allRows.length;
                         const pct     = total ? Math.round((pass / total) * 100) : 0;
-                        const latest  = rows.reduce((a, b) => new Date(a.created_at) > new Date(b.created_at) ? a : b, rows[0]);
-                        const isOpen  = expandedTester === name;
+                        const latest  = allRows.reduce((a, b) => new Date(a.created_at) > new Date(b.created_at) ? a : b, allRows[0]);
+                        // Auto-expand when filters are active
+                        const isOpen  = hasFilters || expandedTester === name;
 
                         return (
                           <div key={name} className="rounded-xl border border-brand-warm-border bg-white overflow-hidden shadow-sm">
                             {/* Tester summary row */}
                             <button
                               className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-brand-parchment/60 transition-colors cursor-pointer"
-                              onClick={() => setExpandedTester(isOpen ? null : name)}
+                              onClick={() => setExpandedTester(isOpen && !hasFilters ? null : name)}
                             >
-                              {/* Avatar */}
                               <div className="w-9 h-9 rounded-full bg-brand-navy flex items-center justify-center text-white text-[1.3rem] font-bold flex-shrink-0">
                                 {name.charAt(0).toUpperCase()}
                               </div>
-
-                              {/* Name + date */}
                               <div className="flex-1 min-w-0">
                                 <div className="text-[1.6rem] font-bold text-brand-navy truncate">{name}</div>
                                 <div className="text-[1.2rem] text-gray-400">
                                   Last saved {latest?.created_at ? new Date(latest.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "—"}
+                                  {hasFilters && <span className="ml-2 text-brand-orange font-semibold">{rows.length} matching</span>}
                                 </div>
                               </div>
-
-                              {/* Progress bar */}
                               <div className="hidden sm:flex flex-col gap-1 w-36">
                                 <div className="flex justify-between text-[1.1rem] text-gray-500">
                                   <span>{pct}% passed</span>
                                   <span>{pass}/{total}</span>
                                 </div>
                                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                  <div
-                                    className="h-full rounded-full transition-all"
-                                    style={{ width: `${pct}%`, background: fail > 0 ? "#ef4444" : "#22c55e" }}
-                                  />
+                                  <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: fail > 0 ? "#ef4444" : "#22c55e" }} />
                                 </div>
                               </div>
-
-                              {/* Counts */}
                               <div className="flex gap-2 flex-shrink-0">
                                 <span className="text-[1.2rem] font-bold px-2.5 py-1 rounded-full bg-green-100 text-green-700">{pass} pass</span>
                                 {fail > 0 && <span className="text-[1.2rem] font-bold px-2.5 py-1 rounded-full bg-red-100 text-red-700">{fail} fail</span>}
                                 {pending > 0 && <span className="text-[1.2rem] font-bold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700">{pending} pending</span>}
                               </div>
-
-                              {/* Chevron */}
                               <svg className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6l4 4 4-4"/></svg>
                             </button>
 
@@ -1326,21 +1387,26 @@ export default function Admin({ onGoToDirectory }) {
                                 {SECTION_ORDER.map((secId) => {
                                   const secRows = rows.filter(r => r.section === secId);
                                   if (!secRows.length) return null;
+                                  // For section header counts use unfiltered section data
+                                  const allSecRows = allRows.filter(r => r.section === secId);
                                   const secKey = `${name}::${secId}`;
-                                  const secOpen = expandedTestSection === secKey;
-                                  const sPass = secRows.filter(r => r.status === "pass").length;
-                                  const sFail = secRows.filter(r => r.status === "fail").length;
-                                  const sPend = secRows.filter(r => r.status === "pending").length;
+                                  // Auto-expand sections when filters active
+                                  const secOpen = hasFilters || expandedTestSection === secKey;
+                                  const sPass = allSecRows.filter(r => r.status === "pass").length;
+                                  const sFail = allSecRows.filter(r => r.status === "fail").length;
+                                  const sPend = allSecRows.filter(r => r.status === "pending").length;
 
                                   return (
                                     <div key={secId}>
-                                      {/* Section header */}
                                       <button
                                         className="w-full flex items-center gap-3 px-6 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left cursor-pointer"
-                                        onClick={() => setExpandedTestSection(secOpen ? null : secKey)}
+                                        onClick={() => setExpandedTestSection(secOpen && !hasFilters ? null : secKey)}
                                       >
                                         <span className="text-[1.4rem] font-semibold text-brand-navy flex-1">
                                           {SECTION_LABELS[secId] || secId}
+                                          {hasFilters && secRows.length < allSecRows.length && (
+                                            <span className="ml-2 text-[1.1rem] font-normal text-brand-orange">{secRows.length} of {allSecRows.length} shown</span>
+                                          )}
                                         </span>
                                         <span className="flex gap-2 text-[1.1rem]">
                                           <span className="font-bold text-green-600">{sPass} ✓</span>
@@ -1350,7 +1416,6 @@ export default function Admin({ onGoToDirectory }) {
                                         <svg className={`w-3.5 h-3.5 text-gray-400 flex-shrink-0 transition-transform ${secOpen ? "rotate-180" : ""}`} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6l4 4 4-4"/></svg>
                                       </button>
 
-                                      {/* Individual test cases */}
                                       {secOpen && (
                                         <table className="w-full">
                                           <thead className="bg-white border-b border-gray-100">
@@ -1362,11 +1427,11 @@ export default function Admin({ onGoToDirectory }) {
                                           </thead>
                                           <tbody className="divide-y divide-gray-50">
                                             {secRows.map((r) => (
-                                              <tr key={r.id} className="hover:bg-gray-50 transition-colors">
+                                              <tr key={r.id} className={`transition-colors ${r.status === "fail" ? "bg-red-50/40 hover:bg-red-50" : "hover:bg-gray-50"}`}>
                                                 <td className="px-6 py-3 text-[1.4rem] text-gray-800 max-w-[380px]">{r.scenario || "—"}</td>
                                                 <td className="px-6 py-3">{priorityBadge(r.priority)}</td>
                                                 <td className="px-6 py-3">{statusBadge(r.status)}</td>
-                                                <td className="px-6 py-3 text-[1.3rem] text-gray-500 max-w-[260px]">{r.notes || <span className="text-gray-300">—</span>}</td>
+                                                <td className="px-6 py-3 text-[1.3rem] text-gray-600 max-w-[260px] whitespace-pre-wrap">{r.notes || <span className="text-gray-300">—</span>}</td>
                                               </tr>
                                             ))}
                                           </tbody>
