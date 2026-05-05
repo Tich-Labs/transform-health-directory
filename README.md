@@ -277,3 +277,5 @@ The Apps Script web app URL (`VITE_APPS_SCRIPT_URL`) is no longer used by the fr
 For interactive testing, open `testing-sheet.html` in your browser — it includes test cases across multiple sections with step-by-step instructions, priority indicators, and auto-saved results.
 
 **Test results** are saved to the Supabase `test_results` table and visible in the **Admin Console → "Test Results" tab** (new tab with pass/fail/pending summary cards and full results table).
+
+**⚠️ One-time setup required:** Run `scripts/create-test-results-table.sql` in the Supabase SQL Editor to create the `test_results` table. Until then, the "Save Results Now" button will save locally only.
