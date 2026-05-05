@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { api } from "../api/leaders";
+import AdminManual from "./AdminManual";
 
 const SIDEBAR_ITEMS = [
   { id: "all",       label: "All Entries",           icon: "list"      },
@@ -8,6 +9,7 @@ const SIDEBAR_ITEMS = [
   { id: "nominated", label: "Nominated",            icon: "user-plus" },
   { id: "divider",   label: "",                     icon: "divider"   },
   { id: "tests",     label: "Test Results",          icon: "test"      },
+  { id: "manual",    label: "User Manual",           icon: "manual"    },
 ];
 
 function InboxIcon() {
@@ -61,7 +63,16 @@ function TestIcon() {
   );
 }
 
-const ICONS = { inbox: InboxIcon, mail: MailIcon, list: ListIcon, "user-plus": UserPlusIcon, test: TestIcon };
+function ManualIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    </svg>
+  );
+}
+
+const ICONS = { inbox: InboxIcon, mail: MailIcon, list: ListIcon, "user-plus": UserPlusIcon, test: TestIcon, manual: ManualIcon };
 
 function getInitials(first, last) {
   return ((first?.[0] || "") + (last?.[0] || "")).toUpperCase();
@@ -398,6 +409,7 @@ export default function Admin({ onGoToDirectory }) {
     { ...SIDEBAR_ITEMS[3], count: nominatedCount },
     SIDEBAR_ITEMS[4],  // divider (no count)
     { ...SIDEBAR_ITEMS[5], count: testResults.length },
+    SIDEBAR_ITEMS[6],
   ];
 
   return (
@@ -468,7 +480,14 @@ export default function Admin({ onGoToDirectory }) {
             })}
           </nav>
 
-          <div className="px-3 py-4 border-t border-gray-200">
+          <div className="px-3 py-4 border-t border-gray-200 flex flex-col gap-2">
+            <button
+              onClick={() => setActiveTab("manual")}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-[1.4rem] font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-brand-navy transition-colors"
+            >
+              <ManualIcon />
+              User Manual
+            </button>
             <button
               onClick={() => onGoToDirectory?.()}
               className="w-full inline-flex items-center justify-center gap-2 rounded-md border border-brand-pink px-3 py-2 text-[1.4rem] font-medium text-brand-pink bg-brand-parchment hover:bg-brand-pink hover:text-white transition-colors"
@@ -480,7 +499,7 @@ export default function Admin({ onGoToDirectory }) {
 
         <main className="flex-1 flex flex-col overflow-hidden">
           {/* Page header + stats - hidden for Tests tab */}
-          {activeTab !== "tests" && (
+          {activeTab !== "tests" && activeTab !== "manual" && (
             <div className="px-8 py-6 border-b border-brand-warm-border flex-shrink-0 bg-gradient-to-br from-brand-sand to-[#ede7d8]">
               <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div>
@@ -510,7 +529,7 @@ export default function Admin({ onGoToDirectory }) {
           )}
 
           {/* Filter bar - hidden for Tests tab */}
-          {activeTab !== "tests" && (
+          {activeTab !== "tests" && activeTab !== "manual" && (
             <div className="px-8 py-4 border-b border-brand-parchment-border flex-shrink-0 bg-brand-parchment">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -1491,6 +1510,8 @@ export default function Admin({ onGoToDirectory }) {
                   </>
                 );
               })()
+            : activeTab === "manual"
+            ? <AdminManual />
             : null}
           </div>
         </main>
