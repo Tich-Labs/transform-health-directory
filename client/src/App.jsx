@@ -1,5 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
-import axios from "axios";
+import React, { useState, lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const Database = lazy(() => import("./pages/Database"));
 const Submit = lazy(() => import("./pages/Submit"));
@@ -19,11 +18,13 @@ const NAV_ITEMS = [
 ];
 
 function App() {
-  const [route, setRoute] = useState("database");
+  const [route, setRoute] = useState(() => {
+    const hash = window.location.hash.replace("#", "");
+    const valid = ["database", "analytics", "submit", "admin"];
+    return valid.includes(hash) ? hash : "database";
+  });
   const [managePrefill, setManagePrefill] = useState(null);
   const [showManageModal, setShowManageModal] = useState(false);
-  const [tokenLoading, setTokenLoading] = useState(false);
-  const [tokenError, setTokenError] = useState("");
   const [chromeHidden, setChromeHidden] = useState(
     () => localStorage.getItem("th-chrome-hidden") === "true"
   );
@@ -35,37 +36,6 @@ function App() {
       return next;
     });
   }
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-    if (!token) return;
-
-    const url = import.meta.env.VITE_APPS_SCRIPT_URL;
-    if (!url) return;
-
-    setTokenLoading(true);
-    window.history.replaceState({}, "", window.location.pathname);
-
-    axios
-      .get(`${url}?api=profile&token=${token}`)
-      .then((r) => {
-        if (r.data?.ok && r.data?.profile) {
-          setManagePrefill({ ...r.data.profile, _verified: true });
-          setShowManageModal(true);
-        } else {
-          setTokenError(
-            r.data?.error === "token_used"
-              ? "This link has already been used. Please request a new one."
-              : "This link is invalid or has expired. Please request a new one."
-          );
-        }
-      })
-      .catch(() => {
-        setTokenError("Could not load your profile. Please try again.");
-      })
-      .finally(() => setTokenLoading(false));
-  }, []);
 
   function openManageModal(profile = null) {
     setManagePrefill(profile);
@@ -205,74 +175,41 @@ function App() {
             </div>
 
             {/* Admin — tucked to the right, smaller */}
-            <button
-              onClick={() => setRoute("admin")}
-              className={`font-['Montserrat'] font-medium text-[1.2rem] tracking-[0.08em] uppercase px-3.5 py-1.5 mb-1.5 cursor-pointer rounded flex-shrink-0 ${
-                route === "admin"
-                  ? "text-white border-transparent bg-brand-orange"
-                  : "text-brand-dark border border-gray-500 bg-transparent"
-              }`}
+            <a
+              href="#admin"
+              onClick={(e) => { e.preventDefault(); window.open(window.location.pathname + "#admin", "_blank"); }}
+              className="font-['Montserrat'] font-medium text-[1.2rem] tracking-[0.08em] uppercase px-3.5 py-1.5 mb-1.5 cursor-pointer rounded flex-shrink-0 text-brand-dark border border-gray-500 bg-transparent"
             >
               Admin
-            </button>
+            </a>
           </div>
         </nav>
       )}
       <main id="main-content">
-        {tokenLoading ? (
-          <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-            <p className="text-gray-600 text-[1.8rem]">
-              Loading your profile...
-            </p>
+        <Suspense fallback={
+          <div className="min-h-screen bg-brand-sand flex items-center justify-center">
+            <div className="text-gray-600 text-[1.8rem]">Loading...</div>
           </div>
-        ) : tokenError ? (
-          <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-8 text-center max-w-md">
-              <div className="text-[3rem] mb-4" aria-hidden="true">
-                ⚠
-              </div>
-              <h2 className="text-[1.8rem] font-semibold text-gray-900 mb-2">
-                Link unavailable
-              </h2>
-              <p className="text-gray-600 text-[1.4rem] mb-4">{tokenError}</p>
-              <button
-                onClick={() => {
-                  setTokenError("");
-                  setManagePrefill(null);
-                  setShowManageModal(true);
-                }}
-                className="px-4 py-2 bg-gray-800 text-white rounded-full text-[1.4rem] font-medium hover:bg-gray-700"
-              >
-                Request a new link
-              </button>
-            </div>
-          </div>
-          ) : (
-            <Suspense fallback={
-              <div className="min-h-screen bg-brand-sand flex items-center justify-center">
-                <div className="text-gray-600 text-[1.8rem]">Loading...</div>
-              </div>
-            }>
-              {route === "database" && (
-                <Database onManageProfile={openManageModal} />
-              )}
-              {route === "analytics" && (
-                <Analytics
-                  onManageProfile={openManageModal}
-                  onGoToDirectory={() => setRoute("database")}
-                />
-              )}
-              {route === "submit" && (
-                <Submit
-                  onManageProfile={openManageModal}
-                  onGoToDirectory={() => setRoute("database")}
-                />
-              )}
-              {route === "admin" && (
-                <Admin onGoToDirectory={() => setRoute("database")} />
-              )}
-            </Suspense>
+        }>
+          {route === "database" && (
+            <Database onManageProfile={openManageModal} />
           )}
+          {route === "analytics" && (
+            <Analytics
+              onManageProfile={openManageModal}
+              onGoToDirectory={() => setRoute("database")}
+            />
+          )}
+          {route === "submit" && (
+            <Submit
+              onManageProfile={openManageModal}
+              onGoToDirectory={() => setRoute("database")}
+            />
+          )}
+          {route === "admin" && (
+            <Admin onGoToDirectory={() => setRoute("database")} />
+          )}
+        </Suspense>
 
         {showManageModal && (
           <div
