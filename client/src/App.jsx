@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from "react";
+import React, { useState, lazy, Suspense, startTransition } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const Database = lazy(() => import("./pages/Database"));
 const Submit = lazy(() => import("./pages/Submit"));
@@ -38,8 +38,10 @@ function App() {
   }
 
   function openManageModal(profile = null) {
-    setManagePrefill(profile);
-    setShowManageModal(true);
+    startTransition(() => {
+      setManagePrefill(profile);
+      setShowManageModal(true);
+    });
   }
 
   function closeManageModal() {
