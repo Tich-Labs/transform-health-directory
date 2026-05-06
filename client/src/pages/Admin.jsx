@@ -118,7 +118,28 @@ export default function Admin({ onGoToDirectory }) {
   const [testFilterSearch, setTestFilterSearch] = useState("");
   const PAGE_SIZE = 15;
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => {
+    // Load data on mount
+    loadData();
+
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      loadData();
+    }, 30000);
+
+    // Refresh when tab comes into focus
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadData();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   async function loadData() {
     setLoading(true);

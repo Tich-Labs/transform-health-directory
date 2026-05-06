@@ -123,13 +123,9 @@ export default function ManageProfile({ prefill, onBack }) {
               ? "Your removal request has been sent. The admin team will process it shortly."
               : "Your update request has been sent. The admin team will review and apply the changes shortly."}
           </p>
-          <p className="text-1.3 text-gray-400 mb-6">
+          <p className="text-1.3 text-gray-400">
             You'll be notified by email at {email}
           </p>
-          <div className="bg-brand-blue-tint border-l-4 border-brand-navy rounded-lg px-4 py-3 text-left">
-            <p className="text-1.2 text-brand-navy font-semibold mb-1">Admin note:</p>
-            <p className="text-1.2 text-gray-600">The admin console may need to be refreshed to see this request under "Profile Requests".</p>
-          </div>
         </div>
       </div>
     );
