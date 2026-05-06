@@ -58,18 +58,20 @@ export const api = {
       console.error("Request submission error:", error);
       throw error;
     }
-    console.log("Request saved successfully:", result);
+    console.log("✓ Request saved successfully to Supabase");
     
-    // Verify it was saved by fetching it back
-    const { data: verify, error: verifyErr } = await supabase
+    // Verify by fetching recent requests
+    const { data: recent, error: verifyErr } = await supabase
       .from("requests")
       .select("*")
-      .eq("id", payload.id)
-      .single();
+      .eq("email", payload.email)
+      .order("created_at", { ascending: false })
+      .limit(1);
+    
     if (verifyErr) {
       console.warn("Could not verify saved request:", verifyErr);
-    } else {
-      console.log("✓ Request verified in database:", verify);
+    } else if (recent && recent.length > 0) {
+      console.log("✓ Request verified in database - found latest request for email:", recent[0]);
     }
     
     return { ok: true };
