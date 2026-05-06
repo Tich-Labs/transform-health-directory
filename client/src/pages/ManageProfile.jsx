@@ -90,6 +90,13 @@ export default function ManageProfile({ prefill, onBack }) {
   }
 
   async function submit() {
+    // Validate email is not empty
+    if (!email.trim()) {
+      setStatus("error");
+      setLinkError("Email address is required");
+      return;
+    }
+    
     setStatus("submitting");
     try {
       await api.submitRequest({
@@ -106,6 +113,7 @@ export default function ManageProfile({ prefill, onBack }) {
     } catch (err) {
       console.error("Submit error:", err);
       setStatus("error");
+      setLinkError("Failed to submit request. Please try again.");
     }
   }
 
@@ -177,6 +185,7 @@ export default function ManageProfile({ prefill, onBack }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="We'll send your profile link here — not stored"
+                required
                 className={INPUT_CLASS}
               />
             </div>
@@ -229,7 +238,7 @@ export default function ManageProfile({ prefill, onBack }) {
                 ← BACK
               </button>
               <ContinueBtn
-                disabled={!firstName || !lastName || linkLoading}
+                disabled={!firstName.trim() || !lastName.trim() || !email.trim() || linkLoading}
                 onClick={lookupProfile}
               >
                 {linkLoading ? "SEARCHING..." : "FIND MY PROFILE →"}
@@ -238,25 +247,43 @@ export default function ManageProfile({ prefill, onBack }) {
 
             {foundProfile && (
               <div className="mt-6 pt-5 border-t border-gray-200">
+                {!email.trim() && (
+                  <div className="border-l-4 border-red-300 bg-red-50 rounded-lg px-7 py-5 mb-5">
+                    <p className="text-1.3 text-red-600 font-semibold">⚠ Email required</p>
+                    <p className="text-1.2 text-red-500 mt-1">Please enter your email address to continue.</p>
+                  </div>
+                )}
                 <p className="text-1.3 text-gray-500 mb-4 text-center">
                   What would you like to do?
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => {
+                      if (!email.trim()) return;
                       setRequestType("update");
                       setStep("edit");
                     }}
-                    className="px-4 py-5 rounded-lg border-[1.5px] border-brand-navy bg-white text-brand-navy text-1.4 font-bold cursor-pointer tracking-[0.04em] hover:bg-brand-blue-tint transition-colors"
+                    disabled={!email.trim()}
+                    className={`px-4 py-5 rounded-lg border-[1.5px] border-brand-navy bg-white text-1.4 font-bold tracking-[0.04em] transition-colors ${
+                      email.trim()
+                        ? "text-brand-navy cursor-pointer hover:bg-brand-blue-tint"
+                        : "text-gray-400 cursor-not-allowed opacity-50"
+                    }`}
                   >
                     Update profile
                   </button>
                   <button
                     onClick={() => {
+                      if (!email.trim()) return;
                       setRequestType("delete");
                       setStep("remove");
                     }}
-                    className="px-4 py-5 rounded-lg border-[1.5px] border-red-500 bg-white text-red-500 text-1.4 font-bold cursor-pointer tracking-[0.04em] hover:bg-red-50 transition-colors"
+                    disabled={!email.trim()}
+                    className={`px-4 py-5 rounded-lg border-[1.5px] bg-white text-1.4 font-bold tracking-[0.04em] transition-colors ${
+                      email.trim()
+                        ? "border-red-500 text-red-500 cursor-pointer hover:bg-red-50"
+                        : "border-gray-300 text-gray-400 cursor-not-allowed opacity-50"
+                    }`}
                   >
                     Remove profile
                   </button>
