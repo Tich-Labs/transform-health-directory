@@ -153,9 +153,22 @@ Open `http://localhost:5173`.
   2. Copy the code from `supabase/functions/send-email/index.ts`
   3. Deploy: `supabase functions deploy send-email`
   4. Set secrets (Dashboard → Settings → Functions → Secrets):
-     - `SMTP_FROM`: Your from address (e.g. `noreply@transformhealthcoalition.org`)
-     - `SENDGRID_API_KEY`: Your SendGrid API key (or use SMTP_* below)
-     - OR set SMTP vars: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`
+
+     **Option A: Google Workspace (FREE for Workspace users)**
+     - `GOOGLE_SMTP_USER`: Your Workspace email (e.g. `noreply@transformhealthcoalition.org`)
+     - `GOOGLE_SMTP_PASS`: App Password (NOT regular password)
+       - Go to Google Account → Security → 2-Step Verification → App Passwords
+       - Generate a 16-character app password
+     - Host: `smtp.gmail.com`, Port: `587`
+
+     **Option B: SendGrid (paid)**
+     - `SENDGRID_API_KEY`: Your SendGrid API key
+
+     **Option C: Generic SMTP**
+     - `SMTP_HOST`: Your SMTP host
+     - `SMTP_PORT`: Usually `587`
+     - `SMTP_USERNAME`: SMTP username
+     - `SMTP_PASSWORD`: SMTP password
 
 - [ ] Verify: "Send update link" in Admin → Profile Requests now sends real emails via the Function
 
