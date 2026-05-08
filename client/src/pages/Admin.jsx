@@ -196,6 +196,47 @@ export default function Admin({ onGoToDirectory }) {
     }
   }
 
+  function handleDeleteTestResult(id, scenario) {
+    setShowConfirm({
+      title: "Delete test result?",
+      message: `"${scenario}" will be permanently removed.`,
+      action: "delete",
+      confirmLabel: "Delete",
+      onConfirm: async () => {
+        setShowConfirm(null);
+        try {
+          await api.deleteTestResult(id);
+          setTestResults((prev) => prev.filter((r) => r.id !== id));
+          setActionMessage("Test result deleted.");
+        } catch (e) {
+          setActionIsError(true);
+          setActionMessage("Delete failed.");
+        }
+      },
+    });
+  }
+
+  function handleClearTesterResults(name) {
+    setShowConfirm({
+      title: "Clear all results for this tester?",
+      message: `All test results for "${name}" will be permanently removed. This cannot be undone.`,
+      action: "delete",
+      confirmLabel: "Clear all",
+      onConfirm: async () => {
+        setShowConfirm(null);
+        try {
+          await api.deleteTestResultsForTester(name);
+          setTestResults((prev) => prev.filter((r) => r.tester_name !== name));
+          setExpandedTester((prev) => prev === name ? null : prev);
+          setActionMessage(`All results cleared for ${name}.`);
+        } catch (e) {
+          setActionIsError(true);
+          setActionMessage("Clear failed.");
+        }
+      },
+    });
+  }
+
   const handleRefresh = () => loadData();
 
   function buildOutreachMessage(item) {
@@ -227,9 +268,23 @@ export default function Admin({ onGoToDirectory }) {
     setActionMessage("");
     setActionIsError(false);
     try {
-      await api.requestManage({ firstName: req.first_name, lastName: req.last_name, email: req.email, linkedin: req.linkedin });
+      // Use leader_email from the leaders table (admin-only field)
+      const { data: leader } = await api.getLeaders("all").then(all => 
+        ({ data: all.find(l => l.id === req.leader_id) })
+      );
+      
+      if (!leader?.leader_email) {
+        throw new Error("Leader email not found");
+      }
+
+      await api.requestManage({ 
+        leaderId: req.leader_id, 
+        firstName: req.first_name, 
+        lastName: req.last_name, 
+        linkedin: req.linkedin 
+      });
       setRequests((current) => current.map((r) => (r.id === req.id ? { ...r, link_sent: true } : r)));
-      setActionMessage(`Update link sent to ${req.email}.`);
+      setActionMessage(`Update link sent to ${leader.leader_email}.`);
     } catch (e) {
       console.error(e);
       setRequests((current) => current.map((r) => (r.id === req.id ? { ...r, link_sent: true } : r)));
@@ -377,10 +432,10 @@ export default function Admin({ onGoToDirectory }) {
     return set;
   }, [all]);
 
-  const filteredPending = useMemo(() => {
+    const filteredPending = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     const results = pending.filter((item) => {
-      const text = [item.first_name, item.last_name, item.role, item.organisation, item.editor_email, item.expertise, item.country, item.bio].filter(Boolean).join(" ").toLowerCase();
+      const text = [item.first_name, item.last_name, item.role, item.organisation, item.editor_email, item.leader_email, item.expertise, item.country, item.bio].filter(Boolean).join(" ").toLowerCase();
       if (query && !text.includes(query)) return false;
       if (filterCountry && item.country !== filterCountry) return false;
       if (filterExpertise) {
@@ -402,7 +457,7 @@ export default function Admin({ onGoToDirectory }) {
   const filteredAll = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     const results = all.filter((item) => {
-      const text = [item.first_name, item.last_name, item.role, item.organisation, item.editor_email, item.expertise, item.country].filter(Boolean).join(" ").toLowerCase();
+      const text = [item.first_name, item.last_name, item.role, item.organisation, item.editor_email, item.leader_email, item.expertise, item.country].filter(Boolean).join(" ").toLowerCase();
       if (query && !text.includes(query)) return false;
       if (filterCountry && item.country !== filterCountry) return false;
       // Expertise filter
@@ -730,7 +785,7 @@ export default function Admin({ onGoToDirectory }) {
                                       <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
                                         <div><span className="text-brand-navy font-semibold">Email: </span>{req.email}</div>
                                         <div><span className="text-brand-navy font-semibold">LinkedIn: </span>{req.linkedin || "—"}</div>
-                                        <div><span className="text-brand-navy font-semibold">Submitted: </span>{req.submitted_at}</div>
+                                        <div><span className="text-brand-navy font-semibold">Submitted: </span>{req.created_at ? new Date(req.created_at).toLocaleString() : "—"}</div>
                                       </div>
                                     </div>
                                     <div className="rounded-lg p-4 bg-white border border-amber-200">
@@ -751,7 +806,7 @@ export default function Admin({ onGoToDirectory }) {
                                       {linkSent ? "✓ Link sent — resend" : "Send update link via email"}
                                     </button>
                                     <button
-                                      onClick={() => { setRequests(requests.map(r => r.id === req.id ? { ...r, status: "dismissed" } : r)); setSelectedRequest(null); }}
+                                      onClick={async () => { try { await api.dismissRequest(req.id); } catch {} setRequests(requests.map(r => r.id === req.id ? { ...r, status: "dismissed" } : r)); setSelectedRequest(null); }}
                                       className="px-4 py-2 text-[1.4rem] font-medium rounded-lg border-[1.5px] border-gray-300 text-gray-500 hover:bg-gray-100 transition-colors"
                                     >
                                       Dismiss
@@ -854,7 +909,7 @@ export default function Admin({ onGoToDirectory }) {
                                     <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
                                       <div><span className="text-brand-navy font-semibold">Email: </span>{req.email}</div>
                                       <div><span className="text-brand-navy font-semibold">LinkedIn: </span>{req.linkedin || "—"}</div>
-                                      <div><span className="text-brand-navy font-semibold">Submitted: </span>{req.submitted_at}</div>
+                                      <div><span className="text-brand-navy font-semibold">Submitted: </span>{req.created_at ? new Date(req.created_at).toLocaleString() : "—"}</div>
                                     </div>
                                   </div>
                                   <div className="rounded-lg p-4 bg-white border border-red-200">
@@ -871,7 +926,7 @@ export default function Admin({ onGoToDirectory }) {
                                     {actionId === req.id ? "..." : "Approve deletion"}
                                   </button>
                                   <button
-                                    onClick={() => { setRequests(requests.map(r => r.id === req.id ? { ...r, status: "dismissed" } : r)); setSelectedRequest(null); }}
+                                    onClick={async () => { try { await api.dismissRequest(req.id); } catch {} setRequests(requests.map(r => r.id === req.id ? { ...r, status: "dismissed" } : r)); setSelectedRequest(null); }}
                                     className="px-4 py-2 text-[1.4rem] font-medium rounded-lg border-[1.5px] border-gray-300 text-gray-500 hover:bg-gray-100 transition-colors"
                                   >
                                     Dismiss
@@ -1230,6 +1285,7 @@ export default function Admin({ onGoToDirectory }) {
                                         <div><span className="text-brand-navy font-semibold">Expertise: </span>{item.expertise || "—"}</div>
                                         <div><span className="text-brand-navy font-semibold">LinkedIn: </span>{item.linkedin ? <a href={item.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline text-brand-navy">{item.linkedin}</a> : '—'}</div>
                                         <div><span className="text-brand-navy font-semibold">Editor: </span>{item.editor_email || item.editorEmail || '—'}</div>
+                                        <div><span className="text-brand-navy font-semibold">Leader email: </span>{item.leader_email || '—'}</div>
                                       </div>
                                     </div>
                                     <div className="rounded-lg p-4 bg-white border border-brand-blue-border">
@@ -1463,10 +1519,17 @@ export default function Admin({ onGoToDirectory }) {
                                   <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: fail > 0 ? "#ef4444" : "#22c55e" }} />
                                 </div>
                               </div>
-                              <div className="flex gap-2 flex-shrink-0">
+                              <div className="flex gap-2 flex-shrink-0 items-center">
                                 <span className="text-[1.2rem] font-bold px-2.5 py-1 rounded-lg bg-green-600 text-white">{pass} pass</span>
                                 {fail > 0 && <span className="text-[1.2rem] font-bold px-2.5 py-1 rounded-full bg-red-100 text-red-700">{fail} fail</span>}
                                 {pending > 0 && <span className="text-[1.2rem] font-bold px-2.5 py-1 rounded-lg bg-yellow-500 text-white">{pending} pending</span>}
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleClearTesterResults(name); }}
+                                  className="ml-2 px-2.5 py-1 text-[1.1rem] font-semibold text-red-500 border border-red-200 rounded-lg bg-white hover:bg-red-50 transition-colors cursor-pointer"
+                                  title="Clear all results for this tester"
+                                >
+                                  ✕ clear
+                                </button>
                               </div>
                               <svg className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6l4 4 4-4"/></svg>
                             </button>
@@ -1510,7 +1573,7 @@ export default function Admin({ onGoToDirectory }) {
                                         <table className="w-full">
                                           <thead className="bg-white border-b border-gray-100">
                                             <tr>
-                                              {["Scenario", "Priority", "Status", "Notes"].map(h => (
+                                              {["Scenario", "Priority", "Status", "Notes", ""].map(h => (
                                                 <th key={h} className="text-left text-[1.1rem] font-bold uppercase tracking-wider px-6 py-2.5 text-gray-800">{h}</th>
                                               ))}
                                             </tr>
@@ -1522,6 +1585,15 @@ export default function Admin({ onGoToDirectory }) {
                                                 <td className="px-6 py-3">{priorityBadge(r.priority)}</td>
                                                 <td className="px-6 py-3">{statusBadge(r.status)}</td>
                                                 <td className="px-6 py-3 text-[1.3rem] text-gray-600 max-w-[260px] whitespace-pre-wrap">{r.notes || <span className="text-gray-300">—</span>}</td>
+                                                <td className="px-4 py-3">
+                                                  <button
+                                                    onClick={(e) => { e.stopPropagation(); handleDeleteTestResult(r.id, r.scenario); }}
+                                                    className="text-[1.1rem] font-semibold text-red-400 hover:text-red-600 transition-colors cursor-pointer bg-transparent border-0"
+                                                    title="Delete this test result"
+                                                  >
+                                                    ✕
+                                                  </button>
+                                                </td>
                                               </tr>
                                             ))}
                                           </tbody>

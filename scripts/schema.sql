@@ -16,7 +16,8 @@ create table if not exists public.leaders (
   linkedin          text,
   photo_url         text,
   status            text default 'pending' check (status in ('pending', 'live', 'rejected')),
-  editor_email      text,
+  editor_email      text,                -- email of person who submitted (visible to admin)
+  leader_email      text,                -- leader's own email (NOT visible in public directory)
   internal_note     text,
   country           text,
   nominate_link     text,

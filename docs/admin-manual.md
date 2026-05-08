@@ -152,6 +152,13 @@ A dashboard of submissions from the QA testing sheet. Used during pre-launch tes
 
 Rows with a **Fail** status are tinted red for quick scanning. When filters are active, section headings show how many results are visible vs. the total.
 
+**Managing test results:**
+- **Delete a single result** — click the **✕** button on any row to permanently remove that test case
+- **Clear a tester's results** — click the **✕ clear** button on a tester's card to remove all of their results at once
+- Both actions show a confirmation dialog before deleting
+
+> Deletions are permanent and cannot be undone from the admin console.
+
 ---
 
 ## Common Workflows
@@ -224,6 +231,7 @@ The platform includes two layers of duplicate protection:
 - **Email addresses** in expanded rows are private — they are never shown in the public directory.
 - **LinkedIn Clicks** in All Entries shows how many times a leader's LinkedIn link has been clicked from their profile card — useful for seeing which profiles get the most engagement.
 - The **admin tab** does not show the site header/footer — it is a standalone internal tool.
+- **Returning testers** can continue where they left off — the testing sheet saves their name, current section, scroll position, and all results to local storage and Supabase. When they re-enter their name on a return visit, previous results are loaded and merged automatically.
 
 ---
 
@@ -236,6 +244,7 @@ Before going live, the following need to be completed by the technical team:
 - [ ] Set up production SMTP for the magic link emails (currently Apps Script)
 - [ ] Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to GitHub Actions secrets
 - [ ] Tighten Supabase RLS policies (currently open for testing)
+- [ ] Run `scripts/add-test-results-unique-constraint.sql` in Supabase SQL Editor to enable upsert-based saving (preserves timestamps, prevents duplicate rows)
 
 ---
 

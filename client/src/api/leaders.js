@@ -2,7 +2,11 @@ import { supabase } from "../supabase";
 
 export const api = {
   getLeaders: async (status = "live") => {
-    let query = supabase.from("leaders").select("*");
+    let query = supabase.from("leaders").select(`
+      id, first_name, last_name, role, organisation, bio, linkedin, photo_url,
+      status, editor_email, internal_note, country, nominate_link, expertise,
+      years_experience, countries, notable_items, admin_token, created_at
+    `);
     if (status && status !== "all") query = query.eq("status", status);
     const { data, error } = await query;
     if (error) throw error;
@@ -21,7 +25,8 @@ export const api = {
       linkedin: formData.linkedin || null,
       photo_url: formData.photoUrl || null,
       status: "pending",
-      editor_email: formData.email || null,
+      editor_email: formData.editorEmail || null,   // Person who submitted (could be different from leader)
+      leader_email: formData.email || null,           // Leader's own email (NOT visible in public)
       nominator_name: formData.nominatorName || null,
       country: formData.country || null,
       nominate_link: formData.nominateLink || null,
@@ -210,11 +215,34 @@ export const api = {
     return { ok: true };
   },
 
+  deleteTestResult: async (id) => {
+    const { error } = await supabase.from("test_results").delete().eq("id", id);
+    if (error) throw error;
+    return { ok: true };
+  },
+
+  deleteTestResultsForTester: async (testerName) => {
+    const { error } = await supabase.from("test_results").delete().eq("tester_name", testerName);
+    if (error) throw error;
+    return { ok: true };
+  },
+
   // Send a magic link email via Supabase Function (send-email)
-  // Fallbacks to a manual URL if the function fails
-  requestManage: async ({ firstName, lastName, email, linkedin }) => {
+  // Uses leader_email from database (not passed in) — only visible to admin
+  requestManage: async ({ leaderId, firstName, lastName, linkedin }) => {
     try {
-      const manageUrl = `${window.location.origin}?manage=${btoa(JSON.stringify({ firstName, lastName, email, linkedin }))}`;
+      // Fetch leader's email from database (admin-only field)
+      const { data: leader, error: fetchErr } = await supabase
+        .from("leaders")
+        .select("leader_email, first_name, last_name")
+        .eq("id", leaderId)
+        .single();
+      
+      if (fetchErr || !leader?.leader_email) {
+        throw new Error("Leader email not found");
+      }
+
+      const manageUrl = `${window.location.origin}?manage=${btoa(JSON.stringify({ leaderId, firstName, lastName, linkedin }))}`;
       const html = `
         <div style="font-family: sans-serif; max-width:600px; margin:0 auto;">
           <h2>Update your Transform Health profile</h2>
@@ -227,15 +255,15 @@ export const api = {
       `;
 
       const { error } = await supabase.functions.invoke("send-email", {
-        body: { to: email, subject: "Update your Transform Health profile", html },
+        body: { to: leader.leader_email, subject: "Update your Transform Health profile", html },
       });
 
       if (error) throw error;
-      return { ok: true, message: "Magic link sent to " + email };
+      return { ok: true, message: "Magic link sent to " + leader.leader_email };
     } catch (err) {
       console.error("requestManage failed:", err);
       // Fallback: return a URL the admin can copy manually
-      const token = btoa(JSON.stringify({ firstName, lastName, email, linkedin }));
+      const token = btoa(JSON.stringify({ leaderId, firstName, lastName, linkedin }));
       const url = `${window.location.origin}?manage=${token}`;
       return { ok: false, url, message: "Email not sent — copy this URL: " + url };
     }

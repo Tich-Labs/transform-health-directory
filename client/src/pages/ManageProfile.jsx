@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+ import React, { useState } from "react";
 import { api } from "../api/leaders";
 
 const INPUT_CLASS = "w-full px-[1.6rem] py-5 border-[1.5px] border-gray-300 rounded-lg text-1.5 outline-none bg-brand-blue-tint";

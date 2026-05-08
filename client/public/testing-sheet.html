@@ -258,6 +258,13 @@
       catch (e) { console.warn("Supabase init failed", e); }
     }
 
+    // Stable session ID — generated once, persisted across page loads
+    let sessionId = localStorage.getItem("th-session-id");
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      localStorage.setItem("th-session-id", sessionId);
+    }
+
     function debouncedSave() {
       clearTimeout(saveTimer);
       setDot("pending"); document.getElementById("save-text").textContent = "Changes pending...";
@@ -270,19 +277,22 @@
       if (!name) { setDot(""); document.getElementById("save-text").textContent = "Enter your name to save results"; return; }
       setDot("saving"); document.getElementById("save-text").textContent = "Saving…";
       try {
-        // Delete previous rows for this tester so we don't accumulate duplicates
-        await supabaseClient.from("test_results").delete().eq("tester_name", name);
-        // Insert one flat row per test case — matches the Admin table schema
+        // Upsert each row by (tester_name, scenario) so existing rows keep
+        // their original created_at timestamp — returning testers see their
+        // real "last saved" date in the admin console.
         const rows = results.map(r => ({
-          id: crypto.randomUUID(),
           tester_name: name,
           section: r.section,
           scenario: r.scenario,
           priority: r.priority,
           status: r.status,
           notes: r.notes,
+          session_id: sessionId,
         }));
-        const { error } = await supabaseClient.from("test_results").insert(rows);
+        const { error } = await supabaseClient.from("test_results").upsert(rows, {
+          onConflict: "tester_name, scenario",
+          ignoreDuplicates: false,
+        });
         if (error) throw error;
         setDot("saved");
         document.getElementById("save-text").textContent = "Saved ✓  " + new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
