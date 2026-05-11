@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "../components/Button";
 import { Input, Textarea, Select } from "../components/Input";
-import { ALL_COUNTRIES } from "../utils/countries";
+import { getCountriesForGeoScope, ALL_COUNTRIES } from "../utils/countries";
 
 export const EXPERTISE_TAGS = [
   "AI & Automation",
@@ -266,7 +266,8 @@ export function Step1Consent({ consent, setConsent, onBack, onContinue, onNoCons
 }
 
 // ─── Step 2: Basic information ────────────────────────────────────────────────
-export function Step2BasicInfo({ firstName, setFirstName, lastName, setLastName, email, setEmail, photoPreview, onPhotoUpload, country, setCountry, org, setOrg, role, setRole, duplicateWarning, onNameBlur, onBack, onContinue }) {
+export function Step2BasicInfo({ firstName, setFirstName, lastName, setLastName, email, setEmail, photoPreview, onPhotoUpload, country, setCountry, geoScope, org, setOrg, role, setRole, duplicateWarning, onNameBlur, onBack, onContinue }) {
+  const countryOptions = getCountriesForGeoScope(geoScope);
   return (
     <div>
       <h2 className="text-4xl font-bold text-brand-navy mb-2 tracking-heading">Basic information</h2>
@@ -331,7 +332,7 @@ export function Step2BasicInfo({ firstName, setFirstName, lastName, setLastName,
           className={`${F_INPUT} ${country ? "text-gray-900" : "text-gray-400"}`}
         >
           <option value="">Select a country...</option>
-          {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          {countryOptions.map((c) => <option key={c} value={c}>{c}</option>)}
         </Select>
       </div>
 
@@ -356,6 +357,7 @@ export function Step2BasicInfo({ firstName, setFirstName, lastName, setLastName,
 
 // ─── Step 3: Profile details ──────────────────────────────────────────────────
 export function Step3ProfileDetails({ yearsExp, setYearsExp, expertise, toggleExpertise, otherExpertise, setOtherExpertise, selectedCountries, setSelectedCountries, geoScope, setGeoScope, bio, setBio, charCount, bioCharWarning, onBack, onContinue, nextDisabled }) {
+  const countryOptions = getCountriesForGeoScope(geoScope);
   return (
     <div>
       <h2 className="text-4xl font-bold text-brand-navy mb-7 tracking-heading">Profile details</h2>
@@ -440,7 +442,7 @@ export function Step3ProfileDetails({ yearsExp, setYearsExp, expertise, toggleEx
           className={`${F_INPUT} text-gray-900`}
         >
           <option value="">Add a country...</option>
-          {COUNTRIES.filter((c) => !selectedCountries.includes(c)).map((c) => (
+          {countryOptions.filter((c) => !selectedCountries.includes(c)).map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
         </Select>

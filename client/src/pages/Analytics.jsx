@@ -181,20 +181,18 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
                     ).length
                   : regionTotals[marker.key] || 0;
                 if (!count) return null;
-                // Place label on ocean, no connector line crossing the map
                 return (
                   <Annotation
                     key={marker.key}
-                    subject={marker.oceanCoords || marker.coordinates}
+                    subject={marker.oceanCoords}
                     connectorProps={{ stroke: "transparent", strokeWidth: 0 }}
                   >
                     <g>
-                      <rect x="-62" y="-26" width="124" height="48" rx="10" fill="#F8571D" />
-                      {/* SVG text styles must stay inline — Tailwind cannot target SVG text elements */}
-                      <text textAnchor="middle" y="-8" style={{ fontSize: 13, fontWeight: 700, fill: "#ffffff", fontFamily: "system-ui" }}>
+                      <rect x="-68" y="-26" width="136" height="52" rx="10" fill="#F8571D" />
+                      <text textAnchor="middle" y="-6" style={{ fontSize: 13, fontWeight: 700, fill: "#ffffff", fontFamily: "system-ui" }}>
                         {REGION_LABELS[marker.key]}
                       </text>
-                      <text textAnchor="middle" y="11" style={{ fontSize: 11, fill: "#ffffff", fontFamily: "system-ui" }}>
+                      <text textAnchor="middle" y="14" style={{ fontSize: 11, fill: "#ffffff", fontFamily: "system-ui" }}>
                         {count} Leaders
                       </text>
                     </g>
@@ -246,7 +244,7 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
             </div>
             <div className="text-[1.8rem] font-bold leading-snug mb-4 text-brand-blue">
               {selectedRegion
-                ? `${barData.reduce((s, d) => s + d.count, 0)} leaders in ${REGION_LABELS[selectedRegion]}`
+                ? `${regionTotals[selectedRegion] || 0} leaders in ${REGION_LABELS[selectedRegion]}`
                 : `Based on the ${stats.total} verified profiles`}
             </div>
             <p className="text-[1.1rem] text-gray-400 mb-3">Click a bar to highlight on the map</p>

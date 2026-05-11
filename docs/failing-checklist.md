@@ -144,6 +144,96 @@
 
 ---
 
+## 🆕 Post-QA Fixes
+
+Items addressed during post-QA development (not originally in the test plan).
+
+### 16. LinkedIn icon shows generic person silhouette instead of LinkedIn brand
+- [x] Replaced generic SVG with official LinkedIn brand mark (blue `#0A66C2` rounded square + white "in")
+- [x] Removed background circle wrapper on LeaderCard and ProfileModal for clean rendering
+- [x] Icon is self-contained (hardcoded colors) so it renders correctly regardless of wrapper styling
+
+**File:** `icons.jsx:3-9`, `LeaderCard.jsx:79`, `ProfileModal.jsx` · **Status:** ✅ Fixed
+
+---
+
+### 17. Manage Profile loads wrong profile when multiple leaders share the same name
+- [x] Added `api.findLeader()` in `leaders.js:209-241` — matches on name + `leader_email` when email is provided
+- [x] Updated `ManageProfile.jsx:40-53` to use server-side email verification instead of client-side name-only lookup
+- [x] Updated email placeholder text
+
+**File:** `leaders.js`, `ManageProfile.jsx` · **Status:** ✅ Fixed
+
+---
+
+### 18. Test results not persisting to Supabase (schema mismatch)
+- [x] Diagnosed root cause: `test_results` table had old schema (`id text primary key`) incompatible with testing sheet's expected columns (`section`, `scenario`, `priority`, `status`, `notes`)
+- [x] Created `scripts/migrate-test-results-table.sql` — idempotent migration, preserves old data as `test_results_v0`
+- [x] Updated `scripts/create-test-results-table.sql` with migration + unique constraint on `(tester_name, scenario)` for upsert
+- [x] Removed stale `test_results` definition from `scripts/schema.sql` (lines 119–134)
+- [x] Migrated 111 rows from `test_results_v0` to `test_results` (3 testers: Ndifanji 37, Danielle 37, Gefiune 37)
+- [x] Imported Tejas Tandon's CSV (37 rows)
+
+**File:** `scripts/migrate-test-results-table.sql`, `scripts/create-test-results-table.sql`, `scripts/schema.sql` · **Status:** ✅ Fixed
+
+---
+
+### 19. Admin "Pending Submissions" tab redundant with "All Entries"
+- [x] Merged Pending Submissions into All Entries — removed the separate tab
+- [x] Added checkboxes on pending rows for bulk selection
+- [x] Added bulk Approve / Reject action bar above the table
+- [x] Added individual Approve / Reject buttons in expanded view for pending entries
+- [x] Added duplicate warning badges on pending rows in All Entries
+- [x] Updated default active tab from `"pending"` to `"all"`
+- [x] Cleaned up removed state (`selectedPending`, `pendingSort`, `filteredPending`, `pendingBadgeCount`)
+
+**File:** `Admin.jsx` · **Status:** ✅ Fixed
+
+---
+
+### 20. Long custom expertise entries ("Other: …") break card layout
+- [x] Added `truncate max-w-[130px]` to expertise pills on LeaderCard grid view
+- [x] Added `title` hover tooltip to expertise pills across all four views (LeaderCard, ProfileModal, ManageProfile, Admin)
+- [x] Standardized all expertise pills to `bg-brand-blue-tint text-brand-navy rounded-full border border-brand-blue-border`
+
+**File:** `LeaderCard.jsx`, `ProfileModal.jsx`, `ManageProfile.jsx`, `Admin.jsx` · **Status:** ✅ Fixed
+
+---
+
+### 21. Consent decline — requires extra click in termination modal before auto-advancing
+- [x] Added `useEffect` + `setTimeout` — modal now auto-advances to start screen after 4 seconds
+- [x] Added countdown message ("Returning to start in 4 seconds…")
+- [x] Manual "BACK TO START NOW" button still available as fallback
+- [x] Timer cleans up on unmount or manual dismiss
+
+**File:** `Submit.jsx` · **Status:** ✅ Fixed
+
+---
+
+## ⏳ Known / Pending Items
+
+Issues identified but not yet resolved:
+
+### A. Analytics map — Europe label positioning
+- [x] Moved Europe `oceanCoords` from `[-20, 50]` → `[-30, 52]` to avoid overlapping Ireland/Western UK
+- **File:** `countries.js:135` · **Status:** ✅ Fixed
+
+### B. Analytics map — region counts mismatch
+- 76 batch-imported leaders (from initial CSV) have NULL country — CSV had no country column
+- Self-submission flow correctly saves country; nomination flow correctly doesn't ask
+- Needs Tejas/team to update leader profiles with country data via Supabase
+- **File:** `scripts/backfill-missing-countries.sql` · **Status:** Blocked — needs manual country entry by Tejas/team
+
+### C. Conditional country dropdown based on geo scope
+- [x] Added `GEO_SCOPE_TO_CONTINENTS` mapping in `countries.js` (links geo scope → continent(s))
+- [x] Added `getCountriesForGeoScope()` helper — returns filtered country list
+- [x] Step 2 "Country of residence" dropdown filters when geo_scope is selected
+- [x] Step 3 "Which country/countries?" dropdown filters when geo_scope is selected
+- "Global" and "National" scopes show all countries; region scopes show only relevant countries
+- **File:** `countries.js`, `SubmitSteps.jsx`, `Submit.jsx` · **Status:** ✅ Fixed
+
+---
+
 ## 📊 Section Progress
 
 | Section | Pass | Fail | Pending | Total | % Done |
@@ -154,6 +244,8 @@
 | Submit & Nominate | 11 | 5 | 9 | 25 | 44% |
 | Manage Profile | 0 | 5 | 3 | 8 | 0% |
 | Admin Console | 3 | 1 | 4 | 8 | 38% |
+
+> **Note:** The 5 Post-QA Fixes (items 16–20) are not reflected in the section table above, as they were not part of the original QA test plan. Re-testing via the Testing Sheet may improve the section pass rates.
 
 ---
 

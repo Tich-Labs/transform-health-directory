@@ -91,7 +91,7 @@ const SECTIONS = [
     label: "Dashboard Stats",
     content: (
       <>
-        <P>Three summary cards are visible at the top of every tab (except Test Results and this manual):</P>
+        <P>Three summary cards are visible at the top of the All Entries, Profile Requests, and Nominated tabs:</P>
         <Table
           headers={["Card", "What it shows"]}
           rows={[
@@ -105,36 +105,75 @@ const SECTIONS = [
     ),
   },
   {
-    id: "pending-submissions",
-    label: "Pending Submissions",
+    id: "all-entries",
+    label: "All Entries",
     content: (
       <>
-        <P>Self-submitted profiles waiting for your review before going live in the public directory.</P>
-        <H3>What each row shows</H3>
-        <Ul>
-          <Li>Name, role, organisation, bio preview, primary expertise tag</Li>
-          <Li><strong>⚠ Possible duplicate</strong> badge (amber) — appears if the submitted name matches an existing live leader</Li>
-        </Ul>
-        <H3>Reviewing a submission</H3>
+        <P>The full database — every record regardless of status (<Code>live</Code>, <Code>pending</Code>, <Code>rejected</Code>). This is also where you review and approve pending submissions.</P>
+        <H3>Table columns</H3>
+        <Table
+          headers={["Column", "What it shows"]}
+          rows={[
+            ["Checkbox", "Appears on pending rows only — use for bulk actions"],
+            ["Name", "First and last name; shows ⚠ Possible duplicate badge if name matches an existing live leader"],
+            ["Role", "Current role / title"],
+            ["Organisation", "Organisation or institution"],
+            ["LinkedIn Clicks", "How many times this leader's LinkedIn link has been clicked"],
+            ["Status", "live / pending / rejected (colour-coded badge)"],
+          ]}
+        />
+        <H3>Reviewing a pending submission</H3>
         <Ol>
-          <Li>Click any row to expand it</Li>
+          <Li>Click any row to expand it — look for the yellow <strong>pending</strong> badge to identify entries needing review</Li>
           <Li>Read the full bio, expertise tags, years of experience, geographical scope, countries of operation, and any notable achievements</Li>
           <Li>Check the email address — it is private and never published</Li>
           <Li>Click <strong>Approve</strong> to publish or <strong>Reject</strong> to decline</Li>
           <Li>Confirm in the modal that appears</Li>
         </Ol>
         <H3>Bulk actions</H3>
+        <Ol>
+          <Li>Tick checkboxes on multiple pending rows (or use <strong>Select all</strong>)</Li>
+          <Li>A bulk action bar appears above the table</Li>
+          <Li>Click <strong>Approve N</strong> or <strong>Reject N</strong> — a single confirmation covers all selected</Li>
+        </Ol>
+        <H3>Filters</H3>
         <Ul>
-          <Li>Tick checkboxes on multiple rows (or use <strong>Select all</strong>)</Li>
-          <Li>Click <strong>Bulk Approve</strong> or <strong>Bulk Reject</strong> — a single confirmation covers all selected</Li>
+          <Li>Search: name, org, role, expertise, email, country, or bio</Li>
+          <Li>Country dropdown</Li>
+          <Li>Expertise tag dropdown</Li>
+          <Li>LinkedIn clicks: Most clicked / Least clicked</Li>
         </Ul>
-        <H3>Filtering & sorting</H3>
-        <Ul>
-          <Li>Search by name, role, org, expertise, country, or bio text</Li>
-          <Li>Filter by country or expertise tag</Li>
-          <Li>Sort by Name A→Z / Z→A, Newest, Oldest, or Expertise A→Z</Li>
-        </Ul>
-        <Note><strong>On the duplicate badge:</strong> Check whether this is the same person or a different person with the same name. The submitter was warned at submission time — you have the final call.</Note>
+        <H3>Expanding a row</H3>
+        <P>Shows full profile details. For pending entries you get <strong>Approve / Reject / Delete</strong> buttons. For live/rejected entries you get <strong>Delete</strong> only. Deletion is a hard delete — the record is permanently removed from the database.</P>
+        <Note><strong>On the duplicate badge:</strong> If you see ⚠ Possible duplicate, check whether this is genuinely the same person or a different person with the same name. The submitter was warned at submission time — you have the final call.</Note>
+      </>
+    ),
+  },
+  {
+    id: "profile-requests",
+    label: "Profile Requests",
+    content: (
+      <>
+        <P>Leaders already in the database who want to change or remove their profile. Two sub-tabs:</P>
+        <H3>Updates</H3>
+        <P>Leaders requesting changes to their profile (role, bio, photo, etc.).</P>
+        <Ol>
+          <Li>Expand the row to read the full change request</Li>
+          <Li>Click <strong>Send update link</strong> — emails the leader a magic link to edit their own profile</Li>
+          <Li>The row updates to show a <strong>Link sent</strong> status</Li>
+          <Li>Once the leader resubmits via the link, it reappears as a new pending entry in <strong>All Entries</strong></Li>
+          <Li>Review and approve the updated version as normal</Li>
+        </Ol>
+        <Note>If the request is spam or irrelevant, click <strong>Dismiss</strong> to close it without sending a link.</Note>
+        <H3>Deletes</H3>
+        <P>Leaders who want to be removed from the directory.</P>
+        <Ol>
+          <Li>Expand the row to read the reason for removal (if provided)</Li>
+          <Li>Click <strong>Approve deletion</strong> — sets status to <Code>rejected</Code> and removes them from the public directory</Li>
+          <Li>Or click <strong>Dismiss</strong> to decline the request</Li>
+        </Ol>
+        <P>Use <strong>Select all</strong> + <strong>Approve N deletion(s)</strong> to process multiple requests at once.</P>
+        <Note>Deletion cannot be undone from the admin console. If a leader was removed in error they must resubmit from scratch.</Note>
       </>
     ),
   },
@@ -153,66 +192,7 @@ const SECTIONS = [
         <Ul>
           <Li><strong>Approve</strong> — publishes the nomination record (stub profile) with status live</Li>
           <Li><strong>Reject</strong> — removes it from the queue</Li>
-          <Li><strong>Copy Message</strong> — generates a personalised invitation email. Click to copy to clipboard, then paste into your email client</Li>
         </Ul>
-        <Tip>The copy message includes who nominated them, a description of the database, and a call to action to submit their full profile.</Tip>
-      </>
-    ),
-  },
-  {
-    id: "profile-requests",
-    label: "Profile Requests",
-    content: (
-      <>
-        <P>Leaders already in the database who want to change or remove their profile. Two sub-tabs:</P>
-        <H3>Updates</H3>
-        <P>Leaders requesting changes to their profile (role, bio, photo, etc.).</P>
-        <Ol>
-          <Li>Expand the row to read the full change request</Li>
-          <Li>Click <strong>Send update link</strong> — emails the leader a magic link to edit their own profile</Li>
-          <Li>The row updates to show a <strong>Link sent</strong> status</Li>
-          <Li>Once the leader resubmits via the link, it reappears in <strong>Pending Submissions</strong></Li>
-          <Li>Review and approve the updated version as normal</Li>
-        </Ol>
-        <Note>If the request is spam or irrelevant, click <strong>Dismiss</strong> to close it without sending a link.</Note>
-        <H3>Deletes</H3>
-        <P>Leaders who want to be removed from the directory.</P>
-        <Ol>
-          <Li>Expand the row to read the reason for removal (if provided)</Li>
-          <Li>Click <strong>Approve deletion</strong> — sets status to <Code>rejected</Code> and removes them from the public directory</Li>
-          <Li>Or click <strong>Dismiss</strong> to decline the request</Li>
-        </Ol>
-        <P>Use <strong>Select all</strong> + <strong>Approve N deletion(s)</strong> to process multiple requests at once.</P>
-        <Note>Deletion cannot be undone from the admin console. If a leader was removed in error they must resubmit from scratch.</Note>
-      </>
-    ),
-  },
-  {
-    id: "all-entries",
-    label: "All Entries",
-    content: (
-      <>
-        <P>The full database — every record regardless of status (live, pending, rejected). Use this for auditing and lookups.</P>
-        <Table
-          headers={["Column", "What it shows"]}
-          rows={[
-            ["Name", "First and last name"],
-            ["Role", "Current role / title"],
-            ["Organisation", "Organisation or institution"],
-            ["LinkedIn Clicks", "How many times this leader's LinkedIn link has been clicked from their profile card"],
-            ["Status", "live / pending / rejected"],
-          ]}
-        />
-        <H3>Filters</H3>
-        <Ul>
-          <Li>Search: name, org, role, expertise, email, country, or bio</Li>
-          <Li>Country dropdown</Li>
-          <Li>Expertise tag dropdown</Li>
-          <Li>LinkedIn clicks: Most clicked / Least clicked</Li>
-        </Ul>
-        <H3>Expanding a row</H3>
-        <P>Shows full profile details and a <strong>Delete</strong> button. This is a hard delete — the record is permanently removed from the database. Use with care.</P>
-        <Tip>Use All Entries for lookups and auditing. Use Pending / Nominated / Requests for day-to-day workflow.</Tip>
       </>
     ),
   },
@@ -229,6 +209,13 @@ const SECTIONS = [
           <Li>Expand each section → individual test cases with scenario, priority, status, and notes</Li>
           <Li>Fail rows are tinted red for quick scanning</Li>
         </Ul>
+        <P>Results are saved to both the browser's local storage and the database. Returning testers can continue where they left off — the testing sheet loads and merges previous results automatically. The database uses upsert (insert or update) based on tester name + scenario, so re-running a scenario updates its existing row rather than creating a duplicate.</P>
+        <H3>Managing results</H3>
+        <Ul>
+          <Li><strong>Delete a single result</strong> — click the <strong>✕</strong> button on any row to permanently remove that test case</Li>
+          <Li><strong>Clear a tester's results</strong> — click the <strong>✕ clear</strong> button on a tester's card to remove all of their results at once</Li>
+          <Li>Both actions show a confirmation dialog before deleting</Li>
+        </Ul>
         <H3>Filters</H3>
         <Ul>
           <Li>Filter by tester name</Li>
@@ -240,23 +227,40 @@ const SECTIONS = [
     ),
   },
   {
+    id: "test-fixes",
+    label: "Test Fixes",
+    content: (
+      <>
+        <P>A reference checklist of 15 known bug items identified during pre-launch QA testing. All items have been fixed and verified in the codebase.</P>
+        <Ul>
+          <Li>An ID and description of the issue</Li>
+          <Li>A priority level (Critical / Important / Nice-to-have)</Li>
+          <Li>File references for where the fix was applied</Li>
+          <Li>A green ✓ status indicator confirming the fix is in place</Li>
+        </Ul>
+        <P>These are hardcoded reference items (not database-driven) — use this tab to cross-reference what was addressed before re-testing via the <strong>Testing Sheet</strong>.</P>
+      </>
+    ),
+  },
+  {
     id: "common-workflows",
     label: "Common Workflows",
     content: (
       <>
         <H3>Publishing a new leader</H3>
         <Ol>
-          <Li>Open <strong>Pending Submissions</strong></Li>
+          <Li>Open <strong>All Entries</strong> — find pending entries by looking for the yellow <strong>pending</strong> status badge</Li>
           <Li>Click the row to expand — read bio, check photo, verify expertise tags</Li>
-          <Li>If <strong>⚠ Possible duplicate</strong> appears, search the name in <strong>All Entries</strong> to compare</Li>
+          <Li>If <strong>⚠ Possible duplicate</strong> appears, search the name to compare against other records</Li>
           <Li>Click <strong>Approve</strong> → confirm → leader goes live instantly</Li>
+          <Li>Or use checkboxes + bulk <strong>Approve</strong> to process multiple submissions at once</Li>
         </Ol>
         <H3>Handling a profile update request</H3>
         <Ol>
           <Li>Open <strong>Profile Requests → Updates</strong></Li>
           <Li>Expand the row — read what the leader wants changed</Li>
           <Li>Click <strong>Send update link</strong> — leader receives a magic link by email</Li>
-          <Li>Once they resubmit, the updated profile appears in <strong>Pending Submissions</strong></Li>
+          <Li>Once they resubmit, the updated profile appears as a new pending entry in <strong>All Entries</strong></Li>
           <Li>Approve the updated version</Li>
         </Ol>
         <H3>Removing a leader from the directory</H3>
@@ -273,8 +277,8 @@ const SECTIONS = [
         <H3>Reaching out to a nominee</H3>
         <Ol>
           <Li>Open <strong>Nominated</strong>, expand the nominee's row</Li>
-          <Li>Click <strong>Copy Message</strong> — personalised invitation copied to clipboard</Li>
-          <Li>Paste into your email client and send</Li>
+          <Li>Note the nominator's email and the nominee's LinkedIn profile</Li>
+          <Li>Reach out via your preferred channel (LinkedIn message or email)</Li>
         </Ol>
       </>
     ),
@@ -295,15 +299,15 @@ const SECTIONS = [
             ],
             [
               "Admin flag",
-              "Pending Submissions tab",
-              "Any pending submission whose name matches an existing live leader shows a ⚠ Possible duplicate badge. Admin makes the final call.",
+              "All Entries tab",
+              "Any pending submission whose name matches an existing live leader shows a ⚠ Possible duplicate badge next to their name. Admin makes the final call.",
             ],
           ]}
         />
         <Note>Detection is name-based only (case-insensitive). Two different people can share the same name — always check the email address and profile link before rejecting.</Note>
         <H3>Resolving a duplicate</H3>
         <Ol>
-          <Li>In <strong>Pending Submissions</strong>, look for the ⚠ Possible duplicate badge</Li>
+          <Li>In <strong>All Entries</strong>, look for the ⚠ Possible duplicate badge on pending rows</Li>
           <Li>Open <strong>All Entries</strong> and search the name to see all records</Li>
           <Li>Compare email addresses and profile details</Li>
           <Li>Approve the correct record and reject the duplicate</Li>
@@ -338,8 +342,10 @@ const SECTIONS = [
           <Li><strong>Action messages</strong> (green banner) confirm successful approvals, rejections, or sends. They clear automatically.</Li>
           <Li><strong>Email addresses</strong> in expanded rows are private and never shown in the public directory.</Li>
           <Li><strong>LinkedIn Clicks</strong> in All Entries shows engagement per profile — useful for identifying which leaders drive the most traffic.</Li>
+          <Li><strong>Expertise tags</strong> are shown as blue pill/badge chips — hover to see the full text if truncated.</Li>
           <Li>The admin console does not show the site header or footer — it is a standalone internal tool.</Li>
-          <Li>All confirmation modals require an explicit click — there are no auto-approvals or timeouts.</Li>
+          <Li><strong>Returning testers</strong> can continue where they left off — the testing sheet saves progress to both local storage and Supabase. Re-entering their name loads and merges previous results automatically.</Li>
+          <Li><strong>Live auto-refresh:</strong> Data refreshes every 30 seconds while the tab is visible. It also refreshes when the tab regains focus.</Li>
         </Ul>
       </>
     ),
@@ -351,14 +357,17 @@ const SECTIONS = [
       <>
         <P>Items to complete before the platform goes live — for the technical team:</P>
         <ul className="list-none ml-0 mb-4">
-          <CheckItem>Re-enable the admin auth gate (one-line change in <Code>Admin.jsx</Code>)</CheckItem>
+          <CheckItem>Re-enable the admin auth gate — add auth check in <Code>Admin.jsx</Code> (currently no auth)</CheckItem>
           <CheckItem>Create an admin user in Supabase Auth</CheckItem>
-          <CheckItem>Set up production SMTP for magic link emails (currently Apps Script)</CheckItem>
+          <CheckItem>Configure SMTP secrets in Supabase — the <Code>send-email</Code> Edge Function is built; set <Code>GOOGLE_SMTP_USER</Code> + <Code>GOOGLE_SMTP_PASS</Code> (or <Code>SENDGRID_API_KEY</Code> / <Code>SMTP_*</Code> fallback)</CheckItem>
           <CheckItem>Add <Code>VITE_SUPABASE_URL</Code> and <Code>VITE_SUPABASE_ANON_KEY</Code> to GitHub Actions secrets</CheckItem>
-          <CheckItem>Tighten Supabase RLS policies (currently open for testing)</CheckItem>
-          <CheckItem>Run <Code>scripts/create-test-results-table.sql</Code> on the production Supabase instance</CheckItem>
+          <CheckItem>Drop three test-mode RLS policies — <Code>Admin test mode: read all leaders</Code>, <Code>Admin test mode: update leaders</Code>, <Code>Admin test mode: update requests</Code></CheckItem>
+          <span className="flex items-start gap-3 mb-2 opacity-60">
+            <span className="mt-0.5 w-5 h-5 flex-shrink-0 rounded border-2 border-green-500 bg-green-500 text-white flex items-center justify-center text-[1.2rem] font-bold">✓</span>
+            <span className="text-[1.5rem] text-gray-700 leading-[1.7]">Run <Code>scripts/create-test-results-table.sql</Code> on production — done</span>
+          </span>
         </ul>
-        <Note>The auth gate is a single conditional in <Code>Admin.jsx</Code> — it was disabled to allow testing without login. Re-enabling it requires creating a Supabase Auth user for the admin email.</Note>
+        <Note>The SMTP function lives at <Code>supabase/functions/send-email/</Code>. It supports Google Workspace SMTP, SendGrid, and generic SMTP fallback. Configure the relevant secrets in the Supabase dashboard before launch. The auth gate currently does not exist — it needs to be built (not just uncommented).</Note>
       </>
     ),
   },

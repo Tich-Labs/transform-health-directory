@@ -104,6 +104,15 @@ export default function Submit({ onManageProfile }) {
     setShowNoConsentModal(true);
   }
 
+  useEffect(() => {
+    if (!showNoConsentModal) return;
+    const timer = setTimeout(() => {
+      setShowNoConsentModal(false);
+      goStep(0);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [showNoConsentModal]);
+
   function toggleExpertise(tag) {
     if (expertise.includes(tag)) setExpertise(expertise.filter((e) => e !== tag));
     else if (expertise.length < 5) setExpertise([...expertise, tag]);
@@ -280,6 +289,7 @@ export default function Submit({ onManageProfile }) {
               email={email} setEmail={setEmail}
               photoPreview={photoPreview} onPhotoUpload={handlePhotoUpload}
               country={country} setCountry={setCountry}
+              geoScope={geoScope}
               org={org} setOrg={setOrg}
               role={role} setRole={setRole}
               duplicateWarning={duplicateWarning}
@@ -337,13 +347,14 @@ export default function Submit({ onManageProfile }) {
               <p className="text-1.6 text-dark leading-[1.7] m-0">We cannot proceed without your consent.</p>
               <p className="text-1.6 text-dark leading-[1.7] m-0">You are welcome to return and submit your profile anytime.</p>
             </div>
+            <p className="text-[1.3rem] text-gray-400 mb-4">Returning to start in 4 seconds…</p>
             <Button
               variant="ghost"
               size="sm"
               className="font-semibold tracking-[0.05em] uppercase text-brand-dark hover:text-brand-dark hover:no-underline"
               onClick={() => { setShowNoConsentModal(false); goStep(0); }}
             >
-              ← BACK TO START
+              ← BACK TO START NOW
             </Button>
           </div>
         </div>

@@ -4,13 +4,12 @@ import AdminManual from "./AdminManual";
 import AdminFixes from "./AdminFixes";
 
 const SIDEBAR_ITEMS = [
-  { id: "all",       label: "All Entries",           icon: "list"      },
-  { id: "pending",   label: "Pending Submissions", icon: "inbox"     },
-  { id: "requests",  label: "Profile Requests",     icon: "mail"      },
-  { id: "nominated", label: "Nominated",            icon: "user-plus" },
-  { id: "divider",   label: "",                     icon: "divider"   },
-  { id: "tests",     label: "Test Results",          icon: "test"      },
-  { id: "fixes",     label: "Test Fixes",            icon: "fixes"     },
+  { id: "all",       label: "All Entries",      icon: "list"      },
+  { id: "requests",  label: "Profile Requests",  icon: "mail"      },
+  { id: "nominated", label: "Nominated",         icon: "user-plus" },
+  { id: "divider",   label: "",                  icon: "divider"   },
+  { id: "tests",     label: "Test Results",       icon: "test"      },
+  { id: "fixes",     label: "Test Fixes",         icon: "fixes"     },
 ];
 
 function InboxIcon() {
@@ -103,10 +102,10 @@ export default function Admin({ onGoToDirectory }) {
   const [requests,         setRequests]         = useState([]);
   const [testResults,      setTestResults]      = useState([]);
   const [loading,          setLoading]          = useState(true);
-  const [activeTab,        setActiveTab]        = useState("pending");
+  const [activeTab,        setActiveTab]        = useState("all");
   const [requestSubTab,    setRequestSubTab]    = useState("updates");
   const [selectedDeletes,  setSelectedDeletes]  = useState([]);
-  const [selectedPending,  setSelectedPending]  = useState([]);
+  const [selectedAll,      setSelectedAll]      = useState([]);
   const [actionId,         setActionId]         = useState(null);
   const [searchQuery,      setSearchQuery]      = useState("");
   const [filterCountry,    setFilterCountry]    = useState("");
@@ -122,7 +121,6 @@ export default function Admin({ onGoToDirectory }) {
   const [expandedNominee,  setExpandedNominee]  = useState(null);
   const [copiedId,         setCopiedId]         = useState(null);
   const [showConfirm,      setShowConfirm]      = useState(null);
-  const [pendingSort,      setPendingSort]      = useState("name_az");
   const [expandedTester,   setExpandedTester]   = useState(null);
   const [expandedTestSection, setExpandedTestSection] = useState(null);
   const [testFilterTester, setTestFilterTester] = useState("");
@@ -178,7 +176,7 @@ export default function Admin({ onGoToDirectory }) {
 
   async function loadActiveTabData() {
     try {
-      if (activeTab === "all" || activeTab === "pending" || activeTab === "nominated") {
+      if (activeTab === "all" || activeTab === "nominated") {
         const allLeaders = await api.getLeaders("all") || [];
         setAll(allLeaders);
         setPending(allLeaders.filter(l => l.status === "pending" && l.branch !== "nominate"));
@@ -360,25 +358,26 @@ export default function Admin({ onGoToDirectory }) {
     else setSelectedDeletes(deleteRequests.map((r) => r.id));
   }
 
-  function togglePendingSelect(id) {
-    setSelectedPending((current) => current.includes(id) ? current.filter((x) => x !== id) : [...current, id]);
+  function toggleAllSelect(id) {
+    setSelectedAll((current) => current.includes(id) ? current.filter((x) => x !== id) : [...current, id]);
   }
 
-  function toggleAllPending() {
-    const allSelected = filteredPending.every((r) => selectedPending.includes(r.id));
-    if (allSelected) setSelectedPending([]);
-    else setSelectedPending(filteredPending.map((r) => r.id));
+  function toggleAllEntries() {
+    const pendingRows = filteredAll.filter((r) => r.status === "pending");
+    const allSelected = pendingRows.every((r) => selectedAll.includes(r.id));
+    if (allSelected) setSelectedAll([]);
+    else setSelectedAll(pendingRows.map((r) => r.id));
   }
 
-  function handleBulkPending(action) {
-    if (selectedPending.length === 0) return;
+  function handleBulkAllEntries(action) {
+    if (selectedAll.length === 0) return;
     const label = action === "approve" ? "Approve" : "Reject";
     setShowConfirm({
-      title: `${label} ${selectedPending.length} submission(s)?`,
+      title: `${label} ${selectedAll.length} submission(s)?`,
       message: action === "approve" ? "These profiles will be published to the public directory." : "These profiles will be removed from the pending queue.",
       action,
-      confirmLabel: `${label} ${selectedPending.length}`,
-      onConfirm: () => { selectedPending.forEach((id) => confirmAction(id, action)); setSelectedPending([]); },
+      confirmLabel: `${label} ${selectedAll.length}`,
+      onConfirm: () => { selectedAll.forEach((id) => confirmAction(id, action)); setSelectedAll([]); },
     });
   }
 
@@ -429,7 +428,7 @@ export default function Admin({ onGoToDirectory }) {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setRequestSubTab("updates");
-    setSelectedDeletes([]); setSelectedPending([]);
+    setSelectedDeletes([]); setSelectedAll([]);
     setExpandedId(null); setExpandedAllId(null); setExpandedNominee(null);
     setExpandedTester(null); setExpandedTestSection(null);
     setTestFilterTester(""); setTestFilterStatus(""); setTestFilterSearch("");
@@ -467,28 +466,6 @@ export default function Admin({ onGoToDirectory }) {
     return set;
   }, [all]);
 
-    const filteredPending = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    const results = pending.filter((item) => {
-      const text = [item.first_name, item.last_name, item.role, item.organisation, item.editor_email, item.leader_email, item.expertise, item.country, item.bio].filter(Boolean).join(" ").toLowerCase();
-      if (query && !text.includes(query)) return false;
-      if (filterCountry && item.country !== filterCountry) return false;
-      if (filterExpertise) {
-        const tags = toTags(item.expertise).map((tag) => tag.toLowerCase());
-        if (!tags.includes(filterExpertise.toLowerCase())) return false;
-      }
-      return true;
-    });
-    return results.slice().sort((a, b) => {
-      if (pendingSort === "name_az") { const l = `${a.last_name} ${a.first_name}`.toLowerCase(); const r = `${b.last_name} ${b.first_name}`.toLowerCase(); return l < r ? -1 : l > r ? 1 : 0; }
-      if (pendingSort === "name_za") { const l = `${a.last_name} ${a.first_name}`.toLowerCase(); const r = `${b.last_name} ${b.first_name}`.toLowerCase(); return r < l ? -1 : r > l ? 1 : 0; }
-      if (pendingSort === "date_new") { const aD = a.submitted_at || a.created_at || ""; const bD = b.submitted_at || b.created_at || ""; return bD.localeCompare(aD); }
-      if (pendingSort === "date_old") { const aD = a.submitted_at || a.created_at || ""; const bD = b.submitted_at || b.created_at || ""; return aD.localeCompare(bD); }
-      if (pendingSort === "expertise") { const aE = toTags(a.expertise).join(", ").toLowerCase(); const bE = toTags(b.expertise).join(", ").toLowerCase(); return aE < bE ? -1 : aE > bE ? 1 : 0; }
-      return 0;
-    });
-  }, [pending, searchQuery, filterCountry, filterExpertise, pendingSort]);
-
   const filteredAll = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     const results = all.filter((item) => {
@@ -522,18 +499,13 @@ export default function Admin({ onGoToDirectory }) {
     });
   }, [all, searchQuery, filterCountry, filterExpertise, filterClicks, sortOrder]);
 
-  const pendingBadgeCount = (activeTab === "pending" && (searchQuery.trim() || filterCountry || filterExpertise))
-    ? filteredPending.length
-    : pending.length;
-
   const sidebarData = [
-    { ...SIDEBAR_ITEMS[0], count: allCount          },
-    { ...SIDEBAR_ITEMS[1], count: pendingBadgeCount },
-    { ...SIDEBAR_ITEMS[2], count: requestsCount  },
-    { ...SIDEBAR_ITEMS[3], count: nominatedCount },
-    SIDEBAR_ITEMS[4],  // divider (no count)
-    { ...SIDEBAR_ITEMS[5], count: testResults.length },
-    { ...SIDEBAR_ITEMS[6], count: 15 },  // 15 fixed items
+    { ...SIDEBAR_ITEMS[0], count: allCount     },
+    { ...SIDEBAR_ITEMS[1], count: requestsCount },
+    { ...SIDEBAR_ITEMS[2], count: nominatedCount },
+    SIDEBAR_ITEMS[3],  // divider (no count)
+    { ...SIDEBAR_ITEMS[4], count: testResults.length },
+    { ...SIDEBAR_ITEMS[5], count: 15 },  // 15 fixed items
   ];
 
   return (
@@ -637,9 +609,6 @@ export default function Admin({ onGoToDirectory }) {
                   <h2 className="text-3xl font-semibold text-brand-navy tracking-heading">
                     {sidebarData.find((s) => s.id === activeTab)?.label}
                   </h2>
-                  <p className="text-lg text-gray-600 mt-1">
-                    Review and manage member submissions, profile requests, and published entries.
-                  </p>
                 </div>
                 <div className="grid grid-cols-3 gap-3 text-center sm:text-right">
                   <div className="bg-brand-orange rounded-lg px-[1.6rem] py-[1.2rem] border-2 border-brand-orange">
@@ -670,56 +639,35 @@ export default function Admin({ onGoToDirectory }) {
                     placeholder="Search name, org, role, expertise"
                     className="min-w-[220px] rounded-lg border-2 border-gray-400 px-4 py-2 text-lg font-medium shadow-sm focus:outline-none focus:border-brand-navy bg-white text-gray-900"
                   />
-                  {(activeTab === "pending" || activeTab === "all") && (
-                    <select
-                      value={filterCountry}
-                      onChange={(e) => { setFilterCountry(e.target.value); setAllPage(1); }}
-                      className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus:border-brand-navy bg-white text-gray-900"
-                    >
-                      <option value="">All countries</option>
-                      {countries.map((country) => <option key={country} value={country}>{country}</option>)}
-                    </select>
-                  )}
-                  {(activeTab === "pending" || activeTab === "all") && (
-                    <select
-                      value={filterExpertise}
-                      onChange={(e) => { setFilterExpertise(e.target.value); setAllPage(1); }}
-                      className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus:border-brand-navy bg-white text-gray-900"
-                    >
-                      <option value="">All expertise</option>
-                      {expertiseOptions.map((expertise) => <option key={expertise} value={expertise}>{expertise}</option>)}
-                    </select>
-                  )}
-
-                  {activeTab === "all" && (
-                    <select
-                      value={filterClicks}
-                      onChange={(e) => { setFilterClicks(e.target.value); setAllPage(1); }}
-                      className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus:border-brand-navy bg-white text-gray-900"
-                    >
-                      <option value="">All click counts</option>
-                      <option value="high">🔥 Most clicked (high)</option>
-                      <option value="low">📉 Least clicked (low)</option>
-                    </select>
-                  )}
-                  {activeTab === "pending" && (
-                    <select
-                      value={pendingSort}
-                      onChange={(e) => setPendingSort(e.target.value)}
-                      className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus:border-brand-navy bg-white text-gray-900"
-                    >
-                      <option value="name_az">Name A → Z</option>
-                      <option value="name_za">Name Z → A</option>
-                      <option value="date_new">Newest first</option>
-                      <option value="date_old">Oldest first</option>
-                      <option value="expertise">Expertise A → Z</option>
-                    </select>
-                  )}
+                  <select
+                    value={filterCountry}
+                    onChange={(e) => { setFilterCountry(e.target.value); setAllPage(1); }}
+                    className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus:border-brand-navy bg-white text-gray-900"
+                  >
+                    <option value="">All countries</option>
+                    {countries.map((country) => <option key={country} value={country}>{country}</option>)}
+                  </select>
+                  <select
+                    value={filterExpertise}
+                    onChange={(e) => { setFilterExpertise(e.target.value); setAllPage(1); }}
+                    className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus:border-brand-navy bg-white text-gray-900"
+                  >
+                    <option value="">All expertise</option>
+                    {expertiseOptions.map((expertise) => <option key={expertise} value={expertise}>{expertise}</option>)}
+                  </select>
+                  <select
+                    value={filterClicks}
+                    onChange={(e) => { setFilterClicks(e.target.value); setAllPage(1); }}
+                    className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus:border-brand-navy bg-white text-gray-900"
+                  >
+                    <option value="">All click counts</option>
+                    <option value="high">🔥 Most clicked (high)</option>
+                    <option value="low">📉 Least clicked (low)</option>
+                  </select>
                 </div>
                 <div className="text-[1.4rem] font-bold text-brand-navy">
-                  {activeTab === "pending"   ? `${filteredPending.length} of ${pendingCount} self-submitted`
+                  {activeTab === "all"       ? `${filteredAll.length} of ${allCount} total entries`
                   : activeTab === "nominated" ? `${nominatedCount} nominated`
-                  : activeTab === "all"       ? `${filteredAll.length} of ${allCount} total entries`
                   : activeTab === "requests"  ? `${updateRequests.length} update · ${deleteRequests.length} delete`
                   : `${requestsCount} pending requests`}
                 </div>
@@ -1097,204 +1045,45 @@ export default function Admin({ onGoToDirectory }) {
                 </div>
               )
 
-            ) : activeTab === "pending" ? (
-              pending.length === 0 ? (
-                <div className="text-center py-20">
-                  <div className="text-[4.8rem] mb-4 text-green-400">✓</div>
-                  <div className="text-lg text-green-600">No pending submissions</div>
-                </div>
-              ) : filteredPending.length === 0 ? (
-                <div className="text-center py-20">
-                  <div className="text-[4.8rem] mb-4 text-gray-400">🔍</div>
-                  <div className="text-lg text-gray-500">No matching results for your filters</div>
-                </div>
-              ) : (
-                <div className="rounded-lg overflow-hidden border-[1.5px] border-brand-warm-border bg-brand-parchment">
-                  {/* Inbox header */}
-                  <div className="flex items-center justify-between px-5 py-3 border-b-2 border-brand-navy bg-brand-navy">
-                    <div className="flex items-center gap-3">
-                      <div className="text-[1.4rem] font-bold text-white">
-                        {filteredPending.length} pending review
-                      </div>
-                      {selectedPending.length > 0 && (
-                        <>
-                          <span className="text-[1.4rem] text-amber-800">—</span>
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={filteredPending.every((r) => selectedPending.includes(r.id))}
-                              onChange={toggleAllPending}
-                              className="w-4 h-4 rounded"
-                            />
-                            <span className="text-[1.3rem] font-medium text-amber-800">Select all</span>
-                          </label>
-                        </>
-                      )}
-                    </div>
-                    {selectedPending.length > 0 && (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleBulkPending("approve")}
-                          className="px-3 py-1.5 text-[1.3rem] font-semibold rounded-lg bg-green-600 text-white transition-colors"
-                        >
-                          Approve {selectedPending.length}
-                        </button>
-                        <button
-                          onClick={() => handleBulkPending("reject")}
-                          className="px-3 py-1.5 text-[1.3rem] font-semibold rounded-lg bg-red-600 text-white transition-colors"
-                        >
-                          Reject {selectedPending.length}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {filteredPending.map((item) => {
-                    const isExpanded = expandedId === item.id;
-                    const isChecked  = selectedPending.includes(item.id);
-                    const isDuplicate = liveNames.has(`${item.first_name?.trim()?.toLowerCase() ?? ""} ${item.last_name?.trim()?.toLowerCase() ?? ""}`);
-                    return (
-                      <div key={item.id}>
-                        <div
-                          className={`flex items-center px-5 cursor-pointer transition-colors min-h-[64px] border-b border-brand-warm-row-border ${
-                            isExpanded ? "bg-brand-warm-row" : isChecked ? "bg-brand-warm-bg" : "bg-white hover:bg-brand-warm-bg"
-                          }`}
-                          onClick={() => setExpandedId(isExpanded ? null : item.id)}
-                        >
-                          <div className="flex-shrink-0 mr-3">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={(e) => { e.stopPropagation(); togglePendingSelect(item.id); }}
-                              onClick={e => e.stopPropagation()}
-                              className="w-4 h-4 rounded cursor-pointer"
-                            />
-                          </div>
-                          <div className="flex-shrink-0 mr-4">
-                            <div className="w-2.5 h-2.5 rounded-full bg-amber-600" />
-                          </div>
-                          <div className="w-10 h-10 rounded-full flex items-center justify-center text-[1.4rem] font-medium flex-shrink-0 mr-4 bg-brand-blue-tint text-brand-navy">
-                            {getInitials(item.first_name, item.last_name)}
-                          </div>
-                          <div className="flex-1 min-w-0 mr-4">
-                            <div className="flex items-center gap-3">
-                              <span className="font-semibold text-lg truncate text-brand-dark">{item.first_name} {item.last_name}</span>
-                              {isDuplicate && (
-                                <span className="flex-shrink-0 text-[1.2rem] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-300">
-                                  ⚠ Possible duplicate
-                                </span>
-                              )}
-                              <span className="text-[1.4rem] truncate flex-shrink-0 text-gray-500">{item.role || 'No role'} · {item.organisation || 'No org'}</span>
-                            </div>
-                            <div className="text-[1.4rem] truncate mt-0.5 text-gray-400">
-                              {item.bio?.slice(0, 100) || "No bio provided"}
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3 flex-shrink-0">
-                            <span className="text-[1.4rem] px-2.5 py-0.5 rounded-full font-medium bg-brand-blue-tint text-brand-navy">
-                              {toTags(item.expertise)[0] || '—'}
-                            </span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={`text-gray-400 transition-transform ${isExpanded ? "rotate-180" : "rotate-0"}`}>
-                              <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                          </div>
-                        </div>
-
-                        {isExpanded && (
-                          <div className="px-5 py-4 bg-brand-warm-bg border-b border-brand-warm-border">
-                            <div className="flex items-center justify-between mb-4">
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleAction(item.id, "approve")}
-                                  disabled={actionId === item.id}
-                                  className="px-4 py-2 text-[1.4rem] font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
-                                >
-                                  {actionId === item.id ? "..." : "Approve"}
-                                </button>
-                                <button
-                                  onClick={() => handleAction(item.id, "reject")}
-                                  disabled={actionId === item.id}
-                                  className="px-4 py-2 text-[1.4rem] font-medium rounded-lg border-[1.5px] border-red-400 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
-                                >
-                                  Reject
-                                </button>
-                              </div>
-                            </div>
-
-                            <div className="grid gap-4">
-                              {item.bio && (
-                                <div className="rounded-lg p-4 bg-brand-parchment border border-brand-blue-border">
-                                  <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-2 text-brand-navy">Bio</div>
-                                  <div className="text-lg text-brand-dark-blue leading-[1.7]">{item.bio}</div>
-                                </div>
-                              )}
-                              <div className="rounded-lg p-4 bg-brand-parchment border border-brand-blue-border">
-                                <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-2 text-brand-navy">Profile details</div>
-                                <div className="grid gap-3 md:grid-cols-2 text-lg text-brand-dark-blue">
-                                  <div><span className="text-brand-navy font-semibold">Country: </span>{item.country || "—"}</div>
-                                  <div><span className="text-brand-navy font-semibold">Experience: </span>{item.yearsExp || item.years_experience || "—"}</div>
-                                  <div><span className="text-brand-navy font-semibold">Geo scope: </span>{item.geoScope || item.geo_scope || "—"}</div>
-                                  <div><span className="text-brand-navy font-semibold">Countries: </span>{item.selectedCountries || item.countries || "—"}</div>
-                                  <div className="md:col-span-2">
-                                    <span className="text-brand-navy font-semibold">Expertise: </span>
-                                    {toTags(item.expertise).length > 0 ? (
-                                      <div className="flex flex-wrap gap-1.5 mt-1">
-                                        {toTags(item.expertise).map((tag, i) => (
-                                          <span key={i} title={tag} className="inline-block bg-brand-blue-tint text-brand-navy text-[1.3rem] font-medium px-2.5 py-0.5 rounded-full border border-brand-blue-border">{tag}</span>
-                                        ))}
-                                      </div>
-                                    ) : "—"}
-                                  </div>
-                                  <div><span className="text-brand-navy font-semibold">Branch: </span>{item.branch || "self"}</div>
-                                </div>
-                              </div>
-
-                              {item.notableItems && item.notableItems.length > 0 && (
-                                <div className="rounded-lg p-4 bg-brand-parchment border border-brand-blue-border">
-                                  <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-3 text-brand-navy">Notable achievements</div>
-                                  <div className="space-y-3">
-                                    {item.notableItems.map((notable, idx) => (
-                                      <div key={idx} className="rounded-lg p-3 border border-brand-warm-border">
-                                        <div className="text-lg font-semibold text-brand-dark">{notable.title || "Untitled"}</div>
-                                        <div className="text-[1.4rem] text-gray-500">{notable.type || "—"}</div>
-                                        {notable.link && (
-                                          <div className="mt-1 text-[1.4rem]">
-                                            <a href={notable.link} target="_blank" rel="noopener noreferrer" className="hover:underline text-brand-navy">{notable.link}</a>
-                                          </div>
-                                        )}
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-
-                              <div className="flex flex-wrap gap-4 text-[1.4rem]">
-                                <div className="text-brand-navy">
-                                  <span className="font-semibold text-brand-navy">Email: </span>
-                                  {item.editor_email || item.editorEmail || "—"}
-                                </div>
-                                {item.linkedin && (
-                                  <div className="text-brand-navy">
-                                    <span className="font-semibold text-brand-navy">LinkedIn: </span>
-                                    <a href={item.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline text-brand-navy">{item.linkedin}</a>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )
-
             ) : activeTab === "all" ? (
               <>
                 <div className="rounded-lg overflow-hidden border-[1.5px] border-brand-warm-border bg-brand-parchment">
+                  {selectedAll.length > 0 && (
+                    <div className="flex items-center justify-between px-5 py-3 border-b-2 border-brand-navy bg-brand-navy">
+                      <div className="flex items-center gap-3">
+                        <div className="text-[1.4rem] font-bold text-white">
+                          {selectedAll.length} pending selected
+                        </div>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={filteredAll.filter((r) => r.status === "pending").every((r) => selectedAll.includes(r.id))}
+                            onChange={toggleAllEntries}
+                            className="w-4 h-4 rounded"
+                          />
+                          <span className="text-[1.3rem] font-medium text-amber-800">Select all</span>
+                        </label>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleBulkAllEntries("approve")}
+                          className="px-3 py-1.5 text-[1.3rem] font-semibold rounded-lg bg-green-600 text-white transition-colors"
+                        >
+                          Approve {selectedAll.length}
+                        </button>
+                        <button
+                          onClick={() => handleBulkAllEntries("reject")}
+                          className="px-3 py-1.5 text-[1.3rem] font-semibold rounded-lg bg-red-600 text-white transition-colors"
+                        >
+                          Reject {selectedAll.length}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                   <table className="w-full">
                       <thead className="border-b-2 border-brand-navy bg-brand-navy">
                         <tr>
+                          <th className="w-10 px-2 py-3"></th>
                           {["Name", "Role", "Organisation", "LinkedIn Clicks", "Status"].map((h) => (
                             <th key={h} className="text-left text-[1.4rem] font-bold uppercase tracking-wider px-5 py-3 text-white">{h}</th>
                           ))}
@@ -1303,15 +1092,33 @@ export default function Admin({ onGoToDirectory }) {
                     <tbody className="divide-y divide-[#f0ebe0]">
                       {filteredAll.slice((allPage - 1) * PAGE_SIZE, allPage * PAGE_SIZE).map((item) => {
                         const isExpanded = expandedAllId === item.id;
+                        const isPending = item.status === "pending";
+                        const isDuplicate = isPending && liveNames.has(`${item.first_name?.trim()?.toLowerCase() ?? ""} ${item.last_name?.trim()?.toLowerCase() ?? ""}`);
                         return (
                           <React.Fragment key={item.id}>
                             <tr
                               className="transition-colors cursor-pointer bg-transparent hover:bg-brand-warm-row"
                               onClick={() => setExpandedAllId(isExpanded ? null : item.id)}
                             >
+                              <td className="px-2 py-3.5">
+                                {isPending && (
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedAll.includes(item.id)}
+                                    onChange={(e) => { e.stopPropagation(); toggleAllSelect(item.id); }}
+                                    onClick={e => e.stopPropagation()}
+                                    className="w-4 h-4 rounded cursor-pointer"
+                                  />
+                                )}
+                              </td>
                               <td className="px-5 py-3.5">
                                 <div className="flex items-center gap-3">
                                   <span className="text-lg font-medium text-brand-dark">{item.first_name} {item.last_name}</span>
+                                  {isDuplicate && (
+                                    <span className="flex-shrink-0 text-[1.2rem] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-300">
+                                      ⚠ Possible duplicate
+                                    </span>
+                                  )}
                                   <span className="text-[1.2rem] text-gray-500">{isExpanded ? 'Hide details' : 'View details'}</span>
                                 </div>
                               </td>
@@ -1332,7 +1139,7 @@ export default function Admin({ onGoToDirectory }) {
                             </tr>
                             {isExpanded && (
                               <tr>
-                                <td colSpan="5" className="px-5 py-4 bg-brand-parchment">
+                                <td colSpan="6" className="px-5 py-4 bg-brand-parchment">
                                   <div className="grid gap-4 md:grid-cols-2">
                                     <div className="rounded-lg p-4 bg-white border border-brand-blue-border">
                                       <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-3 text-brand-navy">Entry details</div>
@@ -1358,7 +1165,25 @@ export default function Admin({ onGoToDirectory }) {
                                       <div className="text-[1.5rem] text-brand-dark-blue leading-[1.7]">{item.bio || 'No bio available.'}</div>
                                     </div>
                                   </div>
-                                  <div className="mt-4 flex justify-end">
+                                  <div className="mt-4 flex items-center justify-end gap-3">
+                                    {isPending && (
+                                      <>
+                                        <button
+                                          onClick={() => handleAction(item.id, "approve")}
+                                          disabled={actionId === item.id}
+                                          className="px-4 py-2 text-[1.4rem] font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
+                                        >
+                                          {actionId === item.id ? "..." : "Approve"}
+                                        </button>
+                                        <button
+                                          onClick={() => handleAction(item.id, "reject")}
+                                          disabled={actionId === item.id}
+                                          className="px-4 py-2 text-[1.4rem] font-medium rounded-lg border-[1.5px] border-red-400 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                                        >
+                                          Reject
+                                        </button>
+                                      </>
+                                    )}
                                     <button
                                       onClick={(e) => { e.stopPropagation(); handleDeleteLeader(item.id, `${item.first_name} ${item.last_name}`); }}
                                       className="text-[1.3rem] font-medium text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 px-4 py-1.5 rounded-lg transition-colors"

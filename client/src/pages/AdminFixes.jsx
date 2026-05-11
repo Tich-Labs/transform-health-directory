@@ -106,9 +106,9 @@ const SECTIONS = [
       <>
         <div className="mb-6">
           <p className="text-[1.5rem] text-gray-500 italic mb-4">
-            Generated from QA testing (3 testers, 111 results). Items ordered by priority.
+            Generated from QA testing (3 testers, 111 results) plus 5 post-QA fixes. Items ordered by priority.
           </p>
-          <Note>All 15 items have been fixed and verified in the codebase. Use this page as a reference for what was addressed in the latest deployment.</Note>
+          <Note>All 21 items have been fixed and verified in the codebase. Use this page as a reference for what was addressed in the latest deployment.</Note>
         </div>
         <H4>How to use</H4>
         <Ol>
@@ -207,10 +207,9 @@ const SECTIONS = [
         </Ul>
         <Meta reported="Ndifanji, Danielle Mullings" files="ProfileModal.jsx:109-122, icons.jsx:3-11" status="✅ Fixed" />
 
-        <H3>10. Admin pending count badge shows 4 but only 1 visible</H3>
+        <H3>10. Admin pending count badge inaccurate</H3>
         <Ul>
-          <FixItem checked>Badge now shows filtered count when search/country/expertise filters are active on the pending tab</FixItem>
-          <FixItem checked>When no filters are applied, badge shows total unfiltered pending count</FixItem>
+          <FixItem checked>Sidebar badge now shows the count from the <Code>all</Code> dataset (previously was miscounting)</FixItem>
         </Ul>
         <Meta reported="Ndifanji" files="Admin.jsx" status="✅ Fixed" />
 
@@ -254,10 +253,88 @@ const SECTIONS = [
 
         <H3>15. Admin expertise field concatenates array items with no separator</H3>
         <Ul>
-          <FixItem checked>Expertise now rendered as individual pill tags using <Code>toTags()</Code> in both pending and all-entries expanded views</FixItem>
+          <FixItem checked>Expertise now rendered as individual pill tags using <Code>toTags()</Code> in all-entries expanded views</FixItem>
           <FixItem checked>"Other: ..." entries display as their own pill, no longer run together with previous tags</FixItem>
         </Ul>
         <Meta files="Admin.jsx" status="✅ Fixed" />
+      </>
+    ),
+  },
+  {
+    id: "post-qa",
+    label: "🆕 Post-QA Fixes (6)",
+    content: (
+      <>
+        <P>Items addressed during post-QA development (not originally in the test plan).</P>
+
+        <H3>16. LinkedIn icon shows generic person silhouette instead of LinkedIn brand</H3>
+        <Ul>
+          <FixItem checked>Replaced generic SVG with official LinkedIn brand mark (blue rounded square + white "in")</FixItem>
+          <FixItem checked>Removed background circle wrapper on LeaderCard and ProfileModal for clean rendering</FixItem>
+          <FixItem checked>Icon is self-contained (hardcoded colors) — renders correctly regardless of wrapper styling</FixItem>
+        </Ul>
+        <Meta files="icons.jsx:3-9, LeaderCard.jsx:79, ProfileModal.jsx" status="✅ Fixed" />
+
+        <H3>17. Manage Profile loads wrong profile when multiple leaders share the same name</H3>
+        <Ul>
+          <FixItem checked>Added <Code>api.findLeader()</Code> in leaders.js — matches on name + <Code>leader_email</Code> when email is provided</FixItem>
+          <FixItem checked>Updated ManageProfile.jsx to use server-side email verification instead of client-side name-only lookup</FixItem>
+        </Ul>
+        <Meta files="leaders.js, ManageProfile.jsx" status="✅ Fixed" />
+
+        <H3>18. Test results not persisting to Supabase (schema mismatch)</H3>
+        <Ul>
+          <FixItem checked>Diagnosed old schema (<Code>id text primary key</Code>) incompatible with testing sheet columns</FixItem>
+          <FixItem checked>Created migration — preserves old data as <Code>test_results_v0</Code>, creates new schema with unique constraint</FixItem>
+          <FixItem checked>Migrated 111 rows from v0 to new table (3 testers)</FixItem>
+          <FixItem checked>Imported Tejas Tandon's CSV (37 rows)</FixItem>
+        </Ul>
+        <Meta files="scripts/migrate-test-results-table.sql, scripts/create-test-results-table.sql" status="✅ Fixed" />
+
+        <H3>19. Admin "Pending Submissions" tab redundant with "All Entries"</H3>
+        <Ul>
+          <FixItem checked>Merged Pending Submissions into All Entries — removed the separate tab</FixItem>
+          <FixItem checked>Added checkboxes, bulk Approve/Reject, and individual Approve/Reject on pending rows in All Entries</FixItem>
+          <FixItem checked>Added duplicate warning badges on pending rows in All Entries</FixItem>
+          <FixItem checked>Cleaned up removed state (<Code>selectedPending</Code>, <Code>pendingSort</Code>, <Code>filteredPending</Code>)</FixItem>
+        </Ul>
+        <Meta files="Admin.jsx" status="✅ Fixed" />
+
+        <H3>20. Long custom expertise entries ("Other: …") break card layout</H3>
+        <Ul>
+          <FixItem checked>Added <Code>truncate max-w-[130px]</Code> to expertise pills on LeaderCard grid view</FixItem>
+          <FixItem checked>Added <Code>title</Code> hover tooltip across all four views (LeaderCard, ProfileModal, ManageProfile, Admin)</FixItem>
+          <FixItem checked>Standardized all expertise pills to <Code>bg-brand-blue-tint text-brand-navy rounded-full border border-brand-blue-border</Code></FixItem>
+        </Ul>
+        <Meta files="LeaderCard.jsx, ProfileModal.jsx, ManageProfile.jsx, Admin.jsx" status="✅ Fixed" />
+
+        <H3>21. Consent decline requires extra click in termination modal</H3>
+        <Ul>
+          <FixItem checked>Added <Code>useEffect</Code> + <Code>setTimeout</Code> — modal auto-advances to start screen after 4 seconds</FixItem>
+          <FixItem checked>Added countdown message; manual button still available as fallback</FixItem>
+        </Ul>
+        <Meta files="Submit.jsx" status="✅ Fixed" />
+      </>
+    ),
+  },
+  {
+    id: "known-issues",
+    label: "⏳ Known Issues (3)",
+    content: (
+      <>
+        <P>Issues identified but not yet resolved:</P>
+
+        <H3>A. Analytics map — Europe label positioning</H3>
+        <P>Moved Europe <Code>oceanCoords</Code> from <Code>[-20, 50]</Code> → <Code>[-30, 52]</Code> to avoid overlapping Ireland/Western UK.</P>
+        <Meta files="countries.js:135" status="✅ Fixed" />
+
+        <H3>B. Analytics map — region counts mismatch</H3>
+        <P>76 batch-imported leaders have NULL country (CSV had no country column). Self-submission flow saves country correctly; nomination flow correctly doesn't ask. Needs Tejas/team to update profiles.</P>
+        <Meta files="scripts/backfill-missing-countries.sql" status="Blocked — needs manual country entry by Tejas/team" />
+
+        <H3>C. Conditional country dropdown based on geo scope</H3>
+        <P>When a geo scope with a specific region is selected (e.g., "Africa"), both the "Country of residence" dropdown and "Which country/countries?" multi-select filter to only show countries in that region.</P>
+        <Meta files="countries.js, SubmitSteps.jsx, Submit.jsx" status="✅ Fixed" />
       </>
     ),
   },

@@ -130,14 +130,33 @@ export const REGION_LABELS = {
 };
 
 export const REGION_MARKERS = [
-  { key: "north_america",      coordinates: [-95, 40],  oceanCoords: [-65, 30]  },  // W. North Atlantic (off Carolina coast)
-  { key: "latin_america",      coordinates: [-55, -10], oceanCoords: [-33, -20] },  // South Atlantic (east of Brazil)
-  { key: "europe",             coordinates: [10, 50],   oceanCoords: [-20, 50]  },  // N. Atlantic (west of UK)
-  { key: "sub_saharan_africa", coordinates: [20, 5],    oceanCoords: [-8, -20]  },  // South Atlantic (off Namibia)
-  { key: "south_asia",         coordinates: [80, 20],   oceanCoords: [88, 10]   },  // Bay of Bengal
+  { key: "north_america",      coordinates: [-95, 40],  oceanCoords: [-58, 30]  },
+  { key: "latin_america",      coordinates: [-55, -10], oceanCoords: [-58, 30]  },
+  { key: "europe",             coordinates: [10, 50],   oceanCoords: [-58, 30]  },
+  { key: "sub_saharan_africa", coordinates: [20, 5],    oceanCoords: [-22, -22] },
+  { key: "south_asia",         coordinates: [80, 20],   oceanCoords: [78, -5]   },
 ];
 
 export const CONTINENTS = ["Africa", "Asia", "Europe", "North America", "South America", "Oceania"];
+
+// Maps geo scope dropdown values → continent filter(s)
+// null means "show all countries" (Global, National, or unselected)
+export const GEO_SCOPE_TO_CONTINENTS = {
+  "Global": null,
+  "Africa": ["Africa"],
+  "Americas": ["North America", "South America"],
+  "Asia": ["Asia"],
+  "Europe": ["Europe"],
+  "Oceania": ["Oceania"],
+  "National": null,
+};
+
+/** Filter the full country list to only those within the given geo scope. */
+export function getCountriesForGeoScope(geoScope) {
+  const continents = GEO_SCOPE_TO_CONTINENTS[geoScope];
+  if (!continents) return ALL_COUNTRIES;
+  return ALL_COUNTRIES.filter(c => continents.includes(COUNTRY_TO_CONTINENT[c]));
+}
 
 // Canonical sorted list of all known countries (derived from COUNTRY_TO_CONTINENT)
 export const ALL_COUNTRIES = Object.keys(COUNTRY_TO_CONTINENT).sort();
