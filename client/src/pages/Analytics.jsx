@@ -74,10 +74,19 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
       const canonical = l.country.trim();
       const r = COUNTRY_TO_REGION[canonical];
       if (!r) return;
-      if (!selectedRegion || r === selectedRegion) names.add(canonical);
+      if (selectedRegion && r !== selectedRegion) return;
+      if (selectedSpecialisation) {
+        const matches = toTags(l.expertise).some((e) => {
+          const trimmed = e.trim();
+          if (selectedSpecialisation === "Other") return trimmed === "Other" || trimmed.startsWith("Other:");
+          return trimmed === selectedSpecialisation;
+        });
+        if (!matches) return;
+      }
+      names.add(canonical);
     });
     return names;
-  }, [allLeaders, selectedRegion]);
+  }, [allLeaders, selectedRegion, selectedSpecialisation]);
 
   const regionTotals = useMemo(() => {
     const totals = { north_america: 0, latin_america: 0, europe: 0, sub_saharan_africa: 0, south_asia: 0 };
@@ -87,6 +96,22 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
     });
     return totals;
   }, [allLeaders]);
+
+  const specialisationTotals = useMemo(() => {
+    if (!selectedSpecialisation) return null;
+    const totals = { north_america: 0, latin_america: 0, europe: 0, sub_saharan_africa: 0, south_asia: 0 };
+    allLeaders.forEach((l) => {
+      const matches = toTags(l.expertise).some((e) => {
+        const trimmed = e.trim();
+        if (selectedSpecialisation === "Other") return trimmed === "Other" || trimmed.startsWith("Other:");
+        return trimmed === selectedSpecialisation;
+      });
+      if (!matches) return;
+      const key = l.region || COUNTRY_TO_REGION[l.country?.trim()];
+      if (key && key in totals) totals[key]++;
+    });
+    return totals;
+  }, [allLeaders, selectedSpecialisation]);
 
   const latestLeaders = useMemo(() => {
     return [...allLeaders]
@@ -199,7 +224,26 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
                   </Annotation>
                 );
               })}
-        </ComposableMap>
+
+              {/* Specialisation-only annotation — no region selected */}
+              {!selectedRegion && selectedSpecialisation && (() => {
+                const count = filteredLeaders.length;
+                if (!count) return null;
+                return (
+                  <Annotation subject={[-58, 30]} connectorProps={{ stroke: "transparent", strokeWidth: 0 }}>
+                    <g>
+                      <rect x="-68" y="-26" width="136" height="52" rx="10" fill="#F8571D" />
+                      <text textAnchor="middle" y="-6" textLength="116" lengthAdjust="spacingAndGlyphs" style={{ fontSize: 13, fontWeight: 700, fill: "#ffffff", fontFamily: "system-ui" }}>
+                        {toTitleCase(selectedSpecialisation)}
+                      </text>
+                      <text textAnchor="middle" y="14" style={{ fontSize: 11, fill: "#ffffff", fontFamily: "system-ui" }}>
+                        {count} Leaders
+                      </text>
+                    </g>
+                  </Annotation>
+                );
+              })()}
+         </ComposableMap>
 
         {/* Region selector */}
             <div className="mt-5 pt-5">
@@ -225,7 +269,7 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
                           {REGION_LABELS[region.key]}
                         </span>
                         <span className="text-[1rem] text-gray-400">
-                          {regionTotals[region.key] || 0} leaders
+                          {selectedSpecialisation ? (specialisationTotals[region.key] || 0) : (regionTotals[region.key] || 0)} leaders
                         </span>
                         {/* Dot sits on the dashed line — always orange, ring when active */}
                         <span className={`w-4 h-4 rounded-full bg-brand-orange transition-all ${active ? "ring-2 ring-brand-orange ring-offset-2" : ""}`} />
@@ -256,7 +300,11 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
                   <button
                     key={d.name}
                     type="button"
-                    onClick={() => setSelectedSpecialisation(isSelected ? null : d.name)}
+                    onClick={() => {
+                      if (isSelected) { setSelectedSpecialisation(null); return; }
+                      setSelectedSpecialisation(d.name);
+                      setSelectedRegion(null);
+                    }}
                     className={`w-full text-left rounded-md px-1 py-0.5 -mx-1 hover:bg-gray-50 cursor-pointer transition-opacity ${isDimmed ? "opacity-35" : "opacity-100"}`}
                   >
                     <div className="flex justify-between items-baseline text-[1.35rem] mb-1">
