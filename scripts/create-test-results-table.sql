@@ -1,6 +1,27 @@
 -- Create test_results table for storing testing sheet submissions
+--
+-- This script handles both fresh installs and migration from the old
+-- schema (where id was TEXT without default). Safe to run multiple times.
+--
 -- Run this in Supabase Dashboard → SQL Editor
+--
+-- See also: scripts/migrate-test-results-table.sql (standalone migration)
 
+-- Step 1: Migrate old schema (id as TEXT) → new schema (id as UUID with default)
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'test_results'
+      AND column_name = 'id'
+      AND data_type = 'text'
+  ) THEN
+    ALTER TABLE test_results RENAME TO test_results_v0;
+    RAISE NOTICE 'Renamed old test_results → test_results_v0 (backup preserved)';
+  END IF;
+END $$;
+
+-- Step 2: Create the new table
 CREATE TABLE IF NOT EXISTS test_results (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   tester_name text,
@@ -9,30 +30,47 @@ CREATE TABLE IF NOT EXISTS test_results (
   priority text,
   status text,
   notes text,
+  session_id text,
   created_at timestamptz DEFAULT now()
 );
 
--- Enable Row Level Security (allow public inserts + reads for now, tighten before launch)
+-- Step 3: Enable Row Level Security
 ALTER TABLE test_results ENABLE ROW LEVEL SECURITY;
 
--- Allow anyone to insert test results (testing sheet uses anon key)
+-- Step 4: Create RLS policies (idempotent — drops first)
+DROP POLICY IF EXISTS "Allow public insert" ON test_results;
+DROP POLICY IF EXISTS "Allow public select" ON test_results;
+DROP POLICY IF EXISTS "Allow public update" ON test_results;
+DROP POLICY IF EXISTS "Allow public delete" ON test_results;
+
 CREATE POLICY "Allow public insert" ON test_results
   FOR INSERT WITH CHECK (true);
 
--- Allow anyone to read test results (admin console uses anon key)
 CREATE POLICY "Allow public select" ON test_results
   FOR SELECT USING (true);
 
--- Optional: allow updates/deletes (for admin management)
 CREATE POLICY "Allow public update" ON test_results
   FOR UPDATE USING (true) WITH CHECK (true);
 
 CREATE POLICY "Allow public delete" ON test_results
   FOR DELETE USING (true);
 
--- Grant access to anon role
+-- Step 5: Grant access
 GRANT ALL ON test_results TO anon;
 GRANT ALL ON test_results TO authenticated;
 
--- Verify table was created
-SELECT * FROM test_results LIMIT 5;
+-- Step 6: Add unique constraint for upsert support
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'test_results_tester_scenario_unique'
+  ) THEN
+    ALTER TABLE test_results
+      ADD CONSTRAINT test_results_tester_scenario_unique
+      UNIQUE (tester_name, scenario);
+  END IF;
+END $$;
+
+-- Verify
+SELECT COUNT(*) AS total_rows, 'test_results' AS table_name FROM test_results;

@@ -44,36 +44,11 @@ export default function ManageProfile({ prefill, onBack }) {
     setNotFound(false);
     setFoundProfile(null);
     try {
-      const all = await api.getLeaders("live");
-      const fn = firstName.trim().toLowerCase();
-      const ln = lastName.trim().toLowerCase();
-      const linkedinUrl = linkedin.trim().toLowerCase();
-      
-      // Primary: exact name match
-      let match = all.find(
-        (l) =>
-          String(l.first_name || "").toLowerCase() === fn &&
-          String(l.last_name  || "").toLowerCase() === ln
-      );
-      
-      // Fallback 1: LinkedIn URL match
-      if (!match && linkedinUrl) {
-        match = all.find(
-          (l) => String(l.linkedin || "").toLowerCase().includes(linkedinUrl.replace(/\/$/, ""))
-        );
-      }
-      
-      // Fallback 2: Partial name match (first name + last name contains search term)
-      if (!match) {
-        match = all.find(
-          (l) =>
-            (String(l.first_name || "").toLowerCase().includes(fn) ||
-             String(l.last_name || "").toLowerCase().includes(ln)) &&
-            (String(l.first_name || "").toLowerCase().includes(fn.split(" ")[0]) ||
-             String(l.last_name || "").toLowerCase().includes(ln.split(" ")[0]))
-        );
-      }
-      
+      const match = await api.findLeader({
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.trim(),
+      });
       if (match) setFoundProfile(match);
       else setNotFound(true);
     } catch (err) {
@@ -184,7 +159,7 @@ export default function ManageProfile({ prefill, onBack }) {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="We'll send your profile link here — not stored"
+                placeholder="Used to verify your identity and send your profile link"
                 required
                 className={INPUT_CLASS}
               />

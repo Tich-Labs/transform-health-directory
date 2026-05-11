@@ -3,6 +3,10 @@
 -- enabling the admin to see accurate "last saved" dates and allowing
 -- returning testers to continue where they left off without losing history.
 --
+-- NOTE: This is already included in scripts/create-test-results-table.sql
+-- and scripts/migrate-test-results-table.sql. Run this standalone only
+-- if you created the table without the constraint and need to add it later.
+--
 -- Run this in Supabase Dashboard → SQL Editor
 
 -- Remove duplicate rows first (keep the most recent for each tester+scenario combo)

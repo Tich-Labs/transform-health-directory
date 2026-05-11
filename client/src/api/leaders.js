@@ -206,6 +206,39 @@ export const api = {
     return data || [];
   },
 
+  findLeader: async ({ firstName, lastName, email }) => {
+    // Preferred: match by name + leader_email (prevents showing wrong profile)
+    if (email) {
+      const { data } = await supabase
+        .from("leaders")
+        .select("id, first_name, last_name, role, organisation, linkedin, photo_url, bio, expertise, notable_items, country")
+        .eq("status", "live")
+        .ilike("first_name", firstName.trim())
+        .ilike("last_name", lastName.trim())
+        .eq("leader_email", email.trim().toLowerCase())
+        .limit(1);
+      if (data?.length > 0) return data[0];
+    }
+
+    // Fallback: name-only match
+    const { data } = await supabase
+      .from("leaders")
+      .select("id, first_name, last_name, role, organisation, linkedin, photo_url, bio, expertise, notable_items, country")
+      .eq("status", "live")
+      .ilike("first_name", firstName.trim())
+      .ilike("last_name", lastName.trim())
+      .limit(3);
+
+    if (!data?.length) return null;
+
+    const fn = firstName.trim().toLowerCase();
+    const ln = lastName.trim().toLowerCase();
+    return data.find(l =>
+      String(l.first_name || "").toLowerCase() === fn &&
+      String(l.last_name || "").toLowerCase() === ln
+    ) || data[0];
+  },
+
   getTestResults: async () => {
     const { data, error } = await supabase
       .from("test_results")

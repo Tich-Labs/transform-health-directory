@@ -117,23 +117,6 @@ create policy "Anyone can upload photos"
   with check (bucket_id = 'profile-photos');
 
 -- ============================================================
--- Test Results table (for testing-sheet.html persistence)
--- RLS intentionally disabled — test feedback is not sensitive
--- ============================================================
-
-create table if not exists public.test_results (
-  id           text primary key,
-  created_at   timestamptz default now(),
-  tester_name  text not null,
-  results      jsonb,
-  summary      jsonb
-);
-
--- No RLS on test_results — open for all testers
-grant usage on schema public to anon;
-grant all on public.test_results to anon;
-
--- ============================================================
 -- Before launch checklist (remove/replace test-mode policies)
 -- ============================================================
 -- 1. Drop "Admin test mode: read all leaders" policy

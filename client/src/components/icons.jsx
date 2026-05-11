@@ -2,10 +2,8 @@ import React from "react";
 
 export function LinkedInIcon({ className = "", ...props }) {
   return (
-    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className={className} {...props}>
-      <path d="M10.5 5.5C11.563 5.5 12.583 5.921 13.334 6.672C14.085 7.423 14.5 8.437 14.5 9.5V14H12.5V9.5C12.5 8.97 12.289 8.461 11.914 8.086C11.539 7.711 11.03 7.5 10.5 7.5C9.97 7.5 9.461 7.711 9.086 8.086C8.711 8.461 8.5 8.97 8.5 9.5V14H6.5V9.5C6.5 8.437 6.915 7.423 7.666 6.672C8.417 5.921 9.437 5.5 10.5 5.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M4.5 5.5V14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M3.5 3.5C3.5 3.897 3.342 4.269 3.061 4.561C2.78 4.853 2.398 5.011 2 5.011C1.602 5.011 1.22 4.853 0.939 4.561C0.658 4.269 0.5 3.897 0.5 3.5C0.5 3.103 0.658 2.731 0.939 2.439C1.22 2.147 1.602 1.989 2 1.989C2.398 1.989 2.78 2.147 3.061 2.439C3.342 2.731 3.5 3.103 3.5 3.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
     </svg>
   );
 }

@@ -1,0 +1,46 @@
+Tester,Section,Scenario,Priority,Status,Notes
+"Tejas Tandon","setup","Site loads from Supabase","critical","pass",""
+"Tejas Tandon","setup","Admin tab accessible (test mode)","critical","pass",""
+"Tejas Tandon","dir","Search filters results in real time","critical","pass",""
+"Tejas Tandon","dir","Continent / country dropdown filter","critical","pass",""
+"Tejas Tandon","dir","Expertise filter","important","pass",""
+"Tejas Tandon","dir","Profile modal opens with full details","critical","pass",""
+"Tejas Tandon","dir","Missing fields show TBC not blank","important","pass",""
+"Tejas Tandon","dir","LinkedIn link opens in new tab","important","fail","The LinkedIn icon in the grid view and in the modal is not very evident. It looks a little odd. Can we please change that with the actual LinkedIn logo? "
+"Tejas Tandon","dir","Email NOT visible in public modal (PII)","critical","pass",""
+"Tejas Tandon","analytics","Region selection shows leaders and highlights map","critical","fail","When Europe is selected it covers the section of the map over Europe so it's not visible. Can you please fix that?
+
+Additionally for Europe the country that was being highlighted in Latin America is still getting highlighted. "
+"Tejas Tandon","analytics","Specialisation bar click filters leaders","important","pass",""
+"Tejas Tandon","analytics","Clear Region and Clear Specialisation buttons work","important","pass",""
+"Tejas Tandon","analytics","Latest additions shown when no filter active","nice-to-have","pass",""
+"Tejas Tandon","submit","Self-submit: form steps progress correctly","critical","pass",""
+"Tejas Tandon","submit","Photo upload is mandatory (blocks Next)","critical","pass",""
+"Tejas Tandon","submit","Photo preview appears after upload","critical","pass",""
+"Tejas Tandon","submit","Geographical scope dropdown works","critical","fail","I see that we've added geographic scope but that is currently lacking the ""global"" option. 
+
+Also for the country we have, should we also enable the multiple selection option for the geographic scope?
+
+Is it possible that if a specific region or regions is selected, in the countries drop-down, only countries from that region(s) show up? We can skip if not."
+"Tejas Tandon","submit","Submission includes geo_scope field","important","pass",""
+"Tejas Tandon","submit","Bio character count enforced (300–500 chars)","critical","pass",""
+"Tejas Tandon","submit","Expertise capped at 5 tags","important","pass",""
+"Tejas Tandon","submit","Submission appears in Admin as pending","critical","pass",""
+"Tejas Tandon","submit","Duplicate warning shown when name matches existing leader","important","pass",""
+"Tejas Tandon","submit","No duplicate warning for a new unique name","important","pass",""
+"Tejas Tandon","submit","Admin flags possible duplicate on pending submission","important","pass",""
+"Tejas Tandon","submit","Nominate: step 0 collects nominator + nominee info","critical","pass",""
+"Tejas Tandon","submit","Nominate: submission appears in Admin Nominated tab","critical","fail","This appears in the pending submissions tab and not the nominated tab"
+"Tejas Tandon","manage","Profile lookup finds existing leader","critical","fail","While this is working, if the other fields - i.e. email address, linkedin profile, etc. are incorrect, it's still showing the leader profile just based on the name. 
+
+Can we have it such that all information needs to be accurate and only then does the possible profile show up? "
+"Tejas Tandon","manage","Profile not found shows clear error","important","pass",""
+"Tejas Tandon","manage","Update request submitted and visible in Admin","critical","pass",""
+"Tejas Tandon","manage","Delete request submitted and visible in Admin","important","pass",""
+"Tejas Tandon","admin","Pending tab shows new self-submissions","critical","pass",""
+"Tejas Tandon","admin","Nominated tab shows nominations correctly","critical","fail","Similar to the point about this earlier"
+"Tejas Tandon","admin","Submitter email visible in admin expanded view","critical","pass",""
+"Tejas Tandon","admin","Approve a pending submission","critical","pass",""
+"Tejas Tandon","admin","Reject a pending submission","critical","pass",""
+"Tejas Tandon","admin","Profile Requests — approve delete request","important","pass",""
+"Tejas Tandon","admin","All Entries tab shows all statuses","important","pass",""
