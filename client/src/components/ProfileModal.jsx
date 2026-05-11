@@ -108,7 +108,7 @@ export default function ProfileModal({ leader, onClose, onManage }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   title="LinkedIn Profile"
-                  className="inline-flex opacity-80 hover:opacity-100 transition-opacity text-[#0A66C2]"
+                  className="inline-block w-[22px] h-[22px] opacity-80 hover:opacity-100 transition-opacity"
                   onClick={() => {
                     import("../api/leaders").then(({ api }) => api.trackLinkedInClick(leader.id));
                   }}
