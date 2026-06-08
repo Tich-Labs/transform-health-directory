@@ -756,6 +756,7 @@ export default function Admin({ onGoToDirectory }) {
                 <button
                   key={item.id}
                   onClick={() => handleTabChange(item.id)}
+                  title={item.label}
                   className={`w-full flex items-center gap-3 px-3 py-3 rounded-md text-xl font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-2 ${
                     isActive
                       ? "bg-brand-pink text-white border border-brand-pink"
@@ -856,10 +857,11 @@ export default function Admin({ onGoToDirectory }) {
               </div>
             )}
 
-          {/* Filter bar - hidden for Tests tab */}
+          {/* Filter bar - hidden for manual/docs and activity tabs */}
           {activeTab !== "tests" &&
             activeTab !== "manual" &&
-            activeTab !== "fixes" && (
+            activeTab !== "fixes" &&
+            activeTab !== "activity" && (
               <div className="px-8 py-4 border-b-2 border-brand-navy flex-shrink-0 bg-white">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -955,6 +957,66 @@ export default function Admin({ onGoToDirectory }) {
                 )}
               </div>
             )}
+
+          {/* Activity Log filter bar — replaces general filter bar for activity tab */}
+          {activeTab === "activity" && (
+            <div className="px-8 py-3 border-b-2 border-brand-navy flex-shrink-0 bg-white">
+              <div className="flex items-center gap-3 flex-wrap">
+                <select
+                  value={activityFilter}
+                  onChange={(e) => setActivityFilter(e.target.value)}
+                  className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
+                >
+                  <option value="all">All actions</option>
+                  <option value="update">Updates</option>
+                  <option value="delete">Deletes</option>
+                </select>
+                <select
+                  value={activityDateRange}
+                  onChange={(e) => setActivityDateRange(e.target.value)}
+                  className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
+                >
+                  <option value="all">All time</option>
+                  <option value="7">Last 7 days</option>
+                  <option value="14">Last 14 days</option>
+                  <option value="30">Last 30 days</option>
+                  <option value="custom">Custom range…</option>
+                </select>
+                {activityDateRange === "custom" && (
+                  <>
+                    <input
+                      type="date"
+                      value={activityDateFrom}
+                      onChange={(e) => setActivityDateFrom(e.target.value)}
+                      className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm bg-white text-gray-900"
+                    />
+                    <span className="text-lg text-gray-500">to</span>
+                    <input
+                      type="date"
+                      value={activityDateTo}
+                      onChange={(e) => setActivityDateTo(e.target.value)}
+                      className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm bg-white text-gray-900"
+                    />
+                  </>
+                )}
+                <input
+                  type="text"
+                  placeholder="Search by name…"
+                  value={activitySearch}
+                  onChange={(e) => setActivitySearch(e.target.value)}
+                  className="min-w-[180px] rounded-lg border-2 border-gray-400 px-4 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900 placeholder-gray-400"
+                />
+                {(activityFilter !== "all" || activitySearch || activityDateRange !== "all") && (
+                  <button
+                    onClick={() => { setActivityFilter("all"); setActivitySearch(""); setActivityDateRange("all"); setActivityDateFrom(""); setActivityDateTo(""); }}
+                    className="text-[1.3rem] text-brand-pink font-medium hover:underline whitespace-nowrap cursor-pointer"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto px-8 py-6 bg-white">
@@ -1314,64 +1376,6 @@ export default function Admin({ onGoToDirectory }) {
                     <div className="text-[1.3rem] text-gray-300">
                       {filteredActivityLog.length} event(s)
                     </div>
-                  </div>
-                  {/* Activity filters */}
-                  <div className="flex flex-col gap-3 px-5 py-3 border-b border-brand-blue-border bg-brand-sand">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <select
-                        value={activityFilter}
-                        onChange={(e) => setActivityFilter(e.target.value)}
-                        className="rounded-lg border-2 border-gray-300 px-3 py-1.5 text-[1.3rem] font-medium bg-white"
-                      >
-                        <option value="all">All actions</option>
-                        <option value="update">Updates</option>
-                        <option value="delete">Deletes</option>
-                      </select>
-                      <select
-                        value={activityDateRange}
-                        onChange={(e) => setActivityDateRange(e.target.value)}
-                        className="rounded-lg border-2 border-gray-300 px-3 py-1.5 text-[1.3rem] font-medium bg-white"
-                      >
-                        <option value="all">All time</option>
-                        <option value="7">Last 7 days</option>
-                        <option value="14">Last 14 days</option>
-                        <option value="30">Last 30 days</option>
-                        <option value="custom">Custom range…</option>
-                      </select>
-                      <input
-                        type="text"
-                        placeholder="Search by name…"
-                        value={activitySearch}
-                        onChange={(e) => setActivitySearch(e.target.value)}
-                        className="flex-1 min-w-[160px] rounded-lg border-2 border-gray-300 px-3 py-1.5 text-[1.3rem] bg-white placeholder-gray-400"
-                      />
-                      {(activityFilter !== "all" || activitySearch || activityDateRange !== "all") && (
-                        <button
-                          onClick={() => { setActivityFilter("all"); setActivitySearch(""); setActivityDateRange("all"); setActivityDateFrom(""); setActivityDateTo(""); }}
-                          className="text-[1.3rem] text-brand-pink font-medium hover:underline whitespace-nowrap"
-                        >
-                          Clear all
-                        </button>
-                      )}
-                    </div>
-                    {activityDateRange === "custom" && (
-                      <div className="flex items-center gap-3">
-                        <label className="text-[1.3rem] text-gray-600 font-medium">From</label>
-                        <input
-                          type="date"
-                          value={activityDateFrom}
-                          onChange={(e) => setActivityDateFrom(e.target.value)}
-                          className="rounded-lg border-2 border-gray-300 px-3 py-1.5 text-[1.3rem] bg-white"
-                        />
-                        <label className="text-[1.3rem] text-gray-600 font-medium">To</label>
-                        <input
-                          type="date"
-                          value={activityDateTo}
-                          onChange={(e) => setActivityDateTo(e.target.value)}
-                          className="rounded-lg border-2 border-gray-300 px-3 py-1.5 text-[1.3rem] bg-white"
-                        />
-                      </div>
-                    )}
                   </div>
                   <div className="divide-y divide-brand-warm-row-border">
                     {filteredActivityLog.map((entry) => {
