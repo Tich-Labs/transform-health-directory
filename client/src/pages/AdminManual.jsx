@@ -579,6 +579,10 @@ const SECTIONS = [
               "How many times this leader's LinkedIn link has been clicked",
             ],
             ["Status", "live / pending / rejected (colour-coded badge)"],
+            [
+              "View",
+              "Button to expand the row — toggles to Hide when open. Shows full profile details with Approve / Reject / Delete actions",
+            ],
           ]}
         />
         <Img
@@ -617,10 +621,10 @@ const SECTIONS = [
         <H3>Filters</H3>
         <Ul>
           <Li>Search: name, org, role, expertise, email, country, or bio</Li>
-          <Li>Status: All statuses / Pending / Live / Rejected</Li>
+          <Li>Status: All statuses / Pending / Live / Rejected (All Entries only)</Li>
           <Li>Country dropdown</Li>
           <Li>Expertise tag dropdown</Li>
-          <Li>LinkedIn clicks: Most clicked / Least clicked</Li>
+          <Li>LinkedIn clicks: Most clicked / Least clicked (All Entries only)</Li>
         </Ul>
         <H3>Expanding a row</H3>
         <P>
@@ -648,9 +652,10 @@ const SECTIONS = [
     content: (
       <>
         <P>
-          New submissions, update requests, and deletion requests — organised
-          into three sub-tabs with colour-coded headers (green = New, amber =
-          Updates, red = Deletes).
+          New profile submissions awaiting admin review. Update and deletion
+          requests are now handled directly by leaders via the{" "}
+          <strong>Manage Profile</strong> page — completed actions appear in the{" "}
+          <strong>Activity Log</strong> tab.
         </P>
         <H3>New</H3>
         <P>
@@ -732,6 +737,57 @@ const SECTIONS = [
           src="screenshots/admin-manual/07-nominated.png"
           caption="Nominated tab showing third-party nomination records"
         />
+      </>
+    ),
+  },
+
+  // ────────────────────────────────────────────────────────────────────────
+  // ACTIVITY LOG
+  // ────────────────────────────────────────────────────────────────────────
+
+  {
+    id: "activity-log",
+    label: "📋 Activity Log",
+    content: (
+      <>
+        <P>
+          Tracks all self-service profile updates and deletions performed by
+          leaders via the <strong>Manage Profile</strong> page. No admin action
+          required — the log is automatically populated.
+        </P>
+        <H3>What's logged</H3>
+        <Ul>
+          <Li>
+            <strong>Updates</strong> — leader name, timestamp, and the specific
+            fields changed (role, organisation, LinkedIn, etc.) with old → new
+            values
+          </Li>
+          <Li>
+            <strong>Deletions</strong> — leader name, timestamp, and the reason
+            they gave for removal
+          </Li>
+        </Ul>
+        <H3>Filters</H3>
+        <Ul>
+          <Li>
+            <strong>Action type</strong> — All actions / Updates / Deletes
+          </Li>
+          <Li>
+            <strong>Date range</strong> — All time / Last 7 days / Last 14 days
+            / Last 30 days / Custom range (from/to date pickers)
+          </Li>
+          <Li>
+            <strong>Search</strong> — filter by leader name
+          </Li>
+          <Li>
+            Use <strong>Clear all</strong> to reset all filters at once
+          </Li>
+        </Ul>
+        <Note>
+          The Activity Log uses its own filter bar at the top of the page —
+          the general search/country/expertise filters from other tabs do not
+          appear here.
+        </Note>
       </>
     ),
   },
