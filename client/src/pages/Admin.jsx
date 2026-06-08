@@ -190,6 +190,7 @@ export default function Admin({ onGoToDirectory }) {
   const [actionId, setActionId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCountry, setFilterCountry] = useState("");
+  const [filterRegion, setFilterRegion] = useState("");
   const [filterExpertise, setFilterExpertise] = useState("");
   const [filterClicks, setFilterClicks] = useState(""); // "", "high", "low", "least"
   const [filterStatus, setFilterStatus] = useState("");
@@ -538,6 +539,7 @@ export default function Admin({ onGoToDirectory }) {
     setAllPage(1);
     setSearchQuery("");
     setFilterCountry("");
+    setFilterRegion("");
     setFilterExpertise("");
   };
 
@@ -573,6 +575,11 @@ export default function Admin({ onGoToDirectory }) {
       }))
       .sort((a, b) => a.label.localeCompare(b.label));
   }, []);
+
+  const filteredCountries = useMemo(() => {
+    if (!filterRegion) return countriesByRegion;
+    return countriesByRegion.filter((r) => r.key === filterRegion);
+  }, [countriesByRegion, filterRegion]);
 
   const expertiseOptions = useMemo(() => {
     const set = new Set();
@@ -898,6 +905,22 @@ export default function Admin({ onGoToDirectory }) {
                       className="min-w-[220px] rounded-lg border-2 border-gray-400 px-4 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
                     />
                     <select
+                      value={filterRegion}
+                      onChange={(e) => {
+                        setFilterRegion(e.target.value);
+                        setFilterCountry("");
+                        setAllPage(1);
+                      }}
+                      className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
+                    >
+                      <option value="">All regions</option>
+                      {countriesByRegion.map((r) => (
+                        <option key={r.key} value={r.key}>
+                          {r.label}
+                        </option>
+                      ))}
+                    </select>
+                    <select
                       value={filterCountry}
                       onChange={(e) => {
                         setFilterCountry(e.target.value);
@@ -905,8 +928,8 @@ export default function Admin({ onGoToDirectory }) {
                       }}
                       className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
                     >
-                      <option value="">All countries</option>
-                      {countriesByRegion.map((region) => (
+                      <option value="">All countries{filterRegion ? ` in ${REGION_LABELS[filterRegion] || ""}` : ""}</option>
+                      {filteredCountries.map((region) => (
                         <optgroup key={region.key} label={region.label}>
                           {region.countries.map((country) => (
                             <option key={country} value={country}>
