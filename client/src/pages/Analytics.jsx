@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   ComposableMap,
   Geographies,
@@ -42,11 +42,28 @@ function toTitleCase(str) {
   });
 }
 
+function stripOther(raw) {
+  const trimmed = raw.trim();
+  const stripped = trimmed.replace(/^Other:\s*/i, "");
+  return stripped || "Other";
+}
+
+function matchesSpecialisation(tag, spec) {
+  return toTitleCase(stripOther(tag)) === spec;
+}
+
 export default function Analytics({ onManageProfile, onGoToDirectory }) {
-  const [selectedRegion, setSelectedRegion] = useState("latin_america");
+  const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedSpecialisation, setSelectedSpecialisation] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [displayCount, setDisplayCount] = useState(9);
+
+  useEffect(() => {
+    if (!selectedRegion && !selectedSpecialisation && !selectedCountry) {
+      setDisplayCount(9);
+    }
+  }, [selectedRegion, selectedSpecialisation, selectedCountry]);
 
   const { allLeaders, loading } = useLeaders();
 
@@ -75,10 +92,7 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
       const tags = toTags(l.expertise);
       const seen = new Set();
       tags.forEach((tag) => {
-        const trimmed = tag.trim();
-        const normalized = trimmed.startsWith("Other")
-          ? "Other"
-          : toTitleCase(trimmed);
+        const normalized = toTitleCase(stripOther(tag));
         if (seen.has(normalized)) return;
         seen.add(normalized);
         expertiseCounts[normalized] = (expertiseCounts[normalized] || 0) + 1;
@@ -106,12 +120,9 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
       if (!r) return;
       if (selectedRegion && r !== selectedRegion) return;
       if (selectedSpecialisation) {
-        const matches = toTags(l.expertise).some((e) => {
-          const trimmed = e.trim();
-          if (selectedSpecialisation === "Other")
-            return trimmed === "Other" || trimmed.startsWith("Other:");
-          return trimmed === selectedSpecialisation;
-        });
+        const matches = toTags(l.expertise).some((e) =>
+          matchesSpecialisation(e, selectedSpecialisation)
+        );
         if (!matches) return;
       }
       names.add(canonical);
@@ -144,12 +155,9 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
       south_asia: 0,
     };
     allLeaders.forEach((l) => {
-      const matches = toTags(l.expertise).some((e) => {
-        const trimmed = e.trim();
-        if (selectedSpecialisation === "Other")
-          return trimmed === "Other" || trimmed.startsWith("Other:");
-        return trimmed === selectedSpecialisation;
-      });
+      const matches = toTags(l.expertise).some((e) =>
+        matchesSpecialisation(e, selectedSpecialisation)
+      );
       if (!matches) return;
       const key = l.region || COUNTRY_TO_REGION[l.country?.trim()];
       if (key && key in totals) totals[key]++;
@@ -157,10 +165,10 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
     return totals;
   }, [allLeaders, selectedSpecialisation]);
 
-  const latestLeaders = useMemo(() => {
-    return [...allLeaders]
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      .slice(0, 3);
+  const sortedLeaders = useMemo(() => {
+    return [...allLeaders].sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    );
   }, [allLeaders]);
 
   const filteredLeaders = useMemo(() => {
@@ -170,12 +178,9 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
         (l.region || COUNTRY_TO_REGION[l.country?.trim()]) === selectedRegion;
       const matchSpec =
         !selectedSpecialisation ||
-        toTags(l.expertise).some((e) => {
-          const trimmed = e.trim();
-          if (selectedSpecialisation === "Other")
-            return trimmed === "Other" || trimmed.startsWith("Other:");
-          return trimmed === selectedSpecialisation;
-        });
+        toTags(l.expertise).some((e) =>
+          matchesSpecialisation(e, selectedSpecialisation)
+        );
       const matchCountry =
         !selectedCountry || l.country?.trim() === selectedCountry;
       return matchRegion && matchSpec && matchCountry;
@@ -276,58 +281,10 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
                     connectorProps={{ stroke: "transparent", strokeWidth: 0 }}
                   >
                     <g>
-                      <rect
-                        x="-68"
-                        y="-26"
-                        width="136"
-                        height="52"
-                        rx="10"
-                        fill="#F8571D"
-                      />
-                      <text
-                        textAnchor="middle"
-                        y="-6"
-                        style={{
-                          fontSize: 13,
-                          fontWeight: 700,
-                          fill: "#ffffff",
-                          fontFamily: "system-ui",
-                        }}
-                      >
-                        {REGION_LABELS[marker.key]}
-                      </text>
-                      <text
-                        textAnchor="middle"
-                        y="14"
-                        style={{
-                          fontSize: 11,
-                          fill: "#ffffff",
-                          fontFamily: "system-ui",
-                        }}
-                      >
-                        {count} Leaders
-                      </text>
-                    </g>
-                  </Annotation>
-                );
-              })}
-
-              {/* Specialisation-only annotation — no region selected */}
-              {!selectedRegion &&
-                selectedSpecialisation &&
-                (() => {
-                  const count = filteredLeaders.length;
-                  if (!count) return null;
-                  return (
-                    <Annotation
-                      subject={[-58, 30]}
-                      connectorProps={{ stroke: "transparent", strokeWidth: 0 }}
-                    >
-                      <g>
                         <rect
-                          x="-68"
+                          x="-80"
                           y="-26"
-                          width="136"
+                          width="160"
                           height="52"
                           rx="10"
                           fill="#F8571D"
@@ -335,16 +292,14 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
                         <text
                           textAnchor="middle"
                           y="-6"
-                          textLength="116"
-                          lengthAdjust="spacingAndGlyphs"
                           style={{
                             fontSize: 13,
                             fontWeight: 700,
                             fill: "#ffffff",
-                            fontFamily: "system-ui",
+                            fontFamily: "Montserrat, system-ui, sans-serif",
                           }}
                         >
-                          {toTitleCase(selectedSpecialisation)}
+                          {REGION_LABELS[marker.key]}
                         </text>
                         <text
                           textAnchor="middle"
@@ -352,16 +307,31 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
                           style={{
                             fontSize: 11,
                             fill: "#ffffff",
-                            fontFamily: "system-ui",
+                            fontFamily: "Montserrat, system-ui, sans-serif",
                           }}
                         >
                           {count} Leaders
                         </text>
-                      </g>
-                    </Annotation>
-                  );
-                })()}
+                    </g>
+                  </Annotation>
+                );
+              })}
+
             </ComposableMap>
+
+            {/* Specialisation label — outside SVG to avoid clipping */}
+            {!selectedRegion && selectedSpecialisation && (() => {
+              const count = filteredLeaders.length;
+              if (!count) return null;
+              return (
+                <div className="flex justify-center mt-4 mb-2">
+                  <span className="inline-flex items-center gap-2 px-5 py-2 rounded-[10px] text-white text-[1.3rem] font-bold font-['Montserrat',system-ui,sans-serif]" style={{ backgroundColor: "#F8571D" }}>
+                    {toTitleCase(selectedSpecialisation)}
+                    <span className="text-[1.1rem] font-normal opacity-90">&middot; {count} Leaders</span>
+                  </span>
+                </div>
+              );
+            })()}
 
             {/* Region selector */}
             <div className="mt-5 pt-5">
@@ -486,13 +456,14 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
           {/* Latest additions — shown only when no filter is active */}
           {!selectedRegion &&
             !selectedSpecialisation &&
-            latestLeaders.length > 0 && (
+            !selectedCountry &&
+            sortedLeaders.length > 0 && (
               <div className="order-2 lg:col-span-5 lg:row-start-2 mt-6 lg:mt-8">
                 <h3 className="text-[1.6rem] font-bold text-brand-navy mb-4">
                   Latest additions
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {latestLeaders.map((l) => (
+                  {sortedLeaders.slice(0, displayCount).map((l) => (
                     <LeaderCard
                       key={l.id}
                       leader={l}
@@ -500,6 +471,16 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
                     />
                   ))}
                 </div>
+                {displayCount < sortedLeaders.length && (
+                  <div className="flex justify-center mt-6">
+                    <button
+                      onClick={() => setDisplayCount((c) => c + 9)}
+                      className="px-8 py-3 border-2 border-brand-navy text-brand-navy text-[1.4rem] font-bold rounded-full hover:bg-brand-navy hover:text-white transition-colors cursor-pointer"
+                    >
+                      Load more
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 

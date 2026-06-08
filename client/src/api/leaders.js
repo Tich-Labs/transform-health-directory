@@ -219,22 +219,8 @@ export const api = {
   },
 
   findLeader: async ({ firstName, lastName, email }) => {
-    // Preferred: match by name + leader_email (prevents showing wrong profile)
-    if (email) {
-      const { data } = await supabase
-        .from("leaders")
-        .select(
-          "id, first_name, last_name, role, organisation, linkedin, photo_url, bio, expertise, notable_items, country"
-        )
-        .eq("status", "live")
-        .ilike("first_name", firstName.trim())
-        .ilike("last_name", lastName.trim())
-        .eq("leader_email", email.trim().toLowerCase())
-        .limit(1);
-      if (data?.length > 0) return data[0];
-    }
+    if (!email) return null;
 
-    // Fallback: name-only match
     const { data } = await supabase
       .from("leaders")
       .select(
@@ -243,19 +229,10 @@ export const api = {
       .eq("status", "live")
       .ilike("first_name", firstName.trim())
       .ilike("last_name", lastName.trim())
-      .limit(3);
+      .eq("leader_email", email.trim().toLowerCase())
+      .limit(1);
 
-    if (!data?.length) return null;
-
-    const fn = firstName.trim().toLowerCase();
-    const ln = lastName.trim().toLowerCase();
-    return (
-      data.find(
-        (l) =>
-          String(l.first_name || "").toLowerCase() === fn &&
-          String(l.last_name || "").toLowerCase() === ln
-      ) || data[0]
-    );
+    return data?.length > 0 ? data[0] : null;
   },
 
   getTestResults: async () => {
@@ -361,6 +338,21 @@ export const api = {
       .single();
     if (error) throw error;
     return data;
+  },
+
+  // Log a self-service action (update or delete) in the requests table for the activity log
+  logSelfService: async ({ leaderId, firstName, lastName, action, details }) => {
+    const { error } = await supabase.from("requests").insert([{
+      id: crypto.randomUUID(),
+      request_type: action === "delete" ? "self_delete" : "self_update",
+      status: "done",
+      leader_id: leaderId,
+      first_name: firstName,
+      last_name: lastName,
+      changes: details || null,
+      created_at: new Date().toISOString(),
+    }]);
+    if (error) console.error("Failed to log self-service action:", error);
   },
 
   // Self-service: leader updates their own profile directly

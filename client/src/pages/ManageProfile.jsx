@@ -151,6 +151,13 @@ export default function ManageProfile({ prefill, onBack, fromMagicLink, tokenMod
     try {
       if (tokenMode === "delete") {
         await api.deleteByLeader(leaderData.id, reason.trim() || null);
+        await api.logSelfService({
+          leaderId: leaderData.id,
+          firstName: leaderData.first_name,
+          lastName: leaderData.last_name,
+          action: "delete",
+          details: reason.trim() || null,
+        });
         await api.notifyAdmin({
           subject: "Profile deleted (self-service)",
           html: `<p>${leaderData.first_name} ${leaderData.last_name} has removed their profile from the Transform Health Women Leaders Directory.</p>${
@@ -183,6 +190,13 @@ export default function ManageProfile({ prefill, onBack, fromMagicLink, tokenMod
 
         if (Object.keys(updates).length > 0) {
           await api.updateLeader(leaderData.id, updates);
+          await api.logSelfService({
+            leaderId: leaderData.id,
+            firstName: leaderData.first_name,
+            lastName: leaderData.last_name,
+            action: "update",
+            details: updates,
+          });
         }
         await api.notifyAdmin({
           subject: "Profile updated (self-service)",

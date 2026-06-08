@@ -240,14 +240,6 @@ function App() {
             </div>
 
             {/* Admin — tucked to the right, smaller */}
-            <a
-              href="./testing-sheet.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-['Montserrat'] font-medium text-[1.2rem] tracking-[0.08em] uppercase px-3.5 py-1.5 mb-1.5 cursor-pointer rounded flex-shrink-0 text-brand-dark border border-gray-500 bg-transparent"
-            >
-              Testing
-            </a>
             <button
               onClick={() => navigate("admin")}
               className="font-['Montserrat'] font-medium text-[1.2rem] tracking-[0.08em] uppercase px-3.5 py-1.5 mb-1.5 cursor-pointer rounded flex-shrink-0 text-brand-dark border border-gray-500 bg-transparent"
