@@ -7,6 +7,7 @@ const SIDEBAR_ITEMS = [
   { id: "all", label: "All Entries", icon: "list" },
   { id: "requests", label: "Profile Requests", icon: "mail" },
   { id: "nominated", label: "Nominated", icon: "user-plus" },
+  { id: "activity", label: "Activity Log", icon: "activity" },
   { id: "divider", label: "", icon: "divider" },
   // { id: "tests", label: "Test Results", icon: "test" },
   // { id: "fixes", label: "Test Fixes", icon: "fixes" },
@@ -145,11 +146,20 @@ function ManualIcon() {
   );
 }
 
+function ActivityIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+    </svg>
+  );
+}
+
 const ICONS = {
   inbox: InboxIcon,
   mail: MailIcon,
   list: ListIcon,
   "user-plus": UserPlusIcon,
+  activity: ActivityIcon,
   test: TestIcon,
   fixes: FixesIcon,
   manual: ManualIcon,
@@ -175,7 +185,6 @@ export default function Admin({ onGoToDirectory }) {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
   const [requestSubTab, setRequestSubTab] = useState("new");
-  const [selectedDeletes, setSelectedDeletes] = useState([]);
   const [selectedAll, setSelectedAll] = useState([]);
   const [actionId, setActionId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -471,17 +480,6 @@ export default function Admin({ onGoToDirectory }) {
     );
   }
 
-  function toggleAllDeletes() {
-    const deleteRequests = requests.filter(
-      (r) => r.request_type === "delete" && r.status === "pending"
-    );
-    const allSelected = deleteRequests.every((r) =>
-      selectedDeletes.includes(r.id)
-    );
-    if (allSelected) setSelectedDeletes([]);
-    else setSelectedDeletes(deleteRequests.map((r) => r.id));
-  }
-
   function toggleAllSelect(id) {
     setSelectedAll((current) =>
       current.includes(id) ? current.filter((x) => x !== id) : [...current, id]
@@ -513,62 +511,6 @@ export default function Admin({ onGoToDirectory }) {
     });
   }
 
-  async function handleBulkDelete() {
-    if (selectedDeletes.length === 0) return;
-    setShowConfirm({
-      title: `Approve ${selectedDeletes.length} deletion(s)?`,
-      message: "These profiles will be permanently removed from the directory.",
-      action: "delete",
-      confirmLabel: `Delete ${selectedDeletes.length}`,
-      onConfirm: () => executeBulkDelete(),
-    });
-  }
-
-  async function executeBulkDelete() {
-    setActionMessage("");
-    setActionIsError(false);
-    try {
-      await Promise.all(
-        selectedDeletes.map((id) => api.approveDeleteRequest(id))
-      );
-      setRequests((current) =>
-        current.map((r) =>
-          selectedDeletes.includes(r.id) ? { ...r, status: "approved" } : r
-        )
-      );
-      setActionMessage(
-        `${selectedDeletes.length} deletion request(s) approved.`
-      );
-      setSelectedDeletes([]);
-    } catch (e) {
-      console.error(e);
-      setActionIsError(true);
-      setActionMessage("Unable to complete bulk deletion. Please try again.");
-    }
-  }
-
-  async function handleApproveSingleDelete(req) {
-    setActionId(req.id);
-    setActionMessage("");
-    setActionIsError(false);
-    try {
-      await api.approveDeleteRequest(req.id);
-      setRequests((current) =>
-        current.map((r) => (r.id === req.id ? { ...r, status: "approved" } : r))
-      );
-      setActionMessage(
-        `Profile for ${req.first_name} ${req.last_name} removed from directory.`
-      );
-      setSelectedRequest(null);
-    } catch (e) {
-      console.error(e);
-      setActionIsError(true);
-      setActionMessage("Unable to complete deletion. Please try again.");
-    } finally {
-      setActionId(null);
-    }
-  }
-
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setRequestSubTab("new");
@@ -592,12 +534,6 @@ export default function Admin({ onGoToDirectory }) {
   const pendingCount = pending.length;
   const nominatedList = nominated;
   const nominatedCount = nominated.length;
-  const updateRequests = requests.filter(
-    (r) => r.request_type === "update" && r.status === "pending"
-  );
-  const deleteRequests = requests.filter(
-    (r) => r.request_type === "delete" && r.status === "pending"
-  );
   const requestsCount = requests.filter((r) => r.status === "pending").length;
   const totalPendingCount = pending.length + requestsCount;
   const liveCount = all.filter((item) => item.status === "live").length;
@@ -699,13 +635,20 @@ export default function Admin({ onGoToDirectory }) {
     sortOrder,
   ]);
 
+  const activityLog = useMemo(() => {
+    return requests
+      .filter(r => r.status === "done" && (r.request_type === "self_update" || r.request_type === "self_delete"))
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  }, [requests]);
+
   const sidebarData = [
     { ...SIDEBAR_ITEMS[0], count: allCount },
     { ...SIDEBAR_ITEMS[1], count: pending.length + requestsCount },
     { ...SIDEBAR_ITEMS[2], count: nominatedCount },
-    SIDEBAR_ITEMS[3], // divider (no count)
-    // { ...SIDEBAR_ITEMS[4], count: testResults.length },
-    // { ...SIDEBAR_ITEMS[5], count: 21 }, // 21 fixed items (5 Critical + 6 Important + 4 Nice-to-have + 6 Post-QA)
+    { ...SIDEBAR_ITEMS[3], count: activityLog.length },
+    SIDEBAR_ITEMS[4], // divider (no count)
+    // { ...SIDEBAR_ITEMS[5], count: testResults.length },
+    // { ...SIDEBAR_ITEMS[6], count: 21 },
   ];
 
   return (
@@ -945,7 +888,7 @@ export default function Admin({ onGoToDirectory }) {
                       : activeTab === "nominated"
                       ? `${nominatedCount} nominated`
                       : activeTab === "requests"
-                      ? `${pending.length} new · ${updateRequests.length} update · ${deleteRequests.length} delete`
+                      ? `${pending.length} new`
                       : `${requestsCount} pending requests`}
                   </div>
                 </div>
@@ -998,58 +941,8 @@ export default function Admin({ onGoToDirectory }) {
                       </span>
                     </span>
                   </button>
-                  <button
-                    onClick={() => setRequestSubTab("updates")}
-                    title="Update requests from existing leaders"
-                    className={`flex-1 px-5 py-3 text-lg font-bold transition-colors ${
-                      requestSubTab === "updates"
-                        ? "bg-white text-amber-700 border-b-[4px] border-amber-500"
-                        : "bg-transparent text-white border-b-[4px] border-transparent hover:bg-white hover:bg-opacity-15"
-                    }`}
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      <svg width="14" height="14" viewBox="0 0 14 14">
-                        <circle cx="7" cy="7" r="7" fill="#f59e0b" />
-                      </svg>
-                      Updates
-                      <span
-                        className={`text-[1.3rem] font-medium px-2 py-0.5 rounded-full ${
-                          requestSubTab === "updates"
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-gray-200 text-gray-500"
-                        }`}
-                      >
-                        {updateRequests.length}
-                      </span>
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => setRequestSubTab("deletes")}
-                    title="Deletion requests from existing leaders"
-                    className={`flex-1 px-5 py-3 text-lg font-bold transition-colors ${
-                      requestSubTab === "deletes"
-                        ? "bg-white text-red-600 border-b-[4px] border-red-500"
-                        : "bg-transparent text-white border-b-[4px] border-transparent hover:bg-white hover:bg-opacity-15"
-                    }`}
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      <svg width="14" height="14" viewBox="0 0 14 14">
-                        <circle cx="7" cy="7" r="7" fill="#ef4444" />
-                      </svg>
-                      Deletes
-                      <span
-                        className={`text-[1.3rem] font-medium px-2 py-0.5 rounded-full ${
-                          requestSubTab === "deletes"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-gray-200 text-gray-500"
-                        }`}
-                      >
-                        {deleteRequests.length}
-                      </span>
-                    </span>
-                  </button>
                 </div>
-
+                {/* Updates and Deletes sub-tabs removed — self-service actions now in Activity Log */}
                 {requestSubTab === "new" && (
                   <>
                     {pending.length === 0 ? (
@@ -1337,416 +1230,92 @@ export default function Admin({ onGoToDirectory }) {
                   </>
                 )}
 
-                {requestSubTab === "updates" && (
-                  <>
-                    {updateRequests.length === 0 ? (
-                      <div className="text-center py-20">
-                        <div className="text-[4.8rem] mb-4 text-green-400">
-                          ✓
-                        </div>
-                        <div className="text-lg text-green-600">
-                          No pending update requests
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="flex items-center justify-between px-5 py-3 border-b-2 border-brand-navy bg-brand-navy">
-                          <div className="text-[1.4rem] font-bold text-white">
-                            {updateRequests.length} update request(s) — send
-                            self-service links
-                          </div>
-                        </div>
-
-                        {updateRequests.map((req) => {
-                          const isSelected = selectedRequest === req.id;
-                          const linkSent = req.link_sent;
-                          return (
-                            <div key={req.id}>
-                              <div
-                                role="button"
-                                tabIndex={0}
-                                aria-expanded={isSelected}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    setSelectedRequest(
-                                      isSelected ? null : req.id
-                                    );
-                                  }
-                                }}
-                                className={`flex items-center px-5 cursor-pointer transition-colors min-h-[64px] border-b border-brand-warm-row-border ${
-                                  isSelected
-                                    ? "bg-brand-warm-row"
-                                    : "bg-white hover:bg-brand-warm-bg"
-                                } ${
-                                  !isSelected
-                                    ? "focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-inset"
-                                    : ""
-                                }`}
-                                onClick={() =>
-                                  setSelectedRequest(isSelected ? null : req.id)
-                                }
-                              >
-                                <div className="flex-shrink-0 mr-4">
-                                  <div
-                                    className={`w-2.5 h-2.5 rounded-full ${
-                                      linkSent ? "bg-gray-400" : "bg-amber-600"
-                                    }`}
-                                  />
-                                </div>
-                                <div className="w-10 h-10 rounded-full flex items-center justify-center text-[1.4rem] font-medium flex-shrink-0 mr-4 bg-brand-blue-tint text-brand-navy">
-                                  {getInitials(req.first_name, req.last_name)}
-                                </div>
-                                <div className="flex-1 min-w-0 mr-4">
-                                  <div className="flex items-center gap-3">
-                                    <span className="font-semibold text-lg truncate text-brand-dark">
-                                      {req.first_name} {req.last_name}
-                                    </span>
-                                    <span className="text-[1.4rem] truncate text-gray-500">
-                                      {req.email}
-                                    </span>
-                                  </div>
-                                  <div className="text-[1.4rem] truncate mt-0.5 text-gray-400">
-                                    {req.changes?.slice(0, 80) ||
-                                      "Requested profile update"}
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-3 flex-shrink-0">
-                                  {linkSent && (
-                                    <span className="text-[1.3rem] font-medium px-2 py-1 rounded-full bg-gray-200 text-gray-500">
-                                      Link sent
-                                    </span>
-                                  )}
-                                  <svg
-                                    width="16"
-                                    height="16"
-                                    viewBox="0 0 16 16"
-                                    fill="none"
-                                    className={`text-gray-400 transition-transform ${
-                                      isSelected ? "rotate-180" : "rotate-0"
-                                    }`}
-                                  >
-                                    <path
-                                      d="M4 6l4 4 4-4"
-                                      stroke="currentColor"
-                                      strokeWidth="1.5"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    />
-                                  </svg>
-                                </div>
-                              </div>
-
-                              {isSelected && (
-                                <div className="px-5 py-4 bg-brand-warm-bg border-b border-brand-warm-border">
-                                  <div className="grid gap-4 md:grid-cols-2 mb-4">
-                                    <div className="rounded-lg p-4 bg-white border border-brand-blue-border">
-                                      <div className="text-[1.4rem] font-semibold uppercase tracking-wider mb-2 text-brand-navy">
-                                        Request details
-                                      </div>
-                                      <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
-                                        <div>
-                                          <span className="text-brand-navy font-semibold">
-                                            Email:{" "}
-                                          </span>
-                                          {req.email}
-                                        </div>
-                                        <div>
-                                          <span className="text-brand-navy font-semibold">
-                                            LinkedIn:{" "}
-                                          </span>
-                                          {req.linkedin || "—"}
-                                        </div>
-                                        <div>
-                                          <span className="text-brand-navy font-semibold">
-                                            Submitted:{" "}
-                                          </span>
-                                          {req.created_at
-                                            ? new Date(
-                                                req.created_at
-                                              ).toLocaleString()
-                                            : "—"}
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="rounded-lg p-4 bg-white border border-amber-200">
-                                      <div className="text-[1.4rem] font-semibold uppercase tracking-wider mb-2 text-amber-600">
-                                        Requested changes
-                                      </div>
-                                      <div className="text-[1.5rem] text-brand-dark-blue leading-[1.7]">
-                                        {req.changes || "No details provided"}
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="flex items-center gap-3">
-                                    <button
-                                      onClick={() => handleSendUpdateLink(req)}
-                                      disabled={actionId === req.id}
-                                      className={`px-5 py-2.5 text-[1.5rem] font-medium rounded-lg transition-colors disabled:opacity-50 ${
-                                        linkSent
-                                          ? "bg-brand-blue-tint text-brand-navy border-[1.5px] border-brand-blue-border hover:bg-blue-50"
-                                          : "bg-brand-navy text-white hover:bg-brand-navy-hover"
-                                      }`}
-                                    >
-                                      {linkSent
-                                        ? "✓ Link sent — resend"
-                                        : "Send update link via email"}
-                                    </button>
-                                    <button
-                                      onClick={async () => {
-                                        try {
-                                          await api.dismissRequest(req.id);
-                                        } catch (e) {
-                                          console.error(
-                                            "Failed to dismiss request:",
-                                            e
-                                          );
-                                        }
-                                        setRequests(
-                                          requests.map((r) =>
-                                            r.id === req.id
-                                              ? { ...r, status: "dismissed" }
-                                              : r
-                                          )
-                                        );
-                                        setSelectedRequest(null);
-                                      }}
-                                      className="px-4 py-2 text-[1.4rem] font-medium rounded-lg border-[1.5px] border-gray-300 text-gray-500 hover:bg-gray-100 transition-colors"
-                                    >
-                                      Dismiss
-                                    </button>
-                                  </div>
-                                  {linkSent && (
-                                    <div className="mt-3 text-[1.4rem] text-gray-500 italic">
-                                      User will receive a magic link to update
-                                      their own profile. Once resubmitted, it
-                                      will appear as a new pending submission.
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </>
-                    )}
-                  </>
-                )}
-
-                {requestSubTab === "deletes" && (
-                  <>
-                    {deleteRequests.length > 0 && (
-                      <div className="flex items-center justify-between px-5 py-3 border-b bg-red-50 border-red-200">
-                        <div className="flex items-center gap-3">
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={
-                                deleteRequests.length > 0 &&
-                                deleteRequests.every((r) =>
-                                  selectedDeletes.includes(r.id)
-                                )
-                              }
-                              onChange={toggleAllDeletes}
-                              className="w-4 h-4 rounded"
-                            />
-                            <span className="text-[1.4rem] font-medium text-red-600">
-                              Select all ({deleteRequests.length})
-                            </span>
-                          </label>
-                        </div>
-                        {selectedDeletes.length > 0 && (
-                          <button
-                            onClick={handleBulkDelete}
-                            className="px-4 py-2 text-[1.4rem] font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
-                          >
-                            Approve {selectedDeletes.length} deletion(s)
-                          </button>
-                        )}
-                      </div>
-                    )}
-
-                    {deleteRequests.length === 0 ? (
-                      <div className="text-center py-20">
-                        <div className="text-[4.8rem] mb-4 text-green-400">
-                          ✓
-                        </div>
-                        <div className="text-lg text-green-600">
-                          No pending deletion requests
-                        </div>
-                      </div>
-                    ) : (
-                      deleteRequests.map((req) => {
-                        const isSelected = selectedRequest === req.id;
-                        const isChecked = selectedDeletes.includes(req.id);
-                        return (
-                          <div key={req.id}>
-                            <div
-                              role="button"
-                              tabIndex={0}
-                              aria-expanded={isSelected}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
-                                  e.preventDefault();
-                                  setSelectedRequest(
-                                    isSelected ? null : req.id
-                                  );
-                                }
-                              }}
-                              className={`flex items-center px-5 cursor-pointer transition-colors min-h-[64px] border-b border-brand-warm-row-border ${
-                                isSelected
-                                  ? "bg-brand-warm-row"
-                                  : isChecked
-                                  ? "bg-red-50"
-                                  : "bg-white hover:bg-brand-warm-bg"
-                              } ${
-                                !isSelected
-                                  ? "focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-inset"
-                                  : ""
-                              }`}
-                              onClick={() =>
-                                setSelectedRequest(isSelected ? null : req.id)
-                              }
-                            >
-                              <div className="flex-shrink-0 mr-3">
-                                <input
-                                  type="checkbox"
-                                  checked={isChecked}
-                                  onChange={(e) => {
-                                    e.stopPropagation();
-                                    toggleDeleteSelect(req.id);
-                                  }}
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="w-4 h-4 rounded cursor-pointer"
-                                />
-                              </div>
-                              <div className="flex-shrink-0 mr-4">
-                                <div className="w-2.5 h-2.5 rounded-full bg-red-600" />
-                              </div>
-                              <div className="w-10 h-10 rounded-full flex items-center justify-center text-[1.4rem] font-medium flex-shrink-0 mr-4 bg-red-50 text-red-600">
-                                {getInitials(req.first_name, req.last_name)}
-                              </div>
-                              <div className="flex-1 min-w-0 mr-4">
-                                <div className="flex items-center gap-3">
-                                  <span className="font-semibold text-lg truncate text-brand-dark">
-                                    {req.first_name} {req.last_name}
-                                  </span>
-                                  <span className="text-[1.4rem] truncate text-gray-500">
-                                    {req.email}
-                                  </span>
-                                </div>
-                                <div className="text-[1.4rem] truncate mt-0.5 text-gray-400">
-                                  {req.reason?.slice(0, 80) ||
-                                    "Requested profile removal"}
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-3 flex-shrink-0">
-                                <svg
-                                  width="16"
-                                  height="16"
-                                  viewBox="0 0 16 16"
-                                  fill="none"
-                                  className={`text-gray-400 transition-transform ${
-                                    isSelected ? "rotate-180" : "rotate-0"
-                                  }`}
-                                >
-                                  <path
-                                    d="M4 6l4 4 4-4"
-                                    stroke="currentColor"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  />
-                                </svg>
-                              </div>
-                            </div>
-
-                            {isSelected && (
-                              <div className="px-5 py-4 bg-brand-warm-bg border-b border-brand-warm-border">
-                                <div className="grid gap-4 md:grid-cols-2 mb-4">
-                                  <div className="rounded-lg p-4 bg-white border border-brand-blue-border">
-                                    <div className="text-[1.4rem] font-semibold uppercase tracking-wider mb-2 text-brand-navy">
-                                      Request details
-                                    </div>
-                                    <div className="grid gap-2 text-[1.5rem] text-brand-dark-blue">
-                                      <div>
-                                        <span className="text-brand-navy font-semibold">
-                                          Email:{" "}
-                                        </span>
-                                        {req.email}
-                                      </div>
-                                      <div>
-                                        <span className="text-brand-navy font-semibold">
-                                          LinkedIn:{" "}
-                                        </span>
-                                        {req.linkedin || "—"}
-                                      </div>
-                                      <div>
-                                        <span className="text-brand-navy font-semibold">
-                                          Submitted:{" "}
-                                        </span>
-                                        {req.created_at
-                                          ? new Date(
-                                              req.created_at
-                                            ).toLocaleString()
-                                          : "—"}
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="rounded-lg p-4 bg-white border border-red-200">
-                                    <div className="text-[1.4rem] font-semibold uppercase tracking-wider mb-2 text-red-600">
-                                      Reason for removal
-                                    </div>
-                                    <div className="text-[1.5rem] text-red-900 leading-[1.7]">
-                                      {req.reason || "No reason provided"}
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                  <button
-                                    onClick={() =>
-                                      handleApproveSingleDelete(req)
-                                    }
-                                    disabled={actionId === req.id}
-                                    className="px-4 py-2 text-[1.4rem] font-medium rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50"
-                                  >
-                                    {actionId === req.id
-                                      ? "..."
-                                      : "Approve deletion"}
-                                  </button>
-                                  <button
-                                    onClick={async () => {
-                                      try {
-                                        await api.dismissRequest(req.id);
-                                      } catch (e) {
-                                        console.error(
-                                          "Failed to dismiss request:",
-                                          e
-                                        );
-                                      }
-                                      setRequests(
-                                        requests.map((r) =>
-                                          r.id === req.id
-                                            ? { ...r, status: "dismissed" }
-                                            : r
-                                        )
-                                      );
-                                      setSelectedRequest(null);
-                                    }}
-                                    className="px-4 py-2 text-[1.4rem] font-medium rounded-lg border-[1.5px] border-gray-300 text-gray-500 hover:bg-gray-100 transition-colors"
-                                  >
-                                    Dismiss
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })
-                    )}
-                  </>
-                )}
               </div>
+            ) : activeTab === "activity" ? (
+              activityLog.length === 0 ? (
+                <div className="text-center py-20">
+                  <div className="text-[4.8rem] mb-4 text-gray-300">—</div>
+                  <div className="text-lg text-gray-500">
+                    No self-service activity yet
+                  </div>
+                  <div className="text-[1.4rem] text-gray-400 mt-2">
+                    Updates and deletions by leaders will appear here
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-lg overflow-hidden border-[1.5px] border-brand-blue-border bg-white">
+                  <div className="flex items-center justify-between px-5 py-3 border-b-2 border-brand-navy bg-brand-navy">
+                    <div className="text-[1.4rem] font-bold text-white">
+                      Self-service activity log
+                    </div>
+                    <div className="text-[1.3rem] text-gray-300">
+                      {activityLog.length} event(s)
+                    </div>
+                  </div>
+                  <div className="divide-y divide-brand-warm-row-border">
+                    {activityLog.map((entry) => {
+                      const isDelete = entry.request_type === "self_delete";
+                      return (
+                        <div
+                          key={entry.id}
+                          className="px-5 py-4 bg-white hover:bg-brand-warm-bg transition-colors"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[1.4rem] font-medium flex-shrink-0 ${
+                              isDelete
+                                ? "bg-red-50 text-red-600"
+                                : "bg-amber-50 text-amber-600"
+                            }`}>
+                              {getInitials(entry.first_name, entry.last_name)}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-lg text-brand-dark">
+                                  {entry.first_name} {entry.last_name}
+                                </span>
+                                <span className={`text-[1.2rem] font-semibold px-2 py-0.5 rounded-full ${
+                                  isDelete
+                                    ? "bg-red-100 text-red-700"
+                                    : "bg-amber-100 text-amber-700"
+                                }`}>
+                                  {isDelete ? "Deleted" : "Updated"}
+                                </span>
+                              </div>
+                              <div className="text-[1.3rem] text-gray-400 mt-0.5">
+                                {entry.created_at
+                                  ? new Date(entry.created_at).toLocaleString()
+                                  : "—"}
+                              </div>
+                            </div>
+                          </div>
+                          {isDelete && entry.changes && (
+                            <div className="mt-3 ml-14 rounded-lg p-3 bg-red-50 border border-red-200">
+                              <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-1 text-gray-500">
+                                Reason
+                              </div>
+                              <p className="text-[1.3rem] text-brand-dark-blue">
+                                {entry.changes}
+                              </p>
+                            </div>
+                          )}
+                          {!isDelete && entry.changes && (
+                            <div className="mt-3 ml-14 rounded-lg p-3 bg-gray-50 border border-gray-200">
+                              <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-1 text-gray-500">
+                                Changes
+                              </div>
+                              <pre className="text-[1.3rem] text-brand-dark-blue whitespace-pre-wrap font-sans leading-[1.6]">
+                                {typeof entry.changes === "string"
+                                  ? entry.changes
+                                  : JSON.stringify(entry.changes, null, 2)}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )
             ) : activeTab === "nominated" ? (
               nominatedList.length === 0 ? (
                 <div className="text-center py-20">
