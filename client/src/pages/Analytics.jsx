@@ -73,11 +73,14 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
     const expertiseCounts = {};
     source.forEach((l) => {
       const tags = toTags(l.expertise);
+      const seen = new Set();
       tags.forEach((tag) => {
-        // Normalize "Other: X" tags to just "Other" for the chart
-        const normalized = tag.trim().startsWith("Other")
+        const trimmed = tag.trim();
+        const normalized = trimmed.startsWith("Other")
           ? "Other"
-          : tag.trim();
+          : toTitleCase(trimmed);
+        if (seen.has(normalized)) return;
+        seen.add(normalized);
         expertiseCounts[normalized] = (expertiseCounts[normalized] || 0) + 1;
       });
     });
@@ -370,7 +373,7 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
                 <div className="absolute inset-x-0 bottom-[20px] hidden md:block pointer-events-none">
                   <div className="border-t-2 border-dashed border-brand-orange" />
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 relative z-10">
+                <div className="flex flex-wrap justify-center gap-x-6 gap-y-4 relative z-10">
                   {REGION_MARKERS.map((region) => {
                     const active = selectedRegion === region.key;
                     return (
@@ -378,16 +381,16 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
                         key={region.key}
                         type="button"
                         onClick={() => setSelectedRegion(region.key)}
-                        className="flex flex-col items-center gap-1.5 text-center py-3 px-2 rounded-lg hover:bg-brand-orange-light/10 transition-colors cursor-pointer"
+                        className="flex flex-col items-center gap-1.5 text-center py-3 px-4 rounded-lg hover:bg-brand-orange-light/10 transition-colors cursor-pointer flex-shrink-0"
                       >
                         <span
-                          className={`text-[1.1rem] font-semibold transition-colors leading-tight ${
+                          className={`text-[1.1rem] font-semibold transition-colors leading-tight whitespace-nowrap ${
                             active ? "text-brand-orange" : "text-gray-700"
                           }`}
                         >
                           {REGION_LABELS[region.key]}
                         </span>
-                        <span className="text-[1rem] text-gray-400">
+                        <span className="text-[1rem] text-gray-400 whitespace-nowrap">
                           {selectedSpecialisation
                             ? specialisationTotals[region.key] || 0
                             : regionTotals[region.key] || 0}{" "}
