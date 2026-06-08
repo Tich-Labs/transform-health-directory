@@ -1769,7 +1769,7 @@ export default function Admin({ onGoToDirectory }) {
                                     }}
                                     className="text-[1.2rem] font-medium px-3 py-1.5 rounded-lg transition-colors bg-brand-blue-tint text-brand-navy border border-brand-blue-border hover:bg-blue-100 cursor-pointer"
                                   >
-                                    {isExpanded ? "Hide" : "Details"}
+                                    {isExpanded ? "Hide" : "View"}
                                   </button>
                                 </td>
                                 <td className="px-5 py-3.5">
