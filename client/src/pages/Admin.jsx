@@ -193,6 +193,8 @@ export default function Admin({ onGoToDirectory }) {
   const [filterClicks, setFilterClicks] = useState(""); // "", "high", "low", "least"
   const [filterStatus, setFilterStatus] = useState("");
   const [sortOrder, setSortOrder] = useState("az");
+  const [activityFilter, setActivityFilter] = useState("all"); // "all", "update", "delete"
+  const [activitySearch, setActivitySearch] = useState("");
   const [expandedId, setExpandedId] = useState(null);
   const [expandedAllId, setExpandedAllId] = useState(null);
   const [actionMessage, setActionMessage] = useState("");
@@ -515,7 +517,6 @@ export default function Admin({ onGoToDirectory }) {
     setActiveTab(tab);
     setRequestSubTab("new");
     setFilterStatus("");
-    setSelectedDeletes([]);
     setSelectedAll([]);
     setExpandedId(null);
     setExpandedAllId(null);
@@ -525,6 +526,8 @@ export default function Admin({ onGoToDirectory }) {
     setTestFilterTester("");
     setTestFilterStatus("");
     setTestFilterSearch("");
+    setActivityFilter("all");
+    setActivitySearch("");
     setAllPage(1);
     setSearchQuery("");
     setFilterCountry("");
@@ -640,6 +643,20 @@ export default function Admin({ onGoToDirectory }) {
       .filter(r => r.status === "approved" && (r.request_type === "update" || r.request_type === "delete"))
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }, [requests]);
+
+  const filteredActivityLog = useMemo(() => {
+    return activityLog.filter(entry => {
+      if (activityFilter !== "all" && 
+          ((activityFilter === "delete" && entry.request_type !== "delete") ||
+           (activityFilter === "update" && entry.request_type !== "update")))
+        return false;
+      if (activitySearch) {
+        const name = `${entry.first_name} ${entry.last_name}`.toLowerCase();
+        if (!name.includes(activitySearch.toLowerCase())) return false;
+      }
+      return true;
+    });
+  }, [activityLog, activityFilter, activitySearch]);
 
   const sidebarData = [
     { ...SIDEBAR_ITEMS[0], count: allCount },
@@ -1234,7 +1251,7 @@ export default function Admin({ onGoToDirectory }) {
 
               </div>
             ) : activeTab === "activity" ? (
-              activityLog.length === 0 ? (
+              filteredActivityLog.length === 0 && activityLog.length === 0 ? (
                 <div className="text-center py-20">
                   <div className="text-[4.8rem] mb-4 text-gray-300">—</div>
                   <div className="text-lg text-gray-500">
@@ -1244,6 +1261,19 @@ export default function Admin({ onGoToDirectory }) {
                     Updates and deletions by leaders will appear here
                   </div>
                 </div>
+              ) : filteredActivityLog.length === 0 ? (
+                <div className="text-center py-20">
+                  <div className="text-[4.8rem] mb-4 text-gray-300">—</div>
+                  <div className="text-lg text-gray-500">
+                    No results match the current filters
+                  </div>
+                  <button
+                    onClick={() => { setActivityFilter("all"); setActivitySearch(""); }}
+                    className="mt-3 text-[1.4rem] text-brand-pink font-medium hover:underline cursor-pointer"
+                  >
+                    Clear filters
+                  </button>
+                </div>
               ) : (
                 <div className="rounded-lg overflow-hidden border-[1.5px] border-brand-blue-border bg-white">
                   <div className="flex items-center justify-between px-5 py-3 border-b-2 border-brand-navy bg-brand-navy">
@@ -1251,11 +1281,38 @@ export default function Admin({ onGoToDirectory }) {
                       Self-service activity log
                     </div>
                     <div className="text-[1.3rem] text-gray-300">
-                      {activityLog.length} event(s)
+                      {filteredActivityLog.length} event(s)
                     </div>
                   </div>
+                  {/* Activity filters */}
+                  <div className="flex items-center gap-4 px-5 py-3 border-b border-brand-blue-border bg-brand-sand">
+                    <select
+                      value={activityFilter}
+                      onChange={(e) => setActivityFilter(e.target.value)}
+                      className="rounded-lg border-2 border-gray-300 px-3 py-1.5 text-[1.3rem] font-medium bg-white"
+                    >
+                      <option value="all">All actions</option>
+                      <option value="update">Updates only</option>
+                      <option value="delete">Deletes only</option>
+                    </select>
+                    <input
+                      type="text"
+                      placeholder="Search by name…"
+                      value={activitySearch}
+                      onChange={(e) => setActivitySearch(e.target.value)}
+                      className="flex-1 rounded-lg border-2 border-gray-300 px-3 py-1.5 text-[1.3rem] bg-white placeholder-gray-400"
+                    />
+                    {(activityFilter !== "all" || activitySearch) && (
+                      <button
+                        onClick={() => { setActivityFilter("all"); setActivitySearch(""); }}
+                        className="text-[1.3rem] text-brand-pink font-medium hover:underline"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
                   <div className="divide-y divide-brand-warm-row-border">
-                    {activityLog.map((entry) => {
+                    {filteredActivityLog.map((entry) => {
                       const isDelete = entry.request_type === "delete";
                       return (
                         <div
