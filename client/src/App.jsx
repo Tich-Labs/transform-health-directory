@@ -40,6 +40,7 @@ function App() {
   const [chromeHidden, setChromeHidden] = useState(
     () => localStorage.getItem("th-chrome-hidden") === "true"
   );
+  const [manageTokenData, setManageTokenData] = useState(null);
 
   // Keep URL in sync when route changes programmatically
   function navigate(to) {
@@ -54,6 +55,23 @@ function App() {
     }
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  // Parse ?manage= token on mount for self-service magic link landing
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("manage");
+    if (t) {
+      try {
+        const decoded = JSON.parse(atob(t));
+        if (decoded?.leaderId) {
+          setManageTokenData(decoded);
+          setShowManageModal(true);
+        }
+      } catch {
+        // invalid token, ignore
+      }
+    }
   }, []);
 
   function toggleChrome() {
@@ -74,6 +92,10 @@ function App() {
   function closeManageModal() {
     setShowManageModal(false);
     setManagePrefill(null);
+    setManageTokenData(null);
+    const url = new URL(window.location);
+    url.searchParams.delete("manage");
+    window.history.replaceState({}, "", url);
   }
 
   return (
@@ -95,8 +117,8 @@ function App() {
             </div>
             <div className="flex-1 text-left">
               <div className="font-bold uppercase text-[clamp(2.8rem,6vw,7rem)] leading-[1.1] text-brand-blue-bright tracking-heading">
-                <div>Women Leaders Bridging the Gap</div>
-                <div>in Digital Health</div>
+                <div>Women Leaders</div>
+                <div>Bridging the Gap in Digital Health</div>
               </div>
             </div>
             <div className="w-20 sm:w-[220px] flex-shrink-0 flex items-center justify-center md:mb-8 md:-translate-x-12">
@@ -284,6 +306,8 @@ function App() {
               <ManageProfile
                 prefill={managePrefill}
                 onBack={closeManageModal}
+                fromMagicLink={manageTokenData}
+                tokenMode={manageTokenData?.mode}
               />
             </div>
           </div>

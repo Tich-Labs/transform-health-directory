@@ -289,8 +289,8 @@ export const api = {
   },
 
   // Send a magic link email via Supabase Function (send-email)
-  // Uses leader_email from database (not passed in) — only visible to admin
-  requestManage: async ({ leaderId, firstName, lastName, linkedin }) => {
+  // Used for self-service: leader requests a magic link directly (no admin needed)
+  requestManage: async ({ leaderId, firstName, lastName, linkedin, mode }) => {
     try {
       // Fetch leader's email from database (admin-only field)
       const { data: leader, error: fetchErr } = await supabase
@@ -303,15 +303,24 @@ export const api = {
         throw new Error("Leader email not found");
       }
 
-      const manageUrl = `${window.location.origin}?manage=${btoa(
-        JSON.stringify({ leaderId, firstName, lastName, linkedin })
-      )}`;
+      const token = btoa(
+        JSON.stringify({ leaderId, mode })
+      );
+      const manageUrl = `${window.location.origin}?manage=${token}`;
+      const subject =
+        mode === "delete"
+          ? "Remove your Transform Health profile"
+          : "Update your Transform Health profile";
       const html = `
         <div style="font-family: sans-serif; max-width:600px; margin:0 auto;">
-          <h2>Update your Transform Health profile</h2>
+          <h2>${subject}</h2>
           <p>Hi ${firstName},</p>
-          <p>Click the link below to update or remove your profile in the Transform Health Women Leaders Directory:</p>
-          <p><a href="${manageUrl}" style="display:inline-block; padding:12px 24px; background:#24588A; color:#fff; text-decoration:none; border-radius:6px;">Manage my profile</a></p>
+          <p>Click the link below to ${
+            mode === "delete" ? "remove" : "update"
+          } your profile in the Transform Health Women Leaders Directory:</p>
+          <p><a href="${manageUrl}" style="display:inline-block; padding:12px 24px; background:#24588A; color:#fff; text-decoration:none; border-radius:6px;">${
+            mode === "delete" ? "Remove my profile" : "Manage my profile"
+          }</a></p>
           <p>Or copy this link: <code>${manageUrl}</code></p>
           <p><em>This link expires in 24 hours.</em></p>
         </div>
@@ -320,7 +329,7 @@ export const api = {
       const { error } = await supabase.functions.invoke("send-email", {
         body: {
           to: leader.leader_email,
-          subject: "Update your Transform Health profile",
+          subject,
           html,
         },
       });
@@ -329,16 +338,58 @@ export const api = {
       return { ok: true, message: "Magic link sent to " + leader.leader_email };
     } catch (err) {
       console.error("requestManage failed:", err);
-      // Fallback: return a URL the admin can copy manually
       const token = btoa(
-        JSON.stringify({ leaderId, firstName, lastName, linkedin })
+        JSON.stringify({ leaderId, mode })
       );
       const url = `${window.location.origin}?manage=${token}`;
       return {
         ok: false,
         url,
-        message: "Email not sent — copy this URL: " + url,
+        message: "Email service unavailable. Use this link instead:",
       };
     }
+  },
+
+  // Fetch full leader data by ID (used when landing from magic link)
+  getLeaderById: async (id) => {
+    const { data, error } = await supabase
+      .from("leaders")
+      .select(
+        "id, first_name, last_name, role, organisation, bio, linkedin, photo_url, expertise, country, geo_scope, years_experience, countries, notable_items, status"
+      )
+      .eq("id", id)
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  // Self-service: leader updates their own profile directly
+  updateLeader: async (id, data) => {
+    const { error } = await supabase.from("leaders").update(data).eq("id", id);
+    if (error) throw error;
+    return { ok: true };
+  },
+
+  // Self-service: leader deletes their own profile (marks as rejected)
+  deleteByLeader: async (id, reason) => {
+    const { error } = await supabase
+      .from("leaders")
+      .update({ status: "rejected", internal_note: reason || null })
+      .eq("id", id);
+    if (error) throw error;
+    return { ok: true };
+  },
+
+  // Notify admin about a self-service action
+  notifyAdmin: async ({ subject, html }) => {
+    // Send to the configured noreply address which can forward to admin team
+    const { error } = await supabase.functions.invoke("send-email", {
+      body: {
+        to: "noreply@transformhealthcoalition.org",
+        subject,
+        html,
+      },
+    });
+    if (error) console.error("Admin notification failed:", error);
   },
 };

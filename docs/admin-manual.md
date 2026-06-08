@@ -83,20 +83,16 @@ Self-submitted profiles awaiting admin review. This sub-tab shows all pending se
 
 #### Updates
 
-Leaders requesting changes to their profile (role, bio, photo, etc.).
+Legacy — leaders now update their profiles directly via the self-service magic link flow (see Section 6). This tab may still show older requests submitted before the self-service update was deployed.
 
 **Workflow:**
 1. Expand the row to read the full change request
-2. Click **Send update link** — this emails the leader a magic link to edit their own profile
-3. The row updates to show **Link sent** status
-4. Once the leader resubmits via the link, it appears as a new pending entry in **All Entries**
-5. Review and approve that new submission as normal
-
-> If the request is spam or irrelevant, click **Dismiss** to close it without sending a link.
+2. Click **Dismiss** to close the request, or handle manually if needed
+3. For new requests, direct the leader to the self-service flow instead
 
 #### Deletes
 
-Leaders who want to be removed from the directory.
+Legacy — leaders now remove themselves directly via the self-service magic link flow (see Section 6). This tab may still show older requests submitted before the self-service update was deployed.
 
 **Workflow:**
 1. Expand the row to read the reason for removal (if provided)
@@ -165,22 +161,26 @@ These are hardcoded reference items (not database-driven) — use this tab to cr
 
 ---
 
-### 6. Email System Setup
+### 6. Self-Service Profile Management (Email System)
 
-The platform uses a Supabase Edge Function (`send-email`) to send magic-link emails so leaders can manage their own profiles (update/delete) without any account or password. This self-service workflow reduces administrative burden and gives leaders ownership of their profiles.
+Leaders can now manage their own profiles entirely without admin intervention. The flow uses a Supabase Edge Function (`send-email`) to deliver secure, single-use magic links.
 
-**Intended user journey — self-service profile management:**
-1. A leader requests to update or delete their profile via the "Manage your profile" page
-2. The system sends a secure magic link to the email address associated with that profile
-3. The leader clicks the link and is taken directly to their profile management page
-4. They update their information or request deletion
-5. The changes are saved — no username, password, or account creation required
+**User journey — fully self-service:**
+1. Leader clicks "Manage your profile" from the Database, Analytics, or Submit page
+2. Enters their name and email → system finds their profile
+3. Chooses "Update profile" or "Remove profile"
+4. A magic link is sent directly to their email (no admin involved)
+5. Leader clicks the link → lands on a secure edit/delete form
+6. For updates: edits name, role, organisation, bio, LinkedIn, and expertise fields directly
+7. For deletion: provides an optional reason and confirms removal
+8. Changes are saved directly to the database — no admin approval needed
+9. The page refreshes automatically to show updated data
+10. An email notification is sent to the admin team for awareness
 
-**How the admin triggers the flow:**
-1. Admin opens **Profile Requests → Updates** (or **Deletes**)
-2. Clicks **Send update link**
-3. The Edge Function sends the email with the unique magic link
-4. Leader's subsequent actions are handled automatically
+**Admin's role:**
+- Admin no longer needs to approve or process individual update/delete requests
+- Admin receives a notification email whenever a leader updates or deletes their profile
+- Admin can still manually edit or delete records from the **All Entries** tab if needed
 
 **Recommended sender address:**
 
@@ -233,17 +233,23 @@ The technical team configures these secrets in the Supabase project dashboard (*
 
 ### Handling a profile update request
 
-1. Open **Profile Requests → Updates**
-2. Expand the row — read what the leader wants changed
-3. Click **Send update link** — leader receives a magic link by email
-4. Once they resubmit, the updated profile appears as a new pending entry in **All Entries** for your review
-5. Approve the updated version
+Profile updates are now fully self-service — leaders manage their own updates via magic link.
+
+**If a leader contacts you about updating their profile:**
+1. Direct them to the **"Manage your profile"** option on the directory website
+2. They enter their name and email → receive a magic link → edit their profile directly
+3. No admin action is needed; you will receive a notification email after the update is saved
+
+**If you need to update a profile manually:**
+1. Open **All Entries**, find the record
+2. Expand and make the desired changes directly in the database if needed
 
 ### Removing a leader from the directory
 
-**If the leader requested removal:**
-1. Open **Profile Requests → Deletes**
-2. Read the reason, click **Approve deletion**
+**If the leader requested removal (self-service):**
+1. Leaders now remove themselves directly via the **"Manage your profile"** flow
+2. They choose "Remove profile" → receive a magic link → confirm deletion
+3. No admin action is needed; you will receive a notification email after the removal
 
 **If you need to remove someone without a request:**
 1. Open **All Entries**, find the record

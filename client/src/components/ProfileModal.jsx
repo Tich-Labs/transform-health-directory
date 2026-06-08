@@ -120,6 +120,13 @@ export default function ProfileModal({ leader, onClose, onManage }) {
               )}
             </h2>
 
+            {(leader.role || leader.organisation) && (
+              <p className="text-[1.5rem] text-gray-700 leading-snug">
+                {[leader.role, leader.organisation]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            )}
           </div>
         </div>
 

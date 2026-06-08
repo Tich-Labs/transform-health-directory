@@ -65,8 +65,8 @@ A complete **Leader Profile** includes:
 | Field | Type | Public | Required |
 |-------|------|--------|----------|
 | Name | Text | ✓ | ✓ |
-| Role / Job Title | Text | ✗ (Admin only) | ✓ |
-| Organization | Text | ✗ (Admin only) | ✓ |
+| Role / Job Title | Text | ✓ | ✓ |
+| Organization | Text | ✓ | ✓ |
 | Bio | Text | ✓ | ✓ |
 | Expertise | Tags | ✓ | ✓ |
 | Years of Experience | Number | ✓ | — |
