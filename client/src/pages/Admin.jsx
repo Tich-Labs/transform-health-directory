@@ -904,18 +904,20 @@ export default function Admin({ onGoToDirectory }) {
                         </option>
                       ))}
                     </select>
-                    <select
-                      value={filterClicks}
-                      onChange={(e) => {
-                        setFilterClicks(e.target.value);
-                        setAllPage(1);
-                      }}
-                      className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
-                    >
-                      <option value="">All click counts</option>
-                      <option value="high">🔥 Most clicked (high)</option>
-                      <option value="low">📉 Least clicked (low)</option>
-                    </select>
+                    {activeTab === "all" && (
+                      <select
+                        value={filterClicks}
+                        onChange={(e) => {
+                          setFilterClicks(e.target.value);
+                          setAllPage(1);
+                        }}
+                        className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
+                      >
+                        <option value="">All click counts</option>
+                        <option value="high">🔥 Most clicked (high)</option>
+                        <option value="low">📉 Least clicked (low)</option>
+                      </select>
+                    )}
                     {activeTab === "all" && (
                       <select
                         value={filterStatus}
