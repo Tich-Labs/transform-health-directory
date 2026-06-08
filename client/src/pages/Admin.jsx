@@ -1305,11 +1305,30 @@ export default function Admin({ onGoToDirectory }) {
                               <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-1 text-gray-500">
                                 Changes
                               </div>
-                              <pre className="text-[1.3rem] text-brand-dark-blue whitespace-pre-wrap font-sans leading-[1.6]">
-                                {typeof entry.changes === "string"
-                                  ? entry.changes
-                                  : JSON.stringify(entry.changes, null, 2)}
-                              </pre>
+                              {!isDelete && entry.changes && (
+                                <div className="mt-3 ml-14 rounded-lg p-3 bg-gray-50 border border-gray-200">
+                                  <div className="text-[1.2rem] font-semibold uppercase tracking-wider mb-1 text-gray-500">
+                                    Changes
+                                  </div>
+                                  <div className="flex flex-col gap-1.5">
+                                    {Object.entries(
+                                      typeof entry.changes === "string"
+                                        ? JSON.parse(entry.changes)
+                                        : entry.changes
+                                    ).map(([field, val]) => (
+                                      <div key={field} className="text-[1.3rem] leading-[1.6]">
+                                        <span className="font-medium text-brand-dark capitalize">
+                                          {field.replace(/_/g, " ")}
+                                        </span>
+                                        <span className="text-gray-400 mx-1.5">·</span>
+                                        <span className="line-through text-gray-400">{val.old || "—"}</span>
+                                        <span className="text-gray-400 mx-1.5">→</span>
+                                        <span className="text-brand-dark-blue">{val.new || "—"}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
