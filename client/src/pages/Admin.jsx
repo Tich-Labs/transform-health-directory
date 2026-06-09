@@ -894,7 +894,7 @@ export default function Admin({ onGoToDirectory }) {
             activeTab !== "activity" && (
               <div className="px-8 py-4 border-b-2 border-brand-navy flex-shrink-0 bg-white">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+                  <div className="flex flex-wrap gap-3 items-center">
                     <input
                       value={searchQuery}
                       onChange={(e) => {
@@ -1730,11 +1730,11 @@ export default function Admin({ onGoToDirectory }) {
                         <th className="w-10 px-2 py-3"></th>
                         {[
                           "Name",
-                          "Role",
-                          "Organisation",
+                          "Expertise",
                           "LinkedIn Clicks",
                           "Details",
                           "Status",
+                          "Date Joined",
                         ].map((h) => (
                           <th
                             key={h}
@@ -1802,11 +1802,17 @@ export default function Admin({ onGoToDirectory }) {
                                     )}
                                   </div>
                                 </td>
-                                <td className="px-5 py-3.5 text-lg text-gray-600">
-                                  {item.role}
-                                </td>
-                                <td className="px-5 py-3.5 text-lg text-gray-600">
-                                  {item.organisation}
+                                <td className="px-5 py-3.5">
+                                  <div className="flex flex-wrap gap-1">
+                                    {toTags(item.expertise).slice(0, 3).map((tag, i) => (
+                                      <span key={i} className="inline-block bg-brand-blue-tint text-brand-navy text-[1.2rem] font-medium px-2 py-0.5 rounded-full border border-brand-blue-border">
+                                        {tag}
+                                      </span>
+                                    ))}
+                                    {toTags(item.expertise).length > 3 && (
+                                      <span className="text-[1.2rem] text-gray-400">+{toTags(item.expertise).length - 3}</span>
+                                    )}
+                                  </div>
                                 </td>
                                 <td className="px-5 py-3.5 text-lg text-gray-600 text-center">
                                   {item.linkedin_clicks || 0}
@@ -1835,11 +1841,16 @@ export default function Admin({ onGoToDirectory }) {
                                     {item.status}
                                   </span>
                                 </td>
+                                <td className="px-5 py-3.5 text-[1.3rem] text-gray-500 whitespace-nowrap">
+                                  {item.created_at
+                                    ? new Date(item.created_at).toLocaleDateString()
+                                    : "—"}
+                                </td>
                               </tr>
                               {isExpanded && (
                                 <tr>
                                   <td
-                                    colSpan="6"
+                                    colSpan="7"
                                     className="px-5 py-4 bg-brand-parchment"
                                   >
                                     <div className="grid gap-4 md:grid-cols-2">
