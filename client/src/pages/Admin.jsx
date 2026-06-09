@@ -878,7 +878,8 @@ export default function Admin({ onGoToDirectory }) {
                       {sidebarData.find((s) => s.id === activeTab)?.label}
                     </h2>
                   </div>
-                  <div className="grid grid-cols-3 gap-3 text-center sm:text-right">
+                  {activeTab === "all" && (
+                    <div className="grid grid-cols-3 gap-3 text-center sm:text-right">
                     <div className="bg-brand-orange rounded-lg px-[1.6rem] py-[1.2rem] border-2 border-brand-orange" title="New profile submissions waiting for approval">
                       <div className="text-[1.4rem] font-bold uppercase tracking-wider text-white">
                         Pending
@@ -903,7 +904,7 @@ export default function Admin({ onGoToDirectory }) {
                         {rejectedCount}
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             )}

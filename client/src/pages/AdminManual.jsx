@@ -552,8 +552,8 @@ const SECTIONS = [
     content: (
       <>
         <P>
-          Three summary cards are visible at the top of the All Entries, Profile
-          Requests, and Nominated tabs:
+          Three summary cards are visible at the top of the{" "}
+          <strong>All Entries</strong> tab: Pending, Live, and Rejected.
         </P>
         <Table
           headers={["Card", "What it shows"]}
