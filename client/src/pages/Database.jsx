@@ -34,6 +34,9 @@ const INITIAL_VISIBLE = 6;
 const EXPANDED_VISIBLE = 9;
 const PAGE_SIZE = 9;
 
+const SELECT_CLASS =
+  "px-[1.6rem] py-[1.0rem] border-[1.5px] border-gray-300 rounded-[10px] text-[1.4rem] outline-none bg-brand-blue-tint cursor-pointer font-semibold text-brand-dark";
+
 export default function Database({ onManageProfile }) {
   const [search, setSearch] = useState("");
   const [expertiseFilter, setExpertiseFilter] = useState("");
@@ -154,87 +157,110 @@ export default function Database({ onManageProfile }) {
       {/* Sticky filter bar */}
       <div className="bg-brand-sand sticky top-0 z-40 border-b border-gray-200">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-3">
-          {/* Search + Sort row */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-            <input
-              id="leader-search"
-              type="text"
-              placeholder="Search leaders…"
-              value={search}
-              onChange={handleSearch}
-              className="flex-1 sm:max-w-[320px] h-10 px-4 text-[1.4rem] border-2 border-gray-300 rounded-[10px] outline-none bg-white focus:border-brand-navy"
-              aria-label="Search leaders by name, role, organisation, or bio"
-            />
-            <select
-              value={sortBy}
-              onChange={handleSort}
-              className="h-10 px-3 text-[1.3rem] border-2 border-gray-300 rounded-[10px] outline-none bg-white cursor-pointer text-gray-600 focus:border-brand-navy sm:ml-auto"
-              aria-label="Sort leaders"
-            >
-              <option value="">Sort: Latest</option>
-              <option value="az">A → Z</option>
-              <option value="za">Z → A</option>
-              <option value="latest">Latest</option>
-            </select>
-          </div>
+          {/*
+            Layout strategy:
+            • Mobile  — flex-col: two stacked rows. Inner divs are normal flex rows.
+            • Desktop — the two inner divs become `display:contents` so their
+              children join the outer sm:flex-row as a single line (original layout).
+          */}
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+            {/* ── Row 1 on mobile / flattened on desktop ── */}
+            <div className="flex items-center gap-3 mb-2 sm:mb-0 sm:contents">
+              <label htmlFor="leader-search" className="sr-only">
+                Search leaders
+              </label>
+              <input
+                id="leader-search"
+                type="text"
+                placeholder="Search..."
+                value={search}
+                onChange={handleSearch}
+                className="flex-1 sm:flex-none sm:min-w-[180px] sm:max-w-[280px] px-[1.6rem] py-[1.0rem] border-[1.5px] border-gray-300 rounded-[10px] text-[1.6rem] outline-none bg-brand-blue-tint"
+                aria-label="Search leaders by name, role, organisation, or bio"
+              />
+              {/* Count: inline on mobile, pushed to far right on desktop */}
+              <div className="flex-shrink-0 sm:order-last sm:ml-auto text-[1.3rem] sm:text-[1.4rem] text-gray-600 font-medium">
+                {leaders.length} of {allLeaders.length}
+              </div>
+            </div>
 
-          {/* Region + Country + Expertise row */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <select
-              value={continentFilter}
-              onChange={handleContinent}
-              className="h-10 px-3 text-[1.3rem] border-2 border-gray-300 rounded-[10px] outline-none bg-white cursor-pointer text-gray-700 focus:border-brand-navy flex-1 sm:flex-none"
-              aria-label="Filter by region"
-            >
-              <option value="">Region: All</option>
-              {CONTINENTS.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-
-            <select
-              value={countryFilter}
-              onChange={handleCountry}
-              disabled={!continentFilter}
-              className={`h-10 px-3 text-[1.3rem] border-2 border-gray-300 rounded-[10px] outline-none bg-white cursor-pointer text-gray-700 focus:border-brand-navy flex-1 sm:flex-none ${!continentFilter ? "opacity-50 cursor-not-allowed" : ""}`}
-              aria-label="Filter by country"
-            >
-              <option value="">
-                {continentFilter ? `Country: All in ${continentFilter}` : "Select a region first"}
-              </option>
-              {visibleCountries.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-
-            <select
-              value={expertiseFilter}
-              onChange={handleExpertise}
-              className="h-10 px-3 text-[1.3rem] border-2 border-gray-300 rounded-[10px] outline-none bg-white cursor-pointer text-gray-700 focus:border-brand-navy flex-1 sm:flex-none"
-              aria-label="Filter by expertise"
-            >
-              <option value="">Expertise: All</option>
-              {EXPERTISE_OPTIONS.map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
-
-            {isFiltered && (
-              <button
-                onClick={resetFilters}
-                className="h-10 flex items-center justify-center gap-1.5 px-4 border-2 border-red-300 rounded-[10px] bg-white text-red-500 text-[1.3rem] font-semibold cursor-pointer hover:bg-red-50 flex-shrink-0"
+            {/* ── Row 2 on mobile / flattened on desktop ── */}
+            <div className="flex flex-wrap items-center gap-2 sm:contents">
+              <select
+                value={sortBy}
+                onChange={handleSort}
+                className={SELECT_CLASS + " flex-1 sm:flex-none"}
+                aria-label="Sort leaders"
               >
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M12 4L4 12M4 4l8 8" />
-                </svg>
-                Clear
-              </button>
-            )}
-          </div>
+                <option value="">Sort by</option>
+                <option value="az">A → Z</option>
+                <option value="za">Z → A</option>
+                <option value="latest">Latest</option>
+              </select>
 
-          {/* Result count */}
-          <div className="mt-2 text-[1.2rem] text-gray-400">
-            Showing {leaders.length} of {allLeaders.length} entries
+              <select
+                value={continentFilter}
+                onChange={handleContinent}
+                className={SELECT_CLASS + " flex-1 sm:flex-none"}
+                aria-label="Filter by continent"
+              >
+                <option value="">Continent: All</option>
+                {CONTINENTS.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={countryFilter}
+                onChange={handleCountry}
+                className={SELECT_CLASS + " flex-1 sm:flex-none"}
+                aria-label="Filter by country"
+              >
+                <option value="">Country: All</option>
+                {visibleCountries.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={expertiseFilter}
+                onChange={handleExpertise}
+                className={SELECT_CLASS + " flex-1 sm:flex-none"}
+                aria-label="Filter by expertise"
+              >
+                <option value="">Expertise: All</option>
+                {EXPERTISE_OPTIONS.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+
+              {/* Clear button: full-width on its own row on mobile, normal size on desktop */}
+              {isFiltered && (
+                <button
+                  onClick={resetFilters}
+                  className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-[1.8rem] py-[1.0rem] border-[1.5px] border-red-400 rounded-[10px] bg-white text-red-400 text-[1.4rem] font-bold cursor-pointer tracking-[0.02em] flex-shrink-0"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  >
+                    <path d="M12 4L4 12M4 4l8 8" />
+                  </svg>
+                  Clear filters
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

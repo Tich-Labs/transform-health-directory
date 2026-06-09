@@ -892,9 +892,10 @@ export default function Admin({ onGoToDirectory }) {
             activeTab !== "manual" &&
             activeTab !== "fixes" &&
             activeTab !== "activity" && (
-              <div className="px-8 py-4 border-b-2 border-brand-navy flex-shrink-0 bg-white">
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="flex flex-wrap gap-3 items-center">
+              <div className="px-8 py-3 border-b-2 border-brand-navy flex-shrink-0 bg-white">
+                <div className="flex flex-col gap-2">
+                  {/* Row 1: core filters */}
+                  <div className="flex flex-wrap gap-2 items-center">
                     <input
                       value={searchQuery}
                       onChange={(e) => {
@@ -902,7 +903,7 @@ export default function Admin({ onGoToDirectory }) {
                         setAllPage(1);
                       }}
                       placeholder="Search name, org, role, expertise"
-                      className="min-w-[220px] rounded-lg border-2 border-gray-400 px-4 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
+                      className="min-w-[200px] rounded-lg border-2 border-gray-400 px-3 py-1.5 text-[1.3rem] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
                     />
                     <select
                       value={filterRegion}
@@ -911,13 +912,11 @@ export default function Admin({ onGoToDirectory }) {
                         setFilterCountry("");
                         setAllPage(1);
                       }}
-                      className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
+                      className="rounded-lg border-2 border-gray-400 px-3 py-1.5 text-[1.3rem] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
                     >
                       <option value="">All regions</option>
                       {countriesByRegion.map((r) => (
-                        <option key={r.key} value={r.key}>
-                          {r.label}
-                        </option>
+                        <option key={r.key} value={r.key}>{r.label}</option>
                       ))}
                     </select>
                     <select
@@ -926,15 +925,13 @@ export default function Admin({ onGoToDirectory }) {
                         setFilterCountry(e.target.value);
                         setAllPage(1);
                       }}
-                      className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
+                      className="rounded-lg border-2 border-gray-400 px-3 py-1.5 text-[1.3rem] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
                     >
                       <option value="">All countries{filterRegion ? ` in ${REGION_LABELS[filterRegion] || ""}` : ""}</option>
                       {filteredCountries.map((region) => (
                         <optgroup key={region.key} label={region.label}>
                           {region.countries.map((country) => (
-                            <option key={country} value={country}>
-                              {country}
-                            </option>
+                            <option key={country} value={country}>{country}</option>
                           ))}
                         </optgroup>
                       ))}
@@ -945,56 +942,59 @@ export default function Admin({ onGoToDirectory }) {
                         setFilterExpertise(e.target.value);
                         setAllPage(1);
                       }}
-                      className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
+                      className="rounded-lg border-2 border-gray-400 px-3 py-1.5 text-[1.3rem] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
                     >
                       <option value="">All expertise</option>
                       {expertiseOptions.map((expertise) => (
-                        <option key={expertise} value={expertise}>
-                          {expertise}
-                        </option>
+                        <option key={expertise} value={expertise}>{expertise}</option>
                       ))}
                     </select>
-                    {activeTab === "all" && (
+                  </div>
+                  {/* Row 2: admin-only filters + count */}
+                  {activeTab === "all" && (
+                    <div className="flex flex-wrap gap-2 items-center">
                       <select
                         value={filterClicks}
                         onChange={(e) => {
                           setFilterClicks(e.target.value);
                           setAllPage(1);
                         }}
-                        className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
+                        className="rounded-lg border-2 border-gray-400 px-3 py-1.5 text-[1.3rem] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
                       >
                         <option value="">All click counts</option>
                         <option value="high">🔥 Most clicked (high)</option>
                         <option value="low">📉 Least clicked (low)</option>
                       </select>
-                    )}
-                    {activeTab === "all" && (
                       <select
                         value={filterStatus}
                         onChange={(e) => {
                           setFilterStatus(e.target.value);
                           setAllPage(1);
                         }}
-                        className="rounded-lg border-2 border-gray-400 px-3 py-2 text-lg font-medium shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
+                        className="rounded-lg border-2 border-gray-400 px-3 py-1.5 text-[1.3rem] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus:border-brand-navy bg-white text-gray-900"
                       >
                         <option value="">All statuses</option>
                         <option value="pending">Pending</option>
                         <option value="live">Live</option>
                         <option value="rejected">Rejected</option>
                       </select>
-                    )}
-                  </div>
-                  <div className="text-[1.4rem] font-bold text-brand-navy">
-                    {activeTab === "all"
-                      ? `${filteredAll.length} of ${allCount} total entries`
-                      : activeTab === "nominated"
-                      ? `${nominatedCount} nominated`
-                      : activeTab === "requests"
-                      ? `${pending.length} new`
-                      : activeTab === "activity"
-                      ? `${activityLog.length} events`
-                      : `${requestsCount} pending requests`}
-                  </div>
+                      <div className="text-[1.3rem] font-semibold text-brand-navy ml-auto">
+                        {filteredAll.length} of {allCount} total entries
+                      </div>
+                    </div>
+                  )}
+                  {/* Stats for non-All-Entries tabs */}
+                  {activeTab !== "all" && (
+                    <div className="text-[1.3rem] font-semibold text-brand-navy">
+                      {activeTab === "nominated"
+                        ? `${nominatedCount} nominated`
+                        : activeTab === "requests"
+                        ? `${pending.length} new`
+                        : activeTab === "activity"
+                        ? `${activityLog.length} events`
+                        : `${requestsCount} pending requests`}
+                    </div>
+                  )}
                 </div>
                 {actionMessage && (
                   <div
