@@ -35,25 +35,35 @@ Deno.serve(async (req) => {
       const enc = new TextEncoder();
       const dec = new TextDecoder();
 
-      async function read(): Promise<string> {
-        const b = new Uint8Array(4096);
-        const n = await conn.read(b);
-        return dec.decode(b.subarray(0, n ?? 0));
-      }
       async function send(cmd: string): Promise<string> {
         await conn.write(enc.encode(cmd + "\r\n"));
-        return read();
+        const b = new Uint8Array(4096);
+        const n = await conn.read(b);
+        const resp = dec.decode(b.subarray(0, n ?? 0)).trim();
+        if (resp && !resp.startsWith("2") && !resp.startsWith("3")) {
+          throw new Error(`SMTP error after "${cmd.split("\n")[0]}": ${resp}`);
+        }
+        return resp;
       }
 
-      await read(); // greeting
+      // SMTP conversation — each send() checks the response code
+      // Read server greeting (no command to send)
+      {
+        const b = new Uint8Array(4096);
+        const n = await conn.read(b);
+        const resp = dec.decode(b.subarray(0, n ?? 0)).trim();
+        if (resp && !resp.startsWith("2") && !resp.startsWith("3")) {
+          throw new Error(`SMTP greeting error: ${resp}`);
+        }
+      }
       await send("EHLO transformhealth.org");
       await send("AUTH LOGIN");
       await send(btoa(smtpUser));
       await send(btoa(smtpPass));
       await send(`MAIL FROM:<${fromEmail}>`);
       await send(`RCPT TO:<${to}>`);
-      await send("DATA"); // server responds 354
-      // Send email content + end-of-data marker; send() reads the 250 OK
+      await send("DATA");
+      // Send email content + end-of-data marker (.\r\n)
       await send(
         [
           `From: ${fromName} <${fromEmail}>`,
