@@ -129,11 +129,23 @@ async function tryGenericSmtp(to: string, subject: string, html: string): Promis
   }
 }
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), { status, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } });
+}
+
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS_HEADERS });
+
   try {
     const { to, subject, html } = await req.json();
     if (!to || !subject || !html) {
-      return new Response(JSON.stringify({ error: "Missing required fields: to, subject, html" }), { status: 400 });
+      return jsonResponse({ error: "Missing required fields: to, subject, html" }, 400);
     }
 
     const providers = [
@@ -145,19 +157,19 @@ Deno.serve(async (req) => {
       const ok = await provider.fn();
       if (ok) {
         console.log(`Email sent via ${provider.name}`);
-        return new Response(JSON.stringify({ ok: true, provider: provider.name }));
+        return jsonResponse({ ok: true, provider: provider.name });
       }
     }
 
-    return new Response(
-      JSON.stringify({
+    return jsonResponse(
+      {
         error:
           "No email provider configured. Set GOOGLE_SMTP_USER+GOOGLE_SMTP_PASS or SMTP_HOST+SMTP_PORT+SMTP_USERNAME+SMTP_PASSWORD in Supabase project secrets.",
-      }),
-      { status: 500 },
+      },
+      500,
     );
   } catch (err) {
     console.error(err);
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return jsonResponse({ error: err.message }, 500);
   }
 });
