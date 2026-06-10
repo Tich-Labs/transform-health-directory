@@ -284,7 +284,7 @@ export const api = {
       const token = btoa(
         JSON.stringify({ leaderId, mode })
       );
-      const manageUrl = `${window.location.origin}?manage=${token}`;
+      const manageUrl = `${window.location.origin}${window.location.pathname}?manage=${token}`;
       const subject =
         mode === "delete"
           ? "Remove your Transform Health profile"
