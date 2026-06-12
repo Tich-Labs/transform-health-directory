@@ -130,6 +130,8 @@ export default function ManageProfile({ prefill, onBack, fromMagicLink, tokenMod
         firstName: foundProfile.first_name,
         lastName: foundProfile.last_name,
         linkedin: foundProfile.linkedin || "",
+        photo_url: foundProfile.photo_url || "",
+        expertise: foundProfile.expertise || [],
         mode: selectedMode,
       });
       if (result.ok) {

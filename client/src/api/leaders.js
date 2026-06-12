@@ -267,12 +267,12 @@ export const api = {
 
   // Send a magic link email via Supabase Function (send-email)
   // Used for self-service: leader requests a magic link directly (no admin needed)
-  requestManage: async ({ leaderId, firstName, lastName, linkedin, mode }) => {
+  requestManage: async ({ leaderId, firstName, lastName, linkedin, photo_url, expertise, mode }) => {
     try {
       // Fetch leader's email from database
       const { data: leader, error: fetchErr } = await supabase
         .from("leaders")
-        .select("leader_email, editor_email, first_name, last_name")
+        .select("leader_email, editor_email, first_name, last_name, photo_url, expertise")
         .eq("id", leaderId)
         .single();
 
@@ -285,22 +285,86 @@ export const api = {
         JSON.stringify({ leaderId, mode })
       );
       const manageUrl = `${window.location.origin}${window.location.pathname}?manage=${token}`;
-      const subject =
-        mode === "delete"
-          ? "Remove your Transform Health profile"
-          : "Update your Transform Health profile";
+      const isDelete = mode === "delete";
+      const subject = isDelete
+        ? "Remove your Transform Health profile"
+        : "Update your Transform Health profile";
+
+      // Resolve avatar and tags from passed values, falling back to database
+      const avatarUrl = photo_url || leader?.photo_url;
+      const rawTags = expertise || leader?.expertise || [];
+      const tags = (
+        Array.isArray(rawTags) ? rawTags : (rawTags || "").split(/,\s*/)
+      ).filter(Boolean);
+
+      const initials = ((firstName?.[0] || "") + (lastName?.[0] || "")).toUpperCase();
+
       const html = `
-        <div style="font-family: sans-serif; max-width:600px; margin:0 auto;">
-          <h2>${subject}</h2>
-          <p>Hi ${firstName},</p>
-          <p>Click the link below to ${
-            mode === "delete" ? "remove" : "update"
-          } your profile in the Transform Health Women Leaders Directory:</p>
-          <p><a href="${manageUrl}" style="display:inline-block; padding:12px 24px; background:#24588A; color:#fff; text-decoration:none; border-radius:6px;">${
-            mode === "delete" ? "Remove my profile" : "Manage my profile"
-          }</a></p>
-          <p>Or copy this link: <code>${manageUrl}</code></p>
-          <p><em>This link expires in 24 hours.</em></p>
+        <div style="font-family:'Montserrat',Arial,Helvetica,sans-serif;max-width:448px;margin:0 auto;background:#fffff4;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;box-shadow:0 1px 3px rgba(0,0,0,0.08)">
+          <!-- Dark navy banner with concentric ring clusters and scattered dots -->
+          <div style="background:#333333;height:120px;position:relative;overflow:hidden">
+            <div style="position:absolute;top:-28px;left:30px;width:88px;height:88px;border:2px solid rgba(255,255,255,0.12);border-radius:50%"></div>
+            <div style="position:absolute;top:76px;left:57px;width:88px;height:88px;border:2px solid rgba(255,255,255,0.12);border-radius:50%"></div>
+            <div style="position:absolute;top:-19px;left:290px;width:88px;height:88px;border:2px solid rgba(255,255,255,0.12);border-radius:50%"></div>
+            <div style="position:absolute;top:53px;left:378px;width:88px;height:88px;border:2px solid rgba(255,255,255,0.12);border-radius:50%"></div>
+            <div style="position:absolute;top:0;left:193px;width:88px;height:88px;border:2px solid rgba(255,255,255,0.12);border-radius:50%"></div>
+            <div style="position:absolute;top:20px;left:150px;width:4px;height:4px;background:rgba(255,255,255,0.25);border-radius:50%"></div>
+            <div style="position:absolute;top:70px;left:200px;width:3px;height:3px;background:rgba(255,255,255,0.15);border-radius:50%"></div>
+            <div style="position:absolute;top:30px;left:350px;width:5px;height:5px;background:rgba(255,255,255,0.2);border-radius:50%"></div>
+            <div style="position:absolute;top:90px;left:100px;width:3px;height:3px;background:rgba(255,255,255,0.15);border-radius:50%"></div>
+            <div style="position:absolute;top:45px;left:260px;width:4px;height:4px;background:rgba(255,255,255,0.2);border-radius:50%"></div>
+            <div style="position:absolute;top:15px;left:310px;width:3px;height:3px;background:rgba(255,255,255,0.15);border-radius:50%"></div>
+            <div style="position:absolute;top:65px;left:30px;width:4px;height:4px;background:rgba(255,255,255,0.2);border-radius:50%"></div>
+          </div>
+
+          <!-- Avatar — photo or initials with brand-pink ring -->
+          <div style="text-align:center;margin-top:-38px">
+            ${
+              avatarUrl
+                ? `<img src="${avatarUrl}" alt="${firstName} ${lastName}" style="width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid #F85A8E;display:inline-block" />`
+                : `<div style="width:76px;height:76px;border-radius:50%;background:#D9D9D9;border:2px solid #F85A8E;display:inline-flex;align-items:center;justify-content:center;font-size:2rem;font-weight:600;color:#666;line-height:1">${initials}</div>`
+            }
+          </div>
+
+          <!-- Body -->
+          <div style="padding:16px 20px 24px;text-align:center">
+            <!-- Name -->
+            <div style="font-size:1.6rem;font-weight:600;color:#111827;margin-bottom:12px;line-height:1.3">
+              ${firstName} ${lastName}
+            </div>
+
+            <!-- Tags — expertise pills matching card style -->
+            ${
+              tags.length
+                ? `<div style="margin-bottom:16px">${tags
+                    .map(
+                      (t) =>
+                        `<span style="display:inline-block;font-size:1.2rem;font-weight:500;background:#e6f0ff;color:#02598E;padding:2px 10px;border-radius:9999px;border:1px solid #d1d9ec;margin:2px">${t
+                          .replace(/^Other:\s*/i, "")
+                          .replace(/\b\w/g, (c) => c.toUpperCase())}</span>`
+                    )
+                    .join("")}</div>`
+                : ""
+            }
+
+            <!-- CTA button — pink for update, red for delete -->
+            <a href="${manageUrl}" style="display:inline-flex;align-items:center;justify-content:center;min-width:200px;height:40px;${
+              isDelete ? "background:#EF4444" : "background:#F85A8E"
+            };border-radius:20px;color:#fff;text-decoration:none;font-size:1.3rem;font-weight:500;padding:0 24px;margin-bottom:16px">
+              ${isDelete ? "Remove my profile" : "Manage my profile"}
+            </a>
+
+            <!-- Expiry badge — amber warning pill -->
+            <div style="margin-bottom:16px">
+              <span style="display:inline-block;background:#fde68a;color:#92400e;font-size:1.1rem;font-weight:500;padding:4px 14px;border-radius:9999px">
+                ⏰ Expires in 24 hours
+              </span>
+            </div>
+
+            <!-- Fallback link — monospace code block -->
+            <div style="font-size:1.2rem;color:#6b7280;margin-bottom:8px">Or copy this link:</div>
+            <div style="background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;padding:10px 14px;font-family:'Courier New','Consolas',monospace;font-size:1.1rem;color:#374151;word-break:break-all;text-align:left">${manageUrl}</div>
+          </div>
         </div>
       `;
 
