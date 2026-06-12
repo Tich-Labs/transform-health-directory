@@ -95,6 +95,7 @@ function App() {
     setManageTokenData(null);
     const url = new URL(window.location);
     url.searchParams.delete("manage");
+    url.searchParams.delete("profile");
     window.history.replaceState({}, "", url);
   }
 

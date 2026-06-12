@@ -97,7 +97,12 @@ export default function ManageProfile({ prefill, onBack, fromMagicLink, tokenMod
         lastName: lastName.trim(),
         email: email.trim(),
       });
-      if (match) setFoundProfile(match);
+      if (match) {
+        setFoundProfile(match);
+        const url = new URL(window.location);
+        url.searchParams.set("profile", `${firstName.trim()} ${lastName.trim()}`);
+        window.history.replaceState({}, "", url);
+      }
       else setNotFound(true);
     } catch (err) {
       console.error("Profile lookup error:", err);
