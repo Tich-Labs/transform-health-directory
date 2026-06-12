@@ -418,22 +418,24 @@ export default function ManageProfile({ prefill, onBack, fromMagicLink, tokenMod
               </div>
             )}
 
-            <div className={NAV_CLASS}>
-              <button onClick={onBack} className={BACK_CLASS}>
-                ← BACK
-              </button>
-              <ContinueBtn
-                disabled={
-                  !firstName.trim() ||
-                  !lastName.trim() ||
-                  !email.trim() ||
-                  linkLoading
-                }
-                onClick={lookupProfile}
-              >
-                {linkLoading ? "SEARCHING..." : "FIND MY PROFILE →"}
-              </ContinueBtn>
-            </div>
+            {!foundProfile && (
+              <div className={NAV_CLASS}>
+                <button onClick={onBack} className={BACK_CLASS}>
+                  ← BACK
+                </button>
+                <ContinueBtn
+                  disabled={
+                    !firstName.trim() ||
+                    !lastName.trim() ||
+                    !email.trim() ||
+                    linkLoading
+                  }
+                  onClick={lookupProfile}
+                >
+                  {linkLoading ? "SEARCHING..." : "FIND MY PROFILE →"}
+                </ContinueBtn>
+              </div>
+            )}
 
             {foundProfile && (
               <div className="mt-6 pt-5 border-t border-gray-200">
