@@ -218,8 +218,22 @@ The technical team configures these secrets in the Supabase project dashboard (*
 
 > **The `send-email` Edge Function is already deployed** at `supabase/functions/send-email/`. Only the secrets above need to be configured in the Supabase project dashboard. Once set, test by sending an update link from **Profile Requests → Updates** and verifying the leader receives the email.
 
-**Email header graphic:**
-The magic link email uses the Transform Health logo centered at the top, followed by a 4px full-width pink horizontal line (`#F85A8E`).
+**Email structure (current implementation):**
+
+The magic link email is constructed inline in `client/src/api/leaders.js` (`requestManage` function). From top to bottom:
+
+1. **Transform Health logo** — centered, hotlinked from the WordPress site
+2. **1px full-width pink line** (`#F85A8E`)
+3. **Avatar** — photo with pink border ring, or initials on a grey circle fallback, plus LinkedIn badge overlay
+4. **Leader name** — bold, centered
+5. **Expertise tags** — blue pills matching the card style
+6. **CTA button** — pink ("Manage my profile") or red ("Remove my profile")
+7. **Expiry badge** — amber pill reading "Expires in 24 hours"
+8. **Fallback link** — monospace code block with the raw `?manage=` URL
+9. **1px grey divider**
+10. **Footer** — "You received this because you have a profile in the **Transform Health Women Leaders Directory** (pink, bold). Didn't request this? You can safely ignore this email."
+
+The page background uses `#f5efe0` (`brand-sand`) to match the database content section.
 
 ---
 
