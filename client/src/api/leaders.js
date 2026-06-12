@@ -302,12 +302,12 @@ export const api = {
 
       // Absolute URL for the card-top SVG (resolved against current page location)
       const pageDir = window.location.href.split("?")[0].replace(/\/[^/]*$/, "/");
-      const svgUrl = `${pageDir}illustrations/Card-top-email.svg`;
+      const svgUrl = `${pageDir}illustrations/Rectangle%206709.svg`;
 
       const html = `
         <table cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#fffff4" style="background-color:#fffff4;font-family:'Montserrat',Arial,Helvetica,sans-serif">
           <tr><td>
-            <!-- Full-width banner — Card-top SVG -->
+            <!-- Full-width banner — pink curved header -->
             <img src="${svgUrl}" alt="" width="100%" height="120" style="display:block;outline:none;border:0;text-decoration:none" />
           </td></tr>
           <tr><td align="center" style="padding:0 16px">

@@ -219,7 +219,7 @@ The technical team configures these secrets in the Supabase project dashboard (*
 > **The `send-email` Edge Function is already deployed** at `supabase/functions/send-email/`. Only the secrets above need to be configured in the Supabase project dashboard. Once set, test by sending an update link from **Profile Requests → Updates** and verifying the leader receives the email.
 
 **Email header graphic:**
-The magic link email uses a dedicated header image (`Card-top-email.svg` at `client/public/illustrations/`) that matches the site's card branding but is designed to stretch full-width across any desktop or mobile email client. It is separate from the `Card-top.svg` used on leader profile cards within the site.
+The magic link email uses the pink curved banner (`Rectangle 6709.svg` at `client/public/illustrations/`) as its full-width header image.
 
 ---
 
