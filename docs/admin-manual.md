@@ -235,6 +235,43 @@ The magic link email is constructed inline in `client/src/api/leaders.js` (`requ
 
 The page background uses `#f5efe0` (`brand-sand`) to match the database content section.
 
+**Technical architecture:**
+
+The magic link system has three layers:
+
+**1. Token (`client/src/api/leaders.js:284-286`)**
+
+When a user requests a magic link, the frontend builds a token:
+```js
+const token = btoa(JSON.stringify({ leaderId, mode }));
+```
+- `leaderId` — the leader's UUID in the `leaders` table
+- `mode` — `"update"` or `"delete"`
+- The token is **not encrypted** — it is simple base64. Security relies on the token being sent only to the leader's email address.
+- The full magic link URL: `{origin}?manage={token}`
+
+**2. Email HTML (`client/src/api/leaders.js:303-391`)**
+
+The entire email body is constructed as a template literal inside `requestManage()`. It uses inline `<table>` layout for email client compatibility. The function resolves avatar, LinkedIn URL, and expertise tags from the values passed by the find-profile step, falling back to database values if absent.
+
+**3. Edge Function (`supabase/functions/send-email/index.ts`)**
+
+The email is sent via a Supabase Edge Function that proxies through a Google Apps Script Web App:
+```
+requestManage() → supabase.functions.invoke("send-email", { to, subject, html })
+                  → fetch(APPS_SCRIPT_URL) → Google Apps Script → SMTP send
+```
+- The Edge Function receives `{ to, subject, htmlBody }` and forwards it to a Google Apps Script URL configured via the `APPS_SCRIPT_URL` environment variable.
+- The Apps Script handles the actual SMTP delivery via Google Workspace.
+- No secrets are exposed to the client — the Apps Script URL is server-side only.
+
+**Fallback:** If the Edge Function call fails (e.g., email service down), `requestManage` catches the error and returns a manual URL to the user so they can still access their profile:
+```js
+return { ok: false, url, message: "Email service unavailable. Use this link instead:" };
+```
+
+**URL management:** When a profile is found via "Find My Profile," the browser URL is updated to `?profile=FirstName+LastName` using `history.replaceState`. Both `?manage=` and `?profile=` params are cleaned up when the modal closes or on page reload after a save/delete.
+
 ---
 
 ## Common Workflows
