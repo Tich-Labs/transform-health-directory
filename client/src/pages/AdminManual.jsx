@@ -1529,14 +1529,79 @@ const SECTIONS = [
         </Ul>
 
         <H4>Handover Checklist</H4>
-        <Note>Required before Transform Health can fully own the system:</Note>
+        <Note>
+          Required before Transform Health can fully own the system. Full details in <code>docs/TRANSFER_CHECKLIST.md</code>.
+        </Note>
+
+        <H4>1. GitHub Repo &amp; Secrets</H4>
         <Ul>
-          <Li>Transfer GitHub repo or add collaborators</Li>
-          <Li>Invite to Supabase project or create new + migrate</Li>
-          <Li>Set GitHub Actions secrets (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)</Li>
-          <Li>Configure Edge Function secrets (APPS_SCRIPT_URL, GOOGLE_SMTP_USER, GOOGLE_SMTP_PASS)</Li>
-          <Li>Access Google Apps Script Web App or deploy new copy</Li>
-          <Li>Confirm noreply@transformhealthcoalition.org access + App Password</Li>
+          <Li>Transfer repo ownership from <code>Tich-Labs/transform-health-directory</code> to Transform Health's GitHub org, or add team members as Admin collaborators</Li>
+          <Li>Set GitHub Actions secrets in the new repo: <code>VITE_SUPABASE_URL</code>, <code>VITE_SUPABASE_ANON_KEY</code></Li>
+          <Li>Remove any stale secrets (Firebase, legacy Apps Script vars)</Li>
+          <Li>Verify CI/CD works — push to <code>main</code> triggers auto-deploy</Li>
+        </Ul>
+
+        <H4>2. Supabase Access, RLS, Storage, Backup</H4>
+        <Ul>
+          <Li>Grant team access to project <code>bahoslsvhwqybqkjonvb</code> (transform-health-directory) or create fresh project + migrate</Li>
+          <Li>Verify Edge Function secrets: <code>APPS_SCRIPT_URL</code>, <code>GOOGLE_SMTP_USER</code>, <code>GOOGLE_SMTP_PASS</code></Li>
+          <Li>Confirm RLS: anon reads only <code>live</code> leaders; auth required for writes</Li>
+          <Li>Verify <code>profile-photos</code> storage bucket is public-read</Li>
+          <Li>Export SQL dump of all tables (<code>leaders</code>, <code>requests</code>, <code>test_results</code>)</Li>
+        </Ul>
+
+        <H4>3. Email — Apps Script, SMTP, App Password</H4>
+        <Ul>
+          <Li>Confirm access to the Google account owning the Apps Script Web App, or deploy a fresh copy from <code>supabase/functions/send-email/</code></Li>
+          <Li>Confirm <code>noreply@transformhealthcoalition.org</code> is accessible</Li>
+          <Li>Enable 2-Step Verification and generate an App Password for SMTP (recommended before production)</Li>
+        </Ul>
+
+        <H4>4. Domain &amp; Hosting</H4>
+        <Ul>
+          <Li>Current URL: <code>https://tich-labs.github.io/transform-health-directory/</code></Li>
+          <Li>Decide on custom domain — e.g. <code>database.transformhealthcoalition.org</code></Li>
+          <Li>If custom domain: configure DNS CNAME to GitHub Pages, then update GitHub Pages settings</Li>
+          <Li>Alternative: migrate to Vercel for simpler env var management and built-in analytics</Li>
+        </Ul>
+
+        <H4>5. Assets &amp; Branding</H4>
+        <Ul>
+          <Li>Confirm WordPress asset URLs are stable (logo, footer icon, favicon — all hotlinked from <code>transformhealthcoalition.org</code>)</Li>
+          <Li>Consider downloading local copies to remove external dependency</Li>
+          <Li>Brand colours are defined in <code>tailwind.config.cjs</code> under <code>brand:</code> — verify against current guidelines</Li>
+        </Ul>
+
+        <H4>6. Documentation</H4>
+        <Ul>
+          <Li><code>docs/admin-manual.md</code> — markdown source for the in-app Admin Manual</Li>
+          <Li><code>docs/TRANSFER_CHECKLIST.md</code> — this checklist in standalone form</Li>
+          <Li>In-app Product Report — accessible at <code>/admin?tab=manual&amp;section=product-report</code></Li>
+          <Li><code>README.md</code> — updated to reflect current codebase state</Li>
+          <Li>Admin Manual PDF — can be generated from the in-app "Download PDF" button</Li>
+          <Li>Screenshots / video walkthrough — being prepared by the current team</Li>
+        </Ul>
+
+        <H4>7. Pre-Launch Tasks</H4>
+        <Ul>
+          <Li>Re-enable admin auth gate — one-line change in <code>Admin.jsx</code></Li>
+          <Li>Create admin user in Supabase Auth dashboard (email/password)</Li>
+          <Li>Upgrade SMTP from Google Apps Script to SendGrid/Resend if higher volume expected</Li>
+          <Li>Add analytics (GA4 or Plausible) if desired</Li>
+          <Li>Test end-to-end: submit → approve → directory → magic link → edit → notification</Li>
+        </Ul>
+
+        <H4>8. Quick Reference</H4>
+        <Ul>
+          <Li>Live URL: <code>https://tich-labs.github.io/transform-health-directory/</code></Li>
+          <Li>Supabase Project: <code>bahoslsvhwqybqkjonvb</code></Li>
+          <Li>Supabase URL: <code>https://bahoslsvhwqybqkjonvb.supabase.co</code></Li>
+          <Li>Database: PostgreSQL — tables: <code>leaders</code>, <code>requests</code>, <code>test_results</code></Li>
+          <Li>Storage: <code>profile-photos</code> bucket</Li>
+          <Li>Auth: Supabase Auth — email/password (test mode bypassed)</Li>
+          <Li>CI/CD: <code>.github/workflows/deploy.yml</code> — auto-deploys on push to <code>main</code></Li>
+          <Li>Email: Edge Function → Google Apps Script → Google Workspace SMTP</Li>
+          <Li>Sender: <code>noreply@transformhealthcoalition.org</code></Li>
         </Ul>
 
         <H4>Limitations and Future Expansion</H4>
