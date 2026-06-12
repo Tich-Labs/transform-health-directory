@@ -8,6 +8,13 @@ function H3({ children }) {
     </h3>
   );
 }
+function H4({ children }) {
+  return (
+    <h4 className="text-[1.5rem] font-semibold text-brand-dark mt-5 mb-1.5">
+      {children}
+    </h4>
+  );
+}
 function P({ children }) {
   return (
     <p className="text-[1.5rem] text-gray-700 leading-[1.8] mb-3">{children}</p>
