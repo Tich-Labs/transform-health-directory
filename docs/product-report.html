@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transform Health — Product Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 62.5%; }
+    body {
+      font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 1.6rem;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #f5efe0;
+    }
+
+    /* Navigation */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #02598e;
+      padding: 1.2rem 2.4rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem 2rem;
+      align-items: center;
+    }
+    nav .logo {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: #fff;
+      margin-right: auto;
+    }
+    nav a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 500;
+      padding: 0.4rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    nav a:hover,
+    nav a.active {
+      color: #fff;
+      border-bottom-color: #FADF56;
+    }
+
+    /* Sections */
+    .page { max-width: 960px; margin: 0 auto; padding: 4rem 2.4rem 8rem; }
+    section { scroll-margin-top: 7rem; }
+
+    header { margin-bottom: 3.2rem; }
+    header h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      color: #02598e;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+    header p {
+      font-size: 1.4rem;
+      color: #6b7280;
+      margin-top: 0.6rem;
+      font-weight: 500;
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #02598e;
+      margin: 4rem 0 0.8rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 3px solid #F85A8E;
+    }
+    h3 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 2.4rem 0 1rem;
+    }
+    h4 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #374151;
+      margin: 1.6rem 0 0.6rem;
+    }
+
+    p, li { font-size: 1.4rem; color: #374151; line-height: 1.7; }
+    p { margin-bottom: 1.2rem; }
+    ul, ol { padding-left: 2.4rem; margin-bottom: 1.6rem; }
+    li { margin-bottom: 0.4rem; }
+
+    strong { color: #1a1a1a; font-weight: 700; }
+    code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 1.2rem;
+      background: #e5e7eb;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+    }
+    pre {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 1.6rem;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      overflow-x: auto;
+      line-height: 1.6;
+      margin-bottom: 1.6rem;
+    }
+
+    .callout {
+      border-radius: 8px;
+      padding: 1.6rem 2rem;
+      margin-bottom: 1.6rem;
+      font-size: 1.3rem;
+      line-height: 1.6;
+    }
+    .callout-info { background: #e6f0ff; border-left: 4px solid #02598e; }
+    .callout-success { background: #dcfce7; border-left: 4px solid #059669; }
+    .callout-warning { background: #fef3c7; border-left: 4px solid #f59e0b; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1.3rem;
+      margin-bottom: 1.6rem;
+    }
+    th {
+      text-align: left;
+      padding: 1rem 1.2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: #f3f4f6;
+      border-bottom: 2px solid #d1d5db;
+      color: #6b7280;
+    }
+    td {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
+      color: #374151;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    .tag {
+      display: inline-block;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.2rem 0.8rem;
+      border-radius: 99px;
+    }
+    .tag-free { background: #dcfce7; color: #166534; }
+    .tag-paid { background: #fee2e2; color: #991b1b; }
+    .tag-foss { background: #e6f0ff; color: #02598e; }
+
+    .bullet-success { color: #059669; font-weight: 700; }
+    .bullet-neutral { color: #6b7280; }
+
+    footer {
+      margin-top: 6rem;
+      padding-top: 2rem;
+      border-top: 2px dashed #d1cfc8;
+      text-align: center;
+      font-size: 1.2rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">Transform Health · Product Report</span>
+  <a href="#section-a" class="active">A. Technical Approach</a>
+  <a href="#section-b">B. Interactive Database</a>
+  <a href="#section-c">C. Handover</a>
+</nav>
+
+<div class="page">
+
+  <header>
+    <h1>Women Leaders in Digital Health Database</h1>
+    <p>Product Report — June 2026</p>
+  </header>
+
+  <p>
+    This report documents the technical approach, design decisions, and deliverables
+    for the Women Leaders in Digital Health Database, developed for Transform Health.
+    It responds to each of the three workstreams defined in the contract.
+  </p>
+
+  <!-- ============================================================ -->
+  <!-- SECTION A -->
+  <!-- ============================================================ -->
+  <section id="section-a">
+    <h2>A. Technical &amp; Visualisation Approach Recommendations</h2>
+
+    <h3>Assessment of Platforms and Tools</h3>
+    <p>
+      Several platforms were evaluated for building and hosting the database. The assessment
+      considered cost, licensing, maintenance overhead, scalability, and the ability to deliver
+      an interactive, searchable directory without ongoing licensing fees for Transform Health.
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>Platform</th><th>Assessment</th><th>Verdict</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Google Sheets + Apps Script</strong></td>
+          <td>Used in the initial prototype. Functional for small datasets but lacks proper querying (reads all rows to filter), has a 6-minute execution limit, requires manual redeploy on every code change, and cannot handle photo uploads.</td>
+          <td><span class="tag tag-paid">Rejected</span></td>
+        </tr>
+        <tr>
+          <td><strong>Tableau / Power BI</strong></td>
+          <td>Strong visualisation tools but designed for dashboards and reporting, not for interactive profile browsing with CRUD operations. Require per-user licensing (Tableau Creator ~$75/user/month; Power BI Pro ~$14/user/month). Not suitable as a public-facing interactive database.</td>
+          <td><span class="tag tag-paid">Rejected</span></td>
+        </tr>
+        <tr>
+          <td><strong>Firebase</strong></td>
+          <td>Evaluated as a potential backend. Firebase Storage was partially configured but the broader platform (Firestore, Auth) introduced vendor lock-in and its document model is less suited for relational leader data. Deprioritised in favour of a unified platform.</td>
+          <td><span class="tag tag-paid">Rejected</span></td>
+        </tr>
+        <tr>
+          <td><strong>Supabase (chosen)</strong></td>
+          <td>Open-source Firebase alternative providing PostgreSQL database, file storage, authentication, and edge functions in a single platform. Generous free tier, transparent pricing, no per-user licensing. PostgreSQL offers proper relational queries, indexing, and full-text search.</td>
+          <td><span class="tag tag-free">Selected</span></td>
+        </tr>
+        <tr>
+          <td><strong>React + Vite (frontend)</strong></td>
+          <td>Modern component-based framework. Vite provides fast builds and hot-module reloading during development. Tailwind CSS enables consistent styling with the Transform Health brand palette. No licensing cost.</td>
+          <td><span class="tag tag-free">Selected</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Recommended Architecture</h3>
+
+    <div class="callout callout-success">
+      <strong>Stack:</strong> React 18 + Vite (frontend) → Supabase PostgreSQL (database) + Supabase Storage (photos) + Supabase Auth (admin login) + Supabase Edge Functions (email sending). Hosted on GitHub Pages via CI/CD.
+    </div>
+
+    <p>The architecture uses a <strong>static frontend + Backend-as-a-Service (BaaS)</strong> model:</p>
+    <ul>
+      <li>The frontend (React) is built into static files and deployed to GitHub Pages — no server to maintain, no hosting cost.</li>
+      <li>Supabase handles all backend concerns: data queries, file storage, authentication, and server-side email sending.</li>
+      <li>The frontend calls Supabase's auto-generated REST API directly using the anon (public) key, with Row Level Security enforcing data access rules on the database side.</li>
+    </ul>
+
+    <h3>Cost and Licensing</h3>
+
+    <table>
+      <thead>
+        <tr><th>Service</th><th>Licence</th><th>Cost (current)</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>React 18</td><td>MIT</td><td>Free</td><td>Open source</td></tr>
+        <tr>
+          <td>Vite</td><td>MIT</td><td>Free</td><td>Build tool</td></tr>
+        <tr>
+          <td>Tailwind CSS</td><td>MIT</td><td>Free</td><td>Utility-first CSS</td></tr>
+        <tr>
+          <td>Supabase</td><td>Apache 2.0</td><td>Free tier</td><td>500 MB database, 1 GB storage, 2 GB bandwidth, 50,000 monthly active users</td></tr>
+        <tr>
+          <td>GitHub Pages</td><td>—</td><td>Free</td><td>Public repository; 1 GB site limit</td></tr>
+        <tr>
+          <td>GitHub Actions</td><td>—</td><td>Free</td><td>2,000 build minutes/month (public repo: unlimited)</td></tr>
+        <tr>
+          <td>Google Fonts</td><td>SIL OFL</td><td>Free</td><td>Montserrat</td></tr>
+        <tr>
+          <td>react-simple-maps</td><td>MIT</td><td>Free</td><td>Interactive world map</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-info">
+      <strong>Total operating cost: $0/month</strong> on the Supabase free tier. Supabase's paid tier starts at $25/month (Pro) when the project scales beyond free-tier limits — still the most cost-effective option compared to per-user licensing models.
+    </div>
+
+    <h3>Maintenance Considerations</h3>
+    <ul>
+      <li>
+        <span class="bullet-success">✓</span> <strong>No runtime server:</strong> The frontend is a static site — no patching, no uptime monitoring, no SSH access needed.
+      </li>
+      <li>
+        <span class="bullet-success">✓</span> <strong>CI/CD pipeline:</strong> Pushing to the <code>main</code> branch triggers an automatic build and deploy via GitHub Actions. No manual deployment steps.
+      </li>
+      <li>
+        <span class="bullet-success">✓</span> <strong>Database backups:</strong> Supabase provides point-in-time recovery on paid plans. On the free tier, take periodic SQL exports via the Supabase dashboard.
+      </li>
+      <li>
+        <span class="bullet-success">✓</span> <strong>Photo storage:</strong> Supabase Storage handles file uploads with built-in CDN. No image processing server required.
+      </li>
+      <li>
+        <span class="bullet-neutral">○</span> <strong>Dependency updates:</strong> npm dependencies (React, Tailwind, etc.) should be updated periodically for security patches — standard frontend maintenance overhead.
+      </li>
+    </ul>
+
+    <h3>Accessibility</h3>
+    <p>The interface follows basic accessibility best practices:</p>
+    <ul>
+      <li><strong>Colour contrast:</strong> All text/background combinations meet WCAG AA contrast ratios, verified against the Transform Health brand palette.</li>
+      <li><strong>Focus indicators:</strong> Visible <code>:focus-visible</code> outlines on all interactive elements with custom brand-colour styling.</li>
+      <li><strong>Reduced motion:</strong> A <code>@media (prefers-reduced-motion: reduce)</code> rule disables animations for users who request it.</li>
+      <li><strong>Skip link:</strong> A "Skip to main content" link is the first focusable element on every page.</li>
+      <li><strong>Responsive:</strong> All layouts adapt to viewport width, tested from 320px to desktop.</li>
+      <li><strong>Semantic HTML:</strong> ARIA attributes used on interactive controls (e.g., <code>aria-expanded</code> on toggles).</li>
+    </ul>
+
+    <h3>Scalability</h3>
+    <p>
+      The current architecture supports hundreds of leaders on the free tier. Supabase PostgreSQL handles
+      indexing on filtered columns (country, expertise, status) and supports full-text search. As the
+      dataset grows, the database can be indexed further without application changes. If traffic exceeds
+      free-tier limits, Supabase Pro ($25/month) increases the row limit from 500 MB to 8 GB database
+      size and raises bandwidth allowances.
+    </p>
+
+    <h3>Embedding Within the Transform Health Website</h3>
+    <p>
+      The database includes a <strong>"Chrome toggle"</strong> feature (an eye icon at the bottom-right
+      of every page) that hides the site header, navigation bar, and footer. This allows the database
+      pages to be embedded in an iframe or directly integrated into the Transform Health website
+      without visual duplication of navigation elements.
+    </p>
+    <p>
+      All brand assets (logo, footer icon) are hotlinked from the Transform Health WordPress site
+      (<code>transformhealthcoalition.org</code>), ensuring visual consistency with the parent site.
+      If deeper integration is needed, the React application can be served as a subdirectory or
+      subdomain of the main Transform Health site, sharing the same header/footer components.
+    </p>
+
+    <h3>Non-Technical Content Management</h3>
+    <p>
+      The <strong>Admin Console</strong> is a dedicated interface for the Transform Health team to
+      manage the database without any technical skills:
+    </p>
+    <ul>
+      <li>Review, approve, or reject pending profile submissions</li>
+      <li>Search, filter, and browse the full database</li>
+      <li>View LinkedIn click analytics for each profile</li>
+      <li>Process self-service update and deletion requests</li>
+      <li>Manage test results from the QA testing team</li>
+    </ul>
+    <p>
+      Additionally, leaders can <strong>manage their own profiles</strong> entirely without admin
+      intervention via the self-service magic link system. They find their profile, request an update
+      or deletion, and receive a secure single-use link by email — no admin approval needed.
+    </p>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION B -->
+  <!-- ============================================================ -->
+  <section id="section-b">
+    <h2>B. Design and Development of Interactive Database</h2>
+
+    <h3>Filters and Search</h3>
+    <p>The database supports multi-dimensional exploration through:</p>
+    <ul>
+      <li><strong>Dropdown filters:</strong> Continent, country, and area of expertise — each populated dynamically from the database.</li>
+      <li><strong>Free-text search:</strong> Searches across name, role, organisation, bio, expertise, and country fields.</li>
+      <li><strong>Sort options:</strong> Latest (by submission date), A–Z, or by expertise area.</li>
+      <li><strong>Analytics page:</strong> An interactive world map with clickable regions. Selecting a region filters the leader cards below the map. A specialisation bar chart allows simultaneous filtering by region AND expertise — clicking a bar highlights the corresponding region on the map.</li>
+    </ul>
+
+    <h3>Profile Presentation</h3>
+    <p>
+      Leaders are presented in a <strong>card grid layout</strong> with consistent visual structure:
+    </p>
+    <ul>
+      <li>Each card shows: photo, name, role, organisation, location, and expertise tags.</li>
+      <li>Clicking a card opens a <strong>1200px modal</strong> with the full profile: bio, years of experience, countries of operation, notable achievements (with links), and LinkedIn button.</li>
+      <li>The email address is <strong>never shown publicly</strong> — it is visible only in the Admin Console.</li>
+      <li>Pagination uses a <strong>"Load more"</strong> pattern (not paginated pages) for intuitive browsing.</li>
+    </ul>
+
+    <p>This split between card-level scanning and modal-level depth satisfies both browsing modes:</p>
+    <ul>
+      <li><strong>High-level scanning:</strong> Quickly scroll through cards, filter by geography or expertise.</li>
+      <li><strong>Deeper exploration:</strong> Click into any card to see the complete profile, bio, and achievements.</li>
+    </ul>
+
+    <h3>Desktop and Mobile Optimisation</h3>
+    <ul>
+      <li>Responsive layout with breakpoints at mobile-first design. Cards reflow from multi-column to single-column on smaller screens.</li>
+      <li>Filter controls adapt: on desktop they appear inline; on mobile they stack into full-width rows with clear touch targets.</li>
+      <li>The modal uses a bottom-sheet pattern on mobile (slides up from the bottom) and a centered overlay on desktop.</li>
+      <li>All interactive elements (buttons, links, dropdowns) are sized for touch interaction on mobile.</li>
+    </ul>
+
+    <h3>User Roles and Journeys</h3>
+
+    <h4>Public Visitor (read-only)</h4>
+    <p>Search, filter, and browse the directory. Click into profiles. No login required.</p>
+
+    <h4>Leader (self-submit)</h4>
+    <p>Complete a 5-step submission form: Branch (self/nominate) → Consent → Basic Info (name, email, photo, country) → Profile Details (years, expertise, geo scope, countries, bio) → Links (LinkedIn, achievements). Submitted profiles enter a pending queue for admin review.</p>
+
+    <h4>Leader (manage existing profile)</h4>
+    <p>Click "Manage your profile" → identify via name and email → choose Update or Delete → receive a secure magic link by email → edit fields directly or confirm removal. No admin required.</p>
+
+    <h4>Nominator</h4>
+    <p>Submit a profile on behalf of someone else by providing their name and LinkedIn URL. The nominee is notified via admin outreach.</p>
+
+    <h4>Admin</h4>
+    <p>Full access to the Admin Console: review pending submissions, approve/reject profiles, manage update and delete requests, browse all entries with LinkedIn click analytics, and run QA test result dashboards.</p>
+
+    <h3>Data Flow</h3>
+    <ol>
+      <li>Leader submits profile → stored in Supabase <code>leaders</code> table (status: pending) + photo uploaded to Storage</li>
+      <li>Admin reviews and approves (status: live) or rejects (status: rejected)</li>
+      <li>Live profiles appear in the public Directory and Analytics pages</li>
+      <li>Leaders manage their profiles via self-service magic link — changes saved directly to the database</li>
+      <li>Admin receives notification emails when leaders update or delete their profiles</li>
+    </ol>
+
+    <h3>Database Schema</h3>
+    <pre>leaders
+  id              uuid  primary key
+  created_at      timestamptz
+  branch          text  ('self' | 'nominate')
+  first_name      text
+  last_name       text
+  role            text
+  organisation    text
+  bio             text
+  linkedin        text
+  photo_url       text
+  status          text  ('pending' | 'live' | 'rejected')
+  editor_email    text
+  country         text
+  nominate_link   text
+  expertise       text[]
+  years_experience text
+  countries       text[]
+  notable_items   jsonb
+  internal_note   text</pre>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION C -->
+  <!-- ============================================================ -->
+  <section id="section-c">
+    <h2>C. Handover and Documentation</h2>
+
+    <h3>How the Database Can Be Updated and Maintained</h3>
+
+    <h4>Adding new leaders</h4>
+    <p>Leaders submit their own profiles via the public "Submit your profile" form. New submissions appear in the Admin Console under Profile Requests → New, where an admin can approve (publish) or reject them.</p>
+
+    <h4>Updating existing profiles</h4>
+    <p>Two paths:</p>
+    <ul>
+      <li><strong>Self-service:</strong> Leaders use "Manage your profile" → receive a magic link by email → edit their own profile directly. No admin intervention needed.</li>
+      <li><strong>Admin:</strong> Admin can manually edit or delete any record from the All Entries tab in the Admin Console.</li>
+    </ul>
+
+    <h4>Removing a profile</h4>
+    <p>Leaders can self-serve via the "Remove profile" option in the manage flow. Admin can also delete records directly from All Entries.</p>
+
+    <h4>Magic link email system</h4>
+    <p>The email system uses a Supabase Edge Function that proxies through a Google Apps Script Web App:</p>
+    <pre>requestManage() → supabase.functions.invoke("send-email", { to, subject, html })
+                  → fetch(APPS_SCRIPT_URL) → Google Apps Script → SMTP send</pre>
+    <p>The <code>APPS_SCRIPT_URL</code>, <code>GOOGLE_SMTP_USER</code>, and <code>GOOGLE_SMTP_PASS</code> secrets are configured in the Supabase Edge Function settings. The Apps Script handles SMTP delivery via Google Workspace.</p>
+
+    <h3>Third-Party Dependencies and Licences</h3>
+
+    <table>
+      <thead>
+        <tr><th>Dependency</th><th>Licence</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>React 18</td><td>MIT</td><td>UI framework</td></tr>
+        <tr><td>Vite</td><td>MIT</td><td>Build tool and dev server</td></tr>
+        <tr><td>Tailwind CSS</td><td>MIT</td><td>Utility-first CSS framework</td></tr>
+        <tr><td>react-simple-maps</td><td>MIT</td><td>Interactive world map for Analytics page</td></tr>
+        <tr><td>@supabase/supabase-js</td><td>MIT / Apache 2.0</td><td>Client library for Supabase API</td></tr>
+        <tr><td>Axios</td><td>MIT</td><td>HTTP client</td></tr>
+        <tr><td>Supabase (platform)</td><td>Apache 2.0</td><td>PostgreSQL database, file storage, auth, edge functions</td></tr>
+        <tr><td>GitHub Pages</td><td>—</td><td>Static site hosting</td></tr>
+        <tr><td>GitHub Actions</td><td>—</td><td>CI/CD pipeline</td></tr>
+        <tr><td>Google Fonts (Montserrat)</td><td>SIL OFL 1.1</td><td>Brand typography</td></tr>
+        <tr><td>Google Apps Script</td><td>—</td><td>Email relay (SMTP proxy)</td></tr>
+        <tr><td>react-dom</td><td>MIT</td><td>React DOM renderer</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-info">
+      <strong>All dependencies are open source</strong> with permissive licences (MIT, Apache 2.0, SIL OFL).
+      No commercial or proprietary licences are required to run, modify, or distribute this project.
+      The project itself is licensed under ISC.
+    </div>
+
+    <h3>Infrastructure Quick Reference</h3>
+
+    <table>
+      <tbody>
+        <tr><td><strong>Live URL</strong></td><td><code>https://tich-labs.github.io/transform-health-directory/</code></td></tr>
+        <tr><td><strong>Supabase Project</strong></td><td><code>bahoslsvhwqybqkjonvb</code> (transform-health-directory)</td></tr>
+        <tr><td><strong>Database</strong></td><td>Supabase PostgreSQL — tables: <code>leaders</code>, <code>requests</code>, <code>test_results</code></td></tr>
+        <tr><td><strong>File Storage</strong></td><td>Supabase Storage — bucket: <code>profile-photos</code></td></tr>
+        <tr><td><strong>Auth</strong></td><td>Supabase Auth — email/password for admin (currently in test mode)</td></tr>
+        <tr><td><strong>CI/CD</strong></td><td><code>.github/workflows/deploy.yml</code> — auto-deploys on push to <code>main</code></td></tr>
+        <tr><td><strong>Email</strong></td><td>Supabase Edge Function → Google Apps Script → Google Workspace SMTP</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Handover Checklist</h3>
+
+    <div class="callout callout-warning">
+      <strong>Required before Transform Health can fully own the system:</strong>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Action Required</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>GitHub repository</td><td>Transfer <code>Tich-Labs/transform-health-directory</code> to Transform Health's GitHub organisation, or add team members as collaborators.</td></tr>
+        <tr><td>Supabase project</td><td>Invite Transform Health team members as collaborators in the Supabase project dashboard, or create a new project under their account and migrate data.</td></tr>
+        <tr><td>GitHub Actions secrets</td><td>Set <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code> in the new repository's Settings → Secrets and Variables → Actions.</td></tr>
+        <tr><td>Supabase Edge Function secrets</td><td><code>APPS_SCRIPT_URL</code>, <code>GOOGLE_SMTP_USER</code>, and <code>GOOGLE_SMTP_PASS</code> must be configured in Supabase Dashboard → Edge Functions.</td></tr>
+        <tr><td>Google Apps Script</td><td>Access to the Google Apps Script Web App that relays emails, or deploy a new copy from the existing code.</td></tr>
+        <tr><td>SMTP sender</td><td>Confirm <code>noreply@transformhealthcoalition.org</code> is accessible. Enable 2FA and generate an App Password for production use.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Limitations and Future Expansion</h3>
+
+    <h4>Current limitations</h4>
+    <ul>
+      <li><strong>Admin auth gate:</strong> Temporarily bypassed for testing. Code is ready — a one-line change re-enables it. An admin user must be created in Supabase Auth first.</li>
+      <li><strong>Email delivery:</strong> Currently uses Google Apps Script as an SMTP relay. For higher volume, migrating to SendGrid or Resend would be more reliable.</li>
+      <li><strong>Analytics:</strong> No page-view or user-behaviour analytics are configured yet (e.g., GA4, Plausible).</li>
+      <li><strong>Country-level map drilldown:</strong> The Analytics map currently supports region-level filtering only (continent), not individual countries.</li>
+      <li><strong>Photo moderation:</strong> Photos are approved when the admin approves the profile. There is no separate photo moderation workflow.</li>
+    </ul>
+
+    <h4>Future expansion considerations</h4>
+    <ul>
+      <li><strong>ORCID integration:</strong> An open researcher identity standard with a real API. Could be offered as an optional verification method for leaders with academic backgrounds.</li>
+      <li><strong>Open Badges / Verifiable Credentials:</strong> Emerging W3C standard. Leaders could carry a "Transform Health Verified" credential in a digital wallet.</li>
+      <li><strong>Supabase Auth magic links:</strong> The current hand-rolled magic link token (<code>btoa(JSON.stringify({ leaderId, mode }))</code>) could be replaced with Supabase's built-in <code>signInWithOtp()</code> for production-grade, one-time-use authentication.</li>
+      <li><strong>Custom domain:</strong> Moving from <code>github.io</code> to a custom domain like <code>database.transformhealthcoalition.org</code> would improve branding and SEO.</li>
+      <li><strong>Vercel deployment:</strong> If GitHub Pages limits become restrictive, Vercel offers simpler environment variable management and built-in analytics at no cost.</li>
+      <li><strong>Export functionality:</strong> Adding CSV/PDF export of search results or profile data for research purposes.</li>
+    </ul>
+
+    <h4>Identity strategy — beyond LinkedIn</h4>
+    <div class="callout callout-info">
+      <p><strong>Current approach:</strong> LinkedIn is treated as a vanity identifier and hyperlink only. Leaders fill in their own structured data through a consent-backed form. This is the correct approach — LinkedIn's API has been progressively locked down since 2015, scraping is explicitly prohibited in their ToS, and treating it as anything more than a link is a liability.</p>
+      <p style="margin-bottom:0;"><strong>Future options:</strong> ORCID (open researcher identity, 20M+ users), Open Badges / Verifiable Credentials (W3C standard), and email-as-identity via Supabase Auth OTP — all platform-independent and LinkedIn cannot block them.</p>
+    </div>
+  </section>
+
+  <footer>
+    Transform Health Women Leaders in Digital Health Database · Product Report · June 2026
+  </footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+      this.classList.add('active');
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>

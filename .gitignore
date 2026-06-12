@@ -10,3 +10,4 @@ node_modules/
 **/.temp/
 *.png
 client/src/assets/illustrations/
+talking-points.html
