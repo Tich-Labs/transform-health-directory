@@ -595,11 +595,20 @@ export default function Admin({ onGoToDirectory }) {
     setEnrichSending(item.id);
     setEnrichMsg((prev) => ({ ...prev, [item.id]: "" }));
     try {
-      await api.sendEnrichmentLink({ leaderId: item.id, email });
-      setEnrichMsg((prev) => ({ ...prev, [item.id]: `✓ Magic link sent to ${email}` }));
+      const result = await api.sendEnrichmentLink({ leaderId: item.id, email });
+      // Email saved to DB regardless — update local state
       setAll((prev) =>
         prev.map((l) => (l.id === item.id ? { ...l, leader_email: email } : l))
       );
+      if (result?.ok === false) {
+        // Email service down — give admin the direct link to share manually
+        setEnrichMsg((prev) => ({
+          ...prev,
+          [item.id]: `✗ Email service unavailable — share this link manually:\n${result.url}`,
+        }));
+      } else {
+        setEnrichMsg((prev) => ({ ...prev, [item.id]: `✓ Magic link sent to ${email}` }));
+      }
     } catch (e) {
       setEnrichMsg((prev) => ({ ...prev, [item.id]: `✗ Failed: ${e.message}` }));
     } finally {
