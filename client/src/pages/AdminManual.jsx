@@ -461,7 +461,8 @@ const SECTIONS = [
 
         <H3>What if the email never sent?</H3>
         <P>
-          Check that SMTP is configured (email secrets in Supabase). If configured correctly:
+          Check that the <Code>send-email</Code> Supabase function is deployed and{" "}
+          <Code>APPS_SCRIPT_URL</Code> is configured. If configured correctly:
         </P>
         <Ul>
           <Li>Ask the leader to check spam folder</Li>
@@ -973,35 +974,37 @@ const SECTIONS = [
           src="screenshots/admin-manual/13-manage-profile.png"
           caption="Manage your profile — leaders enter their name and email to receive a magic link"
         />
-        <H3>Setup: Google Workspace (Recommended)</H3>
-        <P>Ask the client to:</P>
+        <H3>Email setup: Google Apps Script relay</H3>
+        <P>
+          Magic link emails are sent via a Google Apps Script web app that relays
+          through Google Workspace's built-in mailing. No SMTP credentials needed.
+        </P>
+        <P>To set up or replace:</P>
         <Ol>
           <Li>
-            Log into the Workspace admin account (e.g.{" "}
-            <Code>noreply@transformhealthcoalition.org</Code>)
+            Go to <strong>script.google.com</strong> → New project → paste the
+            code from <Code>apps-script/Code.gs</Code>
           </Li>
           <Li>
-            Go to{" "}
-            <strong>
-              Google Account → Security → 2-Step Verification → App Passwords
-            </strong>
+            Deploy → New deployment → Web app (Execute as: <strong>Me</strong>,
+            Who has access: <strong>Anyone</strong>)
           </Li>
           <Li>
-            Generate a <strong>16-character app password</strong> for{" "}
-            <strong>"Mail"</strong>
+            Authorize the script to send emails when prompted
           </Li>
-          <Li>Share the app password with the technical team</Li>
+          <Li>
+            Copy the deployment URL and set it as the{" "}
+            <Code>APPS_SCRIPT_URL</Code> environment variable on both the{" "}
+            <Code>send-email</Code> and <Code>manage-admin</Code> Supabase Edge
+            Functions
+          </Li>
         </Ol>
-        <P>
-          Then configure in Supabase dashboard → Settings → Functions → Secrets:
-        </P>
-        <Table
-          headers={["Secret", "Value"]}
-          rows={[
-            ["<Code>GOOGLE_SMTP_USER</Code>", "The Workspace email address"],
-            ["<Code>GOOGLE_SMTP_PASS</Code>", "The 16-character app password"],
-          ]}
-        />
+        <Note>
+          The <Code>send-email</Code> function must be deployed to the Supabase
+          project and have <Code>APPS_SCRIPT_URL</Code> configured for magic link
+          emails to send. If email fails, a fallback URL is shown directly in the
+          browser.
+        </Note>
 
       </>
     ),
@@ -1626,17 +1629,17 @@ const SECTIONS = [
         <H4>2. Supabase Access, RLS, Storage, Backup</H4>
         <Ul>
           <Li>Grant team access to project <code>qglymhpdsjzkmdvzizdu</code> (transform-health-directory) or create fresh project + migrate</Li>
-          <Li>Verify Edge Function secrets: <code>APPS_SCRIPT_URL</code>, <code>GOOGLE_SMTP_USER</code>, <code>GOOGLE_SMTP_PASS</code></Li>
+          <Li>Verify Edge Function secret: <code>APPS_SCRIPT_URL</code></Li>
           <Li>Confirm RLS: anon reads only <code>live</code> leaders; auth required for writes</Li>
           <Li>Verify <code>profile-photos</code> storage bucket is public-read</Li>
           <Li>Export SQL dump of all tables (<code>leaders</code>, <code>requests</code>, <code>test_results</code>)</Li>
         </Ul>
 
-        <H4>3. Email — Apps Script, SMTP, App Password</H4>
+        <H4>3. Email — Apps Script relay</H4>
         <Ul>
           <Li>Confirm access to the Google account owning the Apps Script Web App, or deploy a fresh copy from <code>supabase/functions/send-email/</code></Li>
-          <Li>Confirm <code>noreply@transformhealthcoalition.org</code> is accessible</Li>
-          <Li>Enable 2-Step Verification and generate an App Password for SMTP (recommended before production)</Li>
+          <Li>Confirm <Code>noreply@transformhealthcoalition.org</Code> is accessible</Li>
+          <Li>Deploy <Code>send-email</Code> Edge Function and configure <Code>APPS_SCRIPT_URL</Code></Li>
         </Ul>
 
         <H4>4. Domain &amp; Hosting</H4>
