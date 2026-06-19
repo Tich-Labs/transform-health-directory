@@ -8,6 +8,7 @@ export default function AdminLogin({ onLogin }) {
   const [error, setError] = useState("");
   const [showForgot, setShowForgot] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+  const [showPw, setShowPw] = useState(false);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -152,14 +153,23 @@ export default function AdminLogin({ onLogin }) {
             <label className="block text-[1.4rem] font-medium text-brand-dark mb-1.5">
               Password
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-[1.5rem] outline-none focus:border-brand-pink"
-              placeholder="Enter your password"
-            />
+            <div className="relative">
+              <input
+                type={showPw ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg text-[1.5rem] outline-none focus:border-brand-pink"
+                placeholder="Enter your password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPw((p) => !p)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[1.3rem] text-gray-500 hover:text-brand-navy cursor-pointer"
+              >
+                {showPw ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
 
           {error && (
