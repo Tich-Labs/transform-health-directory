@@ -129,25 +129,27 @@ function Img({ src, caption }) {
 }
 
 // ── Documentation Hub Link Cards ─────────────────────────────────────────────
-function DocCard({ title, description, link, icon }) {
-  return (
-    <a
-      href={link}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block p-4 rounded-lg border border-gray-300 bg-white hover:bg-blue-50 hover:border-brand-navy transition-all cursor-pointer group"
-    >
-      <div className="flex items-start gap-3">
-        <span className="text-2xl flex-shrink-0 mt-1">{icon}</span>
-        <div className="flex-1">
-          <h4 className="text-[1.5rem] font-semibold text-brand-navy group-hover:underline mb-1">
-            {title}
-          </h4>
-          <p className="text-[1.4rem] text-gray-600 leading-[1.5]">
-            {description}
-          </p>
-        </div>
+function DocCard({ title, description, link, icon, onClick }) {
+  const className = "block p-4 rounded-lg border border-gray-300 bg-white hover:bg-blue-50 hover:border-brand-navy transition-all cursor-pointer group";
+  const content = (
+    <div className="flex items-start gap-3">
+      <span className="text-2xl flex-shrink-0 mt-1">{icon}</span>
+      <div className="flex-1">
+        <h4 className="text-[1.5rem] font-semibold text-brand-navy group-hover:underline mb-1">
+          {title}
+        </h4>
+        <p className="text-[1.4rem] text-gray-600 leading-[1.5]">
+          {description}
+        </p>
       </div>
+    </div>
+  );
+  if (onClick) {
+    return <button onClick={onClick} className={className + " text-left w-full"}>{content}</button>;
+  }
+  return (
+    <a href={link} target="_blank" rel="noopener noreferrer" className={className}>
+      {content}
     </a>
   );
 }
@@ -214,9 +216,9 @@ const SECTIONS = [
           />
           <DocCard
             icon="📋"
-            title="Documentation Index"
-            description="Master navigation hub for all documentation organized by audience and task."
-            link="https://github.com/Tich-Labs/transform-health-directory/blob/main/docs/00-documentation-index.md"
+            title="References &amp; Checklists"
+            description="Document index, glossary, quick navigation by task, and document status."
+            link="?section=references"
           />
         </div>
 
@@ -1712,6 +1714,80 @@ const SECTIONS = [
       </>
     ),
   },
+  {
+    id: "references",
+    label: "📚 References & Checklists",
+    content: (
+      <>
+        <P>
+          Documentation index, glossary of terms, and quick navigation to all
+          project resources. Admin-relevant sections shown below.
+        </P>
+
+        <H3>🛠️ Admin Resources</H3>
+        <Table
+          headers={["Document", "What it covers"]}
+          rows={[
+            ["Admin Manual (this document)", "Complete guide to the admin console — reviewing submissions, approving/rejecting profiles, managing users"],
+            ["Data Quality Standards", "Required fields, completeness standards, quality benchmarks for each field, approval criteria"],
+            ["Privacy Policy & Data Handling", "GDPR/CCPA compliance, data retention, user rights"],
+            ["Product Overview", "Mission, features, user roles, business strategy — for understanding the big picture"],
+            ["Submit Profile Guide", "Step-by-step for leaders submitting profiles — helps you review with context"],
+            ["Nominator Guide", "How nominations work — understand the nomination workflow"],
+            ["FAQ", "50+ common questions answered — for quick answers"],
+          ]}
+        />
+
+        <H3>📋 Quick Navigation by Task</H3>
+        <Table
+          headers={["If you need to…", "See"]}
+          rows={[
+            ["Review & approve submissions", "Admin Manual → All Entries tab"],
+            ["Understand quality standards", "Data Quality Standards — field-by-field guide"],
+            ["Check privacy compliance", "Privacy Policy & Data Handling"],
+            ["Understand the product mission", "Product Overview"],
+            ["Know what leaders see", "Submit Profile Guide"],
+            ["Understand nomination flow", "Nominator Guide"],
+            ["Quick answer to a question", "FAQ"],
+            ["Set up email system", "Admin Manual → Email System Setup"],
+          ]}
+        />
+
+        <H3>📖 Glossary of Terms</H3>
+        <Table
+          headers={["Term", "Definition"]}
+          rows={[
+            ["Live profile", "A profile currently published in the public directory"],
+            ["Pending profile", "A submission awaiting admin review"],
+            ["Magic link", "Email link (valid 48h) that lets leaders update their profile without a password"],
+            ["Self-submitted", "Profile submitted by the leader herself"],
+            ["Nominated", "Profile created when someone nominates a woman leader"],
+            ["Expertise tags", "Categories like AI, Telemedicine, Policy that describe a leader's work"],
+            ["Geographical scope", "The geographic reach of a leader's work (Local, National, Regional, Global)"],
+            ["Enrichment", "Admin sending a magic link to a leader to fill in missing profile fields"],
+          ]}
+        />
+
+        <H3>📋 Document Status</H3>
+        <Table
+          headers={["Document", "Status", "Last Updated"]}
+          rows={[
+            ["Product Overview", "Complete", "June 2026"],
+            ["Submit Profile Guide", "Complete", "June 2026"],
+            ["Nominator Guide", "Complete", "June 2026"],
+            ["FAQ", "Complete", "June 2026"],
+            ["Data Quality Standards", "Complete", "June 2026"],
+            ["Privacy Policy", "Complete", "June 2026"],
+            ["Admin Manual", "Updated", "June 2026"],
+          ]}
+        />
+
+        <Tip>
+          <strong>Pro tip:</strong> Use Ctrl+F (or Cmd+F on Mac) to search within this manual. Bookmark the sections you reference most often.
+        </Tip>
+      </>
+    ),
+  },
 ];
 
 // ── Category grouping for better sidebar organization ────────────────────────
@@ -1745,7 +1821,7 @@ const CATEGORIES = [
   {
     icon: "📚",
     title: "Reference & Checklists",
-    sections: ["status-reference", "tips-notes", "pre-launch-checklist", "product-report"],
+        sections: ["status-reference", "tips-notes", "pre-launch-checklist", "product-report", "references"],
   },
   {
     icon: "❓",
