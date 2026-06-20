@@ -456,7 +456,12 @@ const SECTIONS = [
           Leaders click the <strong>✏ pencil icon</strong> fixed at the bottom-left
           of every public page (Database, Analytics, Submit). It opens the{" "}
           <strong>Manage Profile</strong> modal — they enter their name and email,
-          and receive a magic link to edit or delete their profile directly.
+          and receive a magic link. Once they click the link, they see a
+          pre-filled form covering every field: name, role, organisation, photo,
+          bio, LinkedIn, expertise, country, years of experience, geographical
+          scope, countries of work, and notable items (publications, projects,
+          awards). Empty fields are highlighted with a <strong>Missing</strong>{" "}
+          badge so they know exactly what to complete.
           No admin action required. Completed changes appear in the{" "}
           <strong>Activity Log</strong> for admin visibility.
         </P>
@@ -755,9 +760,14 @@ const SECTIONS = [
           action required. All completed changes are automatically recorded in
           the <strong>Activity Log</strong> tab for admin visibility.
         </P>
-        <Note>
-          Screenshots not yet added — will be captured once new profile submissions arrive.
-        </Note>
+        <P>
+          The edit form covers every field from the original submission: name,
+          role, organisation, photo, bio, LinkedIn, expertise tags, country,
+          years of experience, geographical scope, countries of work, and
+          notable items. Fields that are still empty are highlighted with an
+          amber <strong>Missing</strong> badge so the leader knows exactly what
+          to complete.
+        </P>
       </>
     ),
   },
@@ -963,10 +973,14 @@ const SECTIONS = [
             The system matches their profile by email and sends a magic link
             directly — no admin action required
           </Li>
-          <Li>Leader clicks the link → lands on a pre-filled update form</Li>
           <Li>
-            Leader can edit their details or delete their profile — all
-            self-service, no account, no password, no login needed
+            Leader clicks the link → lands on a pre-filled form with all their
+            existing data; empty fields show a <strong>Missing</strong> badge
+          </Li>
+          <Li>
+            Leader can update any field (name, photo, bio, expertise, country,
+            scope, countries of work, notable items) or delete their profile —
+            all self-service, no account, no password, no login needed
           </Li>
           <Li>
             Completed actions appear in the{" "}
