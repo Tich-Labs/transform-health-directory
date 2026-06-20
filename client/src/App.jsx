@@ -306,22 +306,6 @@ function App() {
       </main>
       {route !== "admin" && !chromeHidden && <SiteFooter />}
 
-      {/* Manage profile — floating pencil, bottom-left, visible on all public pages */}
-      {route !== "admin" && (
-        <div className="fixed bottom-5 left-5 z-[9999] flex items-end gap-2 group">
-          <span className="pointer-events-none text-[1.2rem] text-white bg-brand-navy/80 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-            Already in the directory? Manage your profile
-          </span>
-          <button
-            onClick={() => openManageModal(null)}
-            title="Already in the directory? Manage your profile"
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-white border border-gray-200 shadow-sm text-[1.5rem] text-gray-400 hover:text-brand-navy hover:border-brand-navy transition-colors cursor-pointer flex-shrink-0"
-          >
-            ✏
-          </button>
-        </div>
-      )}
-
       {/* Admin link — subtle, fixed bottom-right above chrome toggle */}
       {route !== "admin" && (
         <button

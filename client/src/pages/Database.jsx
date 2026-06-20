@@ -333,6 +333,17 @@ export default function Database({ onManageProfile }) {
         )}
       </div>
 
+      <div className="text-center pt-[2.4rem] pb-[3.2rem] font-sans">
+        <p className="text-[1.4rem] text-gray-500">
+          Already in the directory?{" "}
+          <button
+            onClick={() => onManageProfile(null)}
+            className="bg-transparent border-0 cursor-pointer text-brand-navy font-semibold text-[1.4rem] underline p-0"
+          >
+            Manage or remove your profile
+          </button>
+        </p>
+      </div>
 
       <ProfileModal
         leader={selectedProfile}

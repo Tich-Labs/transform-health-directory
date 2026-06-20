@@ -453,16 +453,16 @@ const SECTIONS = [
 
         <H3>How do leaders update their profiles?</H3>
         <P>
-          Leaders click the <strong>✏ pencil icon</strong> fixed at the bottom-left
-          of every public page (Database, Analytics, Submit). It opens the{" "}
-          <strong>Manage Profile</strong> modal — they enter their name and email,
-          and receive a magic link. Once they click the link, they see a
-          pre-filled form covering every field: name, role, organisation, photo,
-          bio, LinkedIn, expertise, country, years of experience, geographical
-          scope, countries of work, and notable items (publications, projects,
-          awards). Empty fields are highlighted with a <strong>Missing</strong>{" "}
-          badge so they know exactly what to complete.
-          No admin action required. Completed changes appear in the{" "}
+          Leaders click the <strong>"Already in the directory? Manage or remove
+          your profile"</strong> link at the bottom of the Database and Analytics
+          pages. It opens the <strong>Manage Profile</strong> modal — they enter
+          their name and email and receive a magic link. Once they click the
+          link, they see a pre-filled form covering every field: name, role,
+          organisation, photo, bio, LinkedIn, expertise, country, years of
+          experience, geographical scope, countries of work, and notable items
+          (publications, projects, awards). Empty fields are highlighted with an
+          amber <strong>Missing</strong> badge so they know exactly what to
+          complete. No admin action required. Completed changes appear in the{" "}
           <strong>Activity Log</strong> for admin visibility.
         </P>
 
