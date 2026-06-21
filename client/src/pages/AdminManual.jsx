@@ -1013,6 +1013,14 @@ const SECTIONS = [
           src="screenshots/admin-manual/14-manage-profile-edit.png"
           caption="Profile edit form — pre-filled with existing data; empty fields show a Missing badge"
         />
+        <Img
+          src="screenshots/admin-manual/15-manage-profile-sent-update.png"
+          caption="Check your email — confirmation shown after requesting an update magic link"
+        />
+        <Img
+          src="screenshots/admin-manual/16-manage-profile-sent-delete.png"
+          caption="Check your email — confirmation shown after requesting a removal magic link"
+        />
         <H3>Email setup: Google Apps Script relay</H3>
         <P>
           Magic link emails are sent via a Google Apps Script web app that relays
