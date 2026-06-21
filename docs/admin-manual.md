@@ -173,7 +173,7 @@ These are hardcoded reference items (not database-driven) — use this tab to cr
 
 Controls who can access the admin console and what they can do. This tab is only visible to super admins. See **[Managing Admin Users](#managing-admin-users)** below for the full roles reference, step-by-step instructions, and activity log details.
 
-Leaders can now manage their own profiles entirely without admin intervention. The flow uses a Supabase Edge Function (`send-email`) to deliver secure, single-use magic links.
+Leaders can now manage their own profiles entirely without admin intervention. The flow uses the `self-service` Supabase Edge Function to generate signed tokens and deliver magic link emails.
 
 **User journey — fully self-service:**
 1. Leader clicks "Manage your profile" from the Database, Analytics, or Submit page
@@ -202,7 +202,7 @@ This email is used solely for sending automated profile management links (system
 
 **How email sending works:**
 
-Email is sent via a Google Apps Script Web App deployed under the Transform Health Google Workspace account. The `send-email` Supabase Edge Function calls the Apps Script URL, which uses `MailApp.sendEmail()` to send from the designated Google account — no SMTP credentials are needed.
+Email is sent via a Google Apps Script Web App deployed under the Transform Health Google Workspace account. The `self-service` Supabase Edge Function calls the Apps Script URL, which uses `MailApp.sendEmail()` to send from the designated Google account — no SMTP credentials are needed.
 
 **Edge Function secrets** (configured in Supabase Dashboard → Settings → Edge Functions → Secrets):
 
@@ -214,10 +214,10 @@ Email is sent via a Google Apps Script Web App deployed under the Transform Heal
 
 **Security properties of the magic link flow:**
 
-- Tokens are generated server-side by the `generate-manage-token` Edge Function, signed with `MAGIC_LINK_SECRET`
-- When a leader lands on a magic link, `verify-manage-token` checks the signature and a 48-hour expiry before the edit form is shown
+- Tokens are generated server-side by the `self-service` Edge Function (`action: "generate"`), signed with `MAGIC_LINK_SECRET`
+- When a leader lands on a magic link, `self-service` (`action: "verify"`) checks the signature and a 48-hour expiry before the edit form is shown
 - Forged or expired tokens are silently rejected — no edit form is shown
-- The `send-email` function validates every recipient against the database before sending — it cannot be used to send arbitrary email
+- The `self-service` function validates every email recipient against the database before sending — it cannot be used to send arbitrary email
 
 **If email delivery stops working:**
 
@@ -225,7 +225,7 @@ Email is sent via a Google Apps Script Web App deployed under the Transform Heal
 2. Confirm the Google Apps Script Web App is still deployed under an active Transform Health Google account (redeployment is needed if the owning account changes)
 3. Check the Apps Script execution log for errors: Google Drive → find the script → Executions
 
-> **The `send-email` Edge Function is deployed** at `supabase/functions/send-email/`. To test after any change, send a test magic link from the **All Entries** tab using the enrichment email button on any live leader with an email on file.
+> **The `self-service` Edge Function is deployed** at `supabase/functions/self-service/`. It handles token generation, token verification, and email sending — all public self-service operations in one function. To test after any change, send a test magic link from the **All Entries** tab using the enrichment email button on any live leader with an email on file.
 
 **Email structure (current implementation):**
 
@@ -264,21 +264,27 @@ const token = btoa(JSON.stringify({ leaderId, mode, createdAt: Date.now() }));
 
 The entire email body is constructed as a template literal inside `requestManage()`. It uses inline `<table>` layout for email client compatibility. The function resolves avatar, LinkedIn URL, and expertise tags from the values passed by the find-profile step, falling back to database values if absent.
 
-**3. Edge Function (`supabase/functions/send-email/index.ts`)**
+**3. Edge Function (`supabase/functions/self-service/index.ts`)**
 
-The email is sent via a Supabase Edge Function that proxies through a Google Apps Script Web App:
+All public self-service operations are handled by a single Edge Function that dispatches on an `action` field:
 ```
-requestManage() → supabase.functions.invoke("send-email", { to, subject, html })
-                  → fetch(APPS_SCRIPT_URL) → Google Apps Script → SMTP send
-```
-- The Edge Function receives `{ to, subject, htmlBody }` and forwards it to a Google Apps Script URL configured via the `APPS_SCRIPT_URL` environment variable.
-- The Apps Script handles the actual SMTP delivery via Google Workspace.
-- No secrets are exposed to the client — the Apps Script URL is server-side only.
+Token request:
+  requestManage() → invoke("self-service", { action: "generate", leaderId, mode })
+                  → HMAC-sign token → return { token }
 
-**Fallback:** If the Edge Function call fails (e.g., email service down), `requestManage` catches the error and returns a manual URL to the user so they can still access their profile:
-```js
-return { ok: false, url, message: "Email service unavailable. Use this link instead:" };
+Email send:
+  requestManage() → invoke("self-service", { action: "send-email", to, subject, html })
+                  → fetch(APPS_SCRIPT_URL) → Google Apps Script → Google Workspace send
+
+Magic link click (App.jsx on mount):
+  → invoke("self-service", { action: "verify", token })
+  → verify signature + expiry → return { ok, leaderId, mode }
 ```
+
+- The `APPS_SCRIPT_URL` secret is server-side only — never exposed to the client.
+- Two functions total in the project (`self-service` + `manage-admin`), staying within the Supabase free tier limit of 2.
+
+> **Why one function?** Supabase free tier allows a maximum of 2 Edge Functions per project. Token generation, token verification, and email sending were consolidated into `self-service` (all public, no admin auth) to stay within that limit without paying for Pro.
 
 **URL management:** When a profile is found via "Find My Profile," the browser URL is updated to `?profile=FirstName+LastName` using `history.replaceState`. Both `?manage=` and `?profile=` params are cleaned up when the modal closes or on page reload after a save/delete.
 

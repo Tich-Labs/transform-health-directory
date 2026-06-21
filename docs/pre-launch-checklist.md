@@ -16,7 +16,7 @@ Items to complete before the platform goes live — for the technical team.
 - [x] `MAGIC_LINK_SECRET` set in Supabase Edge Function settings (HMAC signing for self-service tokens)
 - [x] `ADMIN_NOTIFY_EMAIL` set in Supabase Edge Function settings
 - [x] Magic link tokens are HMAC-SHA256 signed and verified server-side — forged tokens rejected
-- [x] `send-email` Edge Function: CORS locked to deployment origin, recipient validated against database, rate limited
+- [x] `self-service` Edge Function: CORS locked to deployment origin, recipient validated against database, rate limited (email action)
 - [x] `manage-admin` Edge Function: caller identity extracted from verified JWT (not client-supplied body)
 - [x] Admin email addresses moved to environment variables (`VITE_ADMIN_CC_EMAIL`, `VITE_ADMIN_NOTIFY_EMAIL`)
 - [x] GitHub Actions secrets updated with all four required vars
@@ -41,4 +41,4 @@ Items to complete before the platform goes live — for the technical team.
 
 - No SMTP secrets needed (`GOOGLE_SMTP_USER`, `GOOGLE_SMTP_PASS`) — the Apps Script uses `MailApp.sendEmail()` which sends from the script owner's Google account automatically
 - No custom domain needed — database is embedded at `transformhealth.rrzdev.co.za`
-- Supabase Free Tier limits: 2 Edge Functions (at limit), no PITR backups. Pro ($25/mo) if adding more functions
+- Supabase Free Tier limits: 2 Edge Functions per project — project uses exactly 2 (`self-service`, `manage-admin`), within limit. No PITR backups on free tier; manual SQL export required.

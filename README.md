@@ -148,34 +148,26 @@ Open `http://localhost:5173`.
 
 ## Before Going Live (Checklist)
 
-- [ ] Create `test_results` table in Supabase (run `scripts/create-test-results-table.sql`)
-- [ ] Re-enable admin auth gate — one-line change in `client/src/pages/Admin.jsx` (currently bypassed for testing)
-- [ ] Create admin user in Supabase Auth dashboard (email/password)
-- [ ] Update GitHub Actions CI secrets: add `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`, remove `VITE_APPS_SCRIPT_URL`
+- [x] Admin auth gate active — login required (`client/src/pages/Admin.jsx`)
+- [x] Admin user created in Supabase Auth (`noreply@transformhealthcoalition.org`)
+- [x] GitHub Actions secrets set: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_ADMIN_CC_EMAIL`, `VITE_ADMIN_NOTIFY_EMAIL`
+- [x] Edge Function secrets set: `APPS_SCRIPT_URL`, `MAGIC_LINK_SECRET`, `ADMIN_NOTIFY_EMAIL`
 - [ ] Set up email system for magic-link profile management:
 
   The self-service magic link flow lets leaders update or delete their own profiles with no account or password:
   1. Leader clicks "Manage your profile" on the site
   2. Enters name and email → system finds their profile
   3. Chooses "Update profile" or "Remove profile"
-  4. A magic link is sent directly to their email (no admin involved)
-  5. Leader clicks the link → edits fields directly or confirms deletion
+  4. A signed magic link is generated server-side and emailed directly to them (no admin involved)
+  5. Leader clicks the link → signature verified server-side → edit or delete form shown
   6. Changes save directly to the database — no admin approval needed
 
-  **What the client needs to provide:**
+  **What the client needs to configure** (in Supabase Dashboard → Settings → Edge Functions → Secrets):
+  - `APPS_SCRIPT_URL` — Google Apps Script Web App URL (no SMTP credentials needed — Apps Script uses `MailApp.sendEmail()` directly)
+  - `MAGIC_LINK_SECRET` — HMAC signing key, generate with `openssl rand -hex 32`
+  - `ADMIN_NOTIFY_EMAIL` — address that receives a notification when a leader self-updates or self-deletes
 
-  **Option A: Google Workspace (Recommended — Free for Workspace users)**
-  The client must:
-  1. Go to their **Google Account → Security → 2-Step Verification → App Passwords**
-  2. Generate a **16-character app password** for **"Mail"**
-  3. Share the app password with you
-
-  Then configure these secrets in **Supabase Dashboard → Settings → Functions → Secrets**:
-  - `APPS_SCRIPT_URL`: Google Apps Script Web App URL (email relay)
-  - `GOOGLE_SMTP_USER`: The Workspace email (e.g. `noreply@transformhealthcoalition.org`)
-  - `GOOGLE_SMTP_PASS`: The 16-character app password
-
-  The Edge Function is already deployed at `supabase/functions/send-email/`. It forwards email requests to a Google Apps Script Web App which handles SMTP delivery.
+  The `self-service` Edge Function at `supabase/functions/self-service/` handles token generation, token verification, and email sending. Two Edge Functions total in the project (`self-service` + `manage-admin`), within the Supabase free tier limit of 2.
 
 - [ ] Verify: Trigger a magic link from the site's "Manage your profile" flow and confirm the leader receives the email
 
@@ -222,20 +214,29 @@ docs/
 - All entries view supports sort order, pagination, and status badges for live/pending/rejected.
 - The sidebar includes a refresh action and a quick "View directory" link back to the public database.
 - Summary metrics surface pending, live, and rejected counts at the top of the console.
-- **Currently in test mode — no login required.** Supabase Auth is wired but bypassed. Will be re-enabled before launch.
+- Admin auth gate is active — login required. Admin user: `noreply@transformhealthcoalition.org` (created in Supabase Auth dashboard).
 
 ---
 
 ## Email Delivery
 
-Email sending uses a Supabase Edge Function (`supabase/functions/send-email/`) that proxies through a Google Apps Script Web App:
+Email sending uses the `self-service` Supabase Edge Function (`supabase/functions/self-service/`) which proxies through a Google Apps Script Web App. The same function also handles magic link token generation and verification — consolidating all public self-service operations into one function to stay within the Supabase free tier limit of 2 Edge Functions.
 
 ```
-requestManage() → supabase.functions.invoke("send-email")
-                  → Google Apps Script → Google Workspace SMTP
+requestManage() → invoke("self-service", { action: "send-email", to, subject, html })
+                → fetch(APPS_SCRIPT_URL) → Google Apps Script → Google Workspace send
+
+Magic link click → invoke("self-service", { action: "verify", token })
+                 → HMAC signature + expiry check → { ok, leaderId, mode }
 ```
 
-The `APPS_SCRIPT_URL`, `GOOGLE_SMTP_USER`, and `GOOGLE_SMTP_PASS` secrets are configured in the Supabase project dashboard. The `apps-script/` folder contains the legacy Apps Script code (retained for reference).
+Three secrets are required in Supabase Dashboard → Settings → Edge Functions → Secrets:
+
+- `APPS_SCRIPT_URL` — Google Apps Script Web App URL (no SMTP credentials needed)
+- `MAGIC_LINK_SECRET` — HMAC-SHA256 signing key for self-service tokens
+- `ADMIN_NOTIFY_EMAIL` — address notified on every self-service update or deletion
+
+The `apps-script/` folder contains the Apps Script source (`Code.gs`) — deploy it as a Web App under Transform Health's Google account.
 
 ---
 

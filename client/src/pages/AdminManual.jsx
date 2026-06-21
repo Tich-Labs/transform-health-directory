@@ -468,7 +468,7 @@ const SECTIONS = [
 
         <H3>What if the email never sent?</H3>
         <P>
-          Check that the <Code>send-email</Code> Supabase function is deployed and{" "}
+          Check that the <Code>self-service</Code> Supabase function is deployed and{" "}
           <Code>APPS_SCRIPT_URL</Code> is configured. If configured correctly:
         </P>
         <Ul>
@@ -960,8 +960,9 @@ const SECTIONS = [
       <>
         <P>
           Magic-link emails let leaders update their own profiles with no
-          account or password. The flow uses a Supabase Edge Function (
-          <Code>send-email</Code>).
+          account or password. The flow uses the <Code>self-service</Code>{" "}
+          Supabase Edge Function, which handles token generation, token
+          verification, and email sending in one place.
         </P>
         <H3>How the magic link flow works</H3>
         <Ol>
@@ -1011,16 +1012,18 @@ const SECTIONS = [
           </Li>
           <Li>
             Copy the deployment URL and set it as the{" "}
-            <Code>APPS_SCRIPT_URL</Code> environment variable on both the{" "}
-            <Code>send-email</Code> and <Code>manage-admin</Code> Supabase Edge
-            Functions
+            <Code>APPS_SCRIPT_URL</Code> secret on the{" "}
+            <Code>self-service</Code> Supabase Edge Function (Supabase Dashboard
+            → Settings → Edge Functions → Secrets)
           </Li>
         </Ol>
         <Note>
-          The <Code>send-email</Code> function must be deployed to the Supabase
-          project and have <Code>APPS_SCRIPT_URL</Code> configured for magic link
-          emails to send. If email fails, a fallback URL is shown directly in the
-          browser.
+          The <Code>self-service</Code> function must be deployed to the Supabase
+          project with <Code>APPS_SCRIPT_URL</Code>, <Code>MAGIC_LINK_SECRET</Code>,
+          and <Code>ADMIN_NOTIFY_EMAIL</Code> configured. It handles token
+          generation, token verification, and email sending — the project uses
+          exactly 2 Edge Functions (<Code>self-service</Code> +{" "}
+          <Code>manage-admin</Code>) to stay within the Supabase free tier limit.
         </Note>
 
       </>
@@ -1653,9 +1656,10 @@ const SECTIONS = [
 
         <H4>3. Email — Apps Script relay</H4>
         <Ul>
-          <Li>Confirm access to the Google account owning the Apps Script Web App, or deploy a fresh copy from <code>supabase/functions/send-email/</code></Li>
+          <Li>Confirm access to the Google account owning the Apps Script Web App, or deploy a fresh copy from <code>apps-script/Code.gs</code></Li>
           <Li>Confirm <Code>noreply@transformhealthcoalition.org</Code> is accessible</Li>
-          <Li>Deploy <Code>send-email</Code> Edge Function and configure <Code>APPS_SCRIPT_URL</Code></Li>
+          <Li>Deploy <Code>self-service</Code> Edge Function (<code>supabase/functions/self-service/</code>) and configure secrets: <Code>APPS_SCRIPT_URL</Code>, <Code>MAGIC_LINK_SECRET</Code>, <Code>ADMIN_NOTIFY_EMAIL</Code></Li>
+          <Li>Note: project uses exactly 2 Edge Functions (<Code>self-service</Code> + <Code>manage-admin</Code>) — within Supabase free tier limit of 2</Li>
         </Ul>
 
 
