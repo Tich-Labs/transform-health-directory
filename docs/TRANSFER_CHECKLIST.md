@@ -12,7 +12,7 @@ This document lists everything required to transfer the Women Leaders in Digital
   - `VITE_SUPABASE_ANON_KEY`
   - `VITE_ADMIN_CC_EMAIL` — staff email CC'd on enrichment emails
   - `VITE_ADMIN_NOTIFY_EMAIL` — address that receives self-service action notifications
-- [ ] **Remove stale secrets** (legacy Apps Script / Firebase vars) if present
+- [ ] **Remove stale secrets** (legacy Apps Script vars) if present
 - [x] **Confirm CI/CD is operational** — push to `main` triggers automatic build + deploy
 - [ ] **Verify branch protection** rules are configured on `main` if desired
 
@@ -37,11 +37,6 @@ This document lists everything required to transfer the Women Leaders in Digital
 
 ## 5. Assets & Branding
 
-- [ ] **Logo URLs** — confirm WordPress asset paths remain stable:
-  - Logo: `https://transformhealthcoalition.org/wp-content/themes/th/assets/images/main_logo.svg`
-  - Footer icon: `https://transformhealthcoalition.org/wp-content/themes/th/assets/images/footer_icon_bg.svg`
-  - Favicon: hotlinked from same logo URL via `client/index.html`
-- [ ] **Consider downloading local copies** of brand assets to remove external dependency
 - [ ] **Brand colours** are defined in `client/tailwind.config.cjs` under `brand:` — verify they match current brand guidelines
 
 ## 6. Documentation

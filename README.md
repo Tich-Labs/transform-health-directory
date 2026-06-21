@@ -129,7 +129,7 @@ Open `http://localhost:5173`.
      - `VITE_SUPABASE_ANON_KEY`
      - `VITE_ADMIN_CC_EMAIL`
      - `VITE_ADMIN_NOTIFY_EMAIL`
-   - Remove any old Apps Script or Firebase secrets if present
+   - Remove any old Apps Script secrets if present
 
 2. **Enable GitHub Pages:**
    - Go to **Settings → Pages**

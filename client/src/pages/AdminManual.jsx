@@ -1519,8 +1519,7 @@ const SECTIONS = [
         <Ul>
           <Li><strong>Google Sheets + Apps Script</strong> — Used in the initial prototype. Functional for small datasets but lacks proper querying, has a 6-minute execution limit, requires manual redeploy on every code change, and cannot handle photo uploads. <strong>Rejected.</strong></Li>
           <Li><strong>Tableau / Power BI</strong> — Strong visualisation tools but designed for dashboards and reporting, not for interactive profile browsing with CRUD operations. Require per-user licensing. <strong>Rejected.</strong></Li>
-          <Li><strong>Firebase</strong> — Evaluated as a potential backend but introduced vendor lock-in and its document model is less suited for relational leader data. <strong>Rejected.</strong></Li>
-          <Li><strong>Supabase (chosen)</strong> — Open-source Firebase alternative providing PostgreSQL, file storage, authentication, and edge functions in a single platform. Generous free tier, no per-user licensing. <strong>Selected.</strong></Li>
+          <Li><strong>Supabase (chosen)</strong> — Open-source platform providing PostgreSQL, file storage, authentication, and edge functions in a single platform. Generous free tier, no per-user licensing. <strong>Selected.</strong></Li>
           <Li><strong>React + Vite (frontend)</strong> — Modern component-based framework with Tailwind CSS for brand-consistent styling. No licensing cost. <strong>Selected.</strong></Li>
         </Ul>
 
@@ -1639,7 +1638,7 @@ const SECTIONS = [
         <Ul>
           <Li>Transfer repo ownership from <code>Tich-Labs/transform-health-directory</code> to Transform Health's GitHub org, or add team members as Admin collaborators</Li>
           <Li>Set GitHub Actions secrets in the new repo: <code>VITE_SUPABASE_URL</code>, <code>VITE_SUPABASE_ANON_KEY</code></Li>
-          <Li>Remove any stale secrets (Firebase, legacy Apps Script vars)</Li>
+          <Li>Remove any stale secrets (legacy Apps Script vars)</Li>
           <Li>Verify CI/CD works — push to <code>main</code> triggers auto-deploy</Li>
         </Ul>
 
@@ -1659,18 +1658,10 @@ const SECTIONS = [
           <Li>Deploy <Code>send-email</Code> Edge Function and configure <Code>APPS_SCRIPT_URL</Code></Li>
         </Ul>
 
-        <H4>4. Domain &amp; Hosting</H4>
-        <Ul>
-          <Li>Current URL: <code>https://tich-labs.github.io/transform-health-directory/</code></Li>
-          <Li>Decide on custom domain — e.g. <code>database.transformhealthcoalition.org</code></Li>
-          <Li>If custom domain: configure DNS CNAME to GitHub Pages, then update GitHub Pages settings</Li>
-          <Li>Alternative: migrate to Vercel for simpler env var management and built-in analytics</Li>
-        </Ul>
+
 
         <H4>5. Assets &amp; Branding</H4>
         <Ul>
-          <Li>Confirm WordPress asset URLs are stable (logo, footer icon, favicon — all hotlinked from <code>transformhealthcoalition.org</code>)</Li>
-          <Li>Consider downloading local copies to remove external dependency</Li>
           <Li>Brand colours are defined in <code>tailwind.config.cjs</code> under <code>brand:</code> — verify against current guidelines</Li>
         </Ul>
 
@@ -1718,8 +1709,6 @@ const SECTIONS = [
           <Li>ORCID integration for optional researcher verification</Li>
           <Li>Open Badges / Verifiable Credentials (W3C standard)</Li>
           <Li>Supabase Auth signInWithOtp() for production-grade magic links</Li>
-          <Li>Custom domain (database.transformhealthcoalition.org)</Li>
-          <Li>Vercel deployment for simpler env management</Li>
           <Li>CSV/PDF export for search results</Li>
         </Ul>
 

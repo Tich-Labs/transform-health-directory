@@ -15,8 +15,7 @@
 ## Frontend Setup
 - [ ] `.env` file created in `client/` folder
 - [ ] `VITE_APPS_SCRIPT_URL` set to your deployed Web App URL
-- [ ] Firebase project created (for profile photos)
-- [ ] Firebase config added to `.env`
+
 
 ## Local Testing
 - [ ] `npm install` completed
@@ -49,5 +48,5 @@
 **Notes:**
 - Apps Script URL: _______________________
 - Admin password: _______________________
-- Firebase project: _______________________
+
 - GitHub Pages URL: _______________________
