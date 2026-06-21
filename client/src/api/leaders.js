@@ -282,10 +282,12 @@ export const api = {
         throw new Error("Leader email not found");
       }
 
-      const token = btoa(
-        JSON.stringify({ leaderId, mode, createdAt: Date.now() })
+      const { data: tokenData, error: tokenErr } = await supabase.functions.invoke(
+        "generate-manage-token",
+        { body: { leaderId, mode } },
       );
-      const manageUrl = `${window.location.origin}${window.location.pathname}?manage=${token}`;
+      if (tokenErr || !tokenData?.token) throw new Error("Failed to generate secure token");
+      const manageUrl = `${window.location.origin}${window.location.pathname}?manage=${tokenData.token}`;
       const isDelete = mode === "delete";
       const isEnrichment = missingFields && missingFields.length > 0;
       const subject = isEnrichment
@@ -444,21 +446,16 @@ export const api = {
       return { ok: true, message: "Magic link sent to " + email };
     } catch (err) {
       console.error("requestManage failed:", err);
-      const token = btoa(
-        JSON.stringify({ leaderId, mode, createdAt: Date.now() })
-      );
-      const url = `${window.location.origin}${window.location.pathname}?manage=${token}`;
       return {
         ok: false,
-        url,
-        message: "Email service unavailable. Use this link instead:",
+        message: "We couldn't send your link right now. Please contact the admin team for help.",
       };
     }
   },
 
   // Admin-triggered enrichment: save leader email and send magic link highlighting missing fields
   sendEnrichmentLink: async ({ leaderId, email }) => {
-    const CONTACT = "ndifanji.namacha@transformhealthcoalition.org";
+    const CONTACT = import.meta.env.VITE_ADMIN_CC_EMAIL;
 
     // Save the admin-provided email to the leader's record
     const { error: saveErr } = await supabase
@@ -560,7 +557,7 @@ export const api = {
     // Send to the configured noreply address which can forward to admin team
     const { error } = await supabase.functions.invoke("send-email", {
       body: {
-        to: "noreply@transformhealthcoalition.org",
+        to: import.meta.env.VITE_ADMIN_NOTIFY_EMAIL,
         subject,
         html,
       },

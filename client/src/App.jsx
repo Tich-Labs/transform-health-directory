@@ -13,6 +13,7 @@ const Analytics = lazy(() => import("./pages/Analytics"));
 const ManageProfile = lazy(() => import("./pages/ManageProfile"));
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
+import { supabase } from "./supabase";
 
 const queryClient = new QueryClient();
 
@@ -60,21 +61,20 @@ function App() {
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
 
-  // Parse ?manage= token on mount for self-service magic link landing
+  // Parse ?manage= token on mount — verify signature server-side before trusting it
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const t = params.get("manage");
-    if (t) {
-      try {
-        const decoded = JSON.parse(atob(t));
-        if (decoded?.leaderId) {
-          setManageTokenData(decoded);
+    if (!t) return;
+    supabase.functions
+      .invoke("verify-manage-token", { body: { token: t } })
+      .then(({ data, error }) => {
+        if (!error && data?.ok) {
+          setManageTokenData({ leaderId: data.leaderId, mode: data.mode });
           setShowManageModal(true);
         }
-      } catch {
-        // invalid token, ignore
-      }
-    }
+        // silently ignore invalid / expired tokens
+      });
   }, []);
 
   function toggleChrome() {
@@ -312,7 +312,7 @@ function App() {
           onClick={() => navigate("admin")}
           title="Admin"
           aria-label="Admin login"
-          className="fixed bottom-[5.5rem] right-5 z-[9999] w-7 h-7 flex items-center justify-center text-gray-300 hover:text-gray-500 transition-colors cursor-pointer"
+          className="fixed bottom-[5.5rem] right-5 z-[9999] w-7 h-7 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6l-8-4z"/>

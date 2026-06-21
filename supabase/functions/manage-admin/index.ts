@@ -17,12 +17,25 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS_HEADERS });
 
   try {
-    const { action, email, role, invokerEmail, origin } = await req.json();
+    const { action, email, role, origin } = await req.json();
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
     if (!serviceKey) return respond({ error: "Service role key not configured" }, 500);
     if (!supabaseUrl) return respond({ error: "SUPABASE_URL not configured" }, 500);
+
+    // Extract the caller's identity from the verified bearer token — never trust client-supplied email.
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const bearerToken = authHeader.replace(/^Bearer\s+/i, "");
+    if (!bearerToken) return respond({ error: "Unauthorised" }, 401);
+
+    const userRes = await fetch(supabaseUrl + "/auth/v1/user", {
+      headers: { apikey: serviceKey, Authorization: "Bearer " + bearerToken },
+    });
+    if (!userRes.ok) return respond({ error: "Unauthorised" }, 401);
+    const userJson: { email?: string } = await userRes.json();
+    const invokerEmail = userJson.email;
+    if (!invokerEmail) return respond({ error: "Unauthorised" }, 401);
 
     const headers = {
       apikey: serviceKey,
