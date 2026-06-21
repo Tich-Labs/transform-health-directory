@@ -7,20 +7,20 @@ This document lists everything required to transfer the Women Leaders in Digital
 ## 1. Source Code & Repository
 
 - [x] **Transfer GitHub repository ownership** — Transform admin added as collaborator; repo to be moved to their organisation
-- [ ] **Verify GitHub Actions secrets** are set in the new repo:
+- [x] **Verify GitHub Actions secrets** are set in the new repo:
   - `VITE_SUPABASE_URL`
   - `VITE_SUPABASE_ANON_KEY`
   - `VITE_ADMIN_CC_EMAIL` — staff email CC'd on enrichment emails
   - `VITE_ADMIN_NOTIFY_EMAIL` — address that receives self-service action notifications
 - [ ] **Remove stale secrets** (legacy Apps Script / Firebase vars) if present
-- [ ] **Confirm CI/CD is operational** — push to `main` triggers automatic build + deploy
+- [x] **Confirm CI/CD is operational** — push to `main` triggers automatic build + deploy
 - [ ] **Verify branch protection** rules are configured on `main` if desired
 
 ## 2. Supabase Project
 
 - [x] **Supabase project created** under Transform Health account (`qglymhpdsjzkmdvzizdu`)
 - [ ] **Grant team access** — invite collaborators via Supabase Dashboard → Project Settings → Team
-- [ ] **Verify Edge Function secrets** are configured in Supabase Dashboard → Settings → Edge Functions → Secrets:
+- [x] **Verify Edge Function secrets** are configured in Supabase Dashboard → Settings → Edge Functions → Secrets:
   - `APPS_SCRIPT_URL` — Google Apps Script Web App URL **(required)**
   - `MAGIC_LINK_SECRET` — HMAC secret for signing self-service tokens **(required)** — generate with `openssl rand -hex 32`
   - `ADMIN_NOTIFY_EMAIL` — address to receive self-service action notifications **(required)**
@@ -28,18 +28,12 @@ This document lists everything required to transfer the Women Leaders in Digital
 - [x] **Storage bucket** `profile-photos` exists and is public-read
 - [ ] **Back up database** — export a SQL dump of all tables (`leaders`, `requests`, `admin_roles`)
 
-> **Note:** Only `APPS_SCRIPT_URL` secret is needed. `GOOGLE_SMTP_USER` and `GOOGLE_SMTP_PASS` are not used — the Apps Script uses `MailApp.sendEmail()` directly (no SMTP credentials needed).
+> **Note:** `GOOGLE_SMTP_USER` and `GOOGLE_SMTP_PASS` are not used — the Apps Script uses `MailApp.sendEmail()` directly (no SMTP credentials needed). All three secrets above are required.
 
 ## 3. Email & Google Workspace
 
 - [ ] **Google Apps Script Web App** — confirm which Google account owns the deployed script (if it's already a TH account, nothing to do)
 - [ ] **If redeploying:** deploy `apps-script/Code.gs` as a new Web App under Transform Health's Google account, then update the `APPS_SCRIPT_URL` secret
-
-## 4. Domain & Hosting
-
-- [x] **No custom domain needed** — database is embedded into TH site at `transformhealth.rrzdev.co.za`
-- [ ] **Current URL:** `https://tich-labs.github.io/transform-health-directory/` — clarify if/when GitHub Pages will be disabled
-- [ ] **If using Vercel or other host:** set up project and configure env vars
 
 ## 5. Assets & Branding
 
@@ -52,10 +46,10 @@ This document lists everything required to transfer the Women Leaders in Digital
 
 ## 6. Documentation
 
-- [ ] `docs/admin-manual.md` — markdown source for the in-app Admin Manual
-- [ ] `docs/TRANSFER_CHECKLIST.md` — this file
+- [x] `docs/admin-manual.md` — updated to reflect current email architecture and token security model
+- [ ] `docs/TRANSFER_CHECKLIST.md` — this file (review before final handover)
 - [ ] In-app **Product Report** — accessible at `/#admin?tab=manual&section=product-report`
-- [ ] **README.md** — updated to reflect current codebase state
+- [x] **README.md** — updated to reflect current codebase state (auth active, correct env vars)
 - [ ] **Admin Manual PDF** — can be generated from the in-app "Download PDF" button
 - [ ] **Screenshots / video walkthrough** — being prepared by current team
 
@@ -93,9 +87,9 @@ The project currently runs on the **Supabase Free Tier** (`qglymhpdsjzkmdvzizdu`
 
 ### Recommended Upgrade Path
 
-1. **Now (Free):** Fine for pilot. Manually export SQL backups via Dashboard → SQL Editor → `SELECT * FROM leaders`
-2. **If adding more Edge Functions:** Pro — removes 2-function limit, adds PITR, 8 GB bandwidth
-3. **Production launch:** Pro at minimum for PITR backups and support
+1. **Immediate:** Upgrade to **Pro ($25/mo)** — the project now has 4 Edge Functions, which exceeds the free tier limit of 2. Pro removes this cap and adds PITR backups and 8 GB bandwidth.
+2. **Now (if staying free temporarily):** Manually export SQL backups via Dashboard → SQL Editor → `SELECT * FROM leaders`
+3. **Production launch:** Pro at minimum for PITR backups and support SLA
 
 ## 9. Quick Reference
 
