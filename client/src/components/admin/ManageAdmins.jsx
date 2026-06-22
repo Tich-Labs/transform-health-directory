@@ -1,3 +1,50 @@
+import { useState } from "react";
+import { api } from "../../api/leaders";
+import { toCsv, downloadCsv } from "../../utils/adminUtils";
+
+function BackupSection() {
+  const [status, setStatus] = useState({});
+
+  async function handleExport(table) {
+    setStatus((s) => ({ ...s, [table]: "loading" }));
+    try {
+      const data = table === "leaders" ? await api.exportLeaders() : await api.exportRequests();
+      const date = new Date().toISOString().slice(0, 10);
+      downloadCsv(`th-${table}-${date}.csv`, toCsv(data));
+      setStatus((s) => ({ ...s, [table]: "done" }));
+      setTimeout(() => setStatus((s) => ({ ...s, [table]: null })), 2000);
+    } catch (err) {
+      setStatus((s) => ({ ...s, [table]: "error" }));
+    }
+  }
+
+  const btn = (table, label) => {
+    const state = status[table];
+    return (
+      <button
+        onClick={() => handleExport(table)}
+        disabled={state === "loading"}
+        className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-[1.3rem] text-gray-700 font-medium transition-colors disabled:opacity-50"
+      >
+        {state === "loading" ? "Exporting…" : state === "done" ? "✓ Downloaded" : state === "error" ? "Error — retry" : label}
+      </button>
+    );
+  };
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-6 mt-8">
+      <h3 className="text-[1.6rem] font-semibold text-gray-800 mb-1">Database Backup</h3>
+      <p className="text-[1.3rem] text-gray-500 mb-4">
+        Download a CSV snapshot of each table. Run this regularly — the Supabase free tier has no automatic backups.
+      </p>
+      <div className="flex flex-wrap gap-3">
+        {btn("leaders", "⬇ Export Leaders")}
+        {btn("requests", "⬇ Export Requests")}
+      </div>
+    </div>
+  );
+}
+
 export default function ManageAdmins({
   newAdminEmail, setNewAdminEmail,
   newAdminRole, setNewAdminRole,
@@ -222,6 +269,7 @@ export default function ManageAdmins({
           </div>
         )}
       </div>
+      <BackupSection />
     </div>
   );
 }

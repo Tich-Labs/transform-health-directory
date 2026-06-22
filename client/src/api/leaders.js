@@ -350,6 +350,18 @@ export const api = {
   },
 
   // Log a self-service action (update or delete) in the requests table for the activity log
+  exportLeaders: async () => {
+    const { data, error } = await supabase.from("leaders").select("*").order("created_at", { ascending: true });
+    if (error) throw error;
+    return data;
+  },
+
+  exportRequests: async () => {
+    const { data, error } = await supabase.from("requests").select("*").order("created_at", { ascending: true });
+    if (error) throw error;
+    return data;
+  },
+
   logSelfService: async ({ leaderId, firstName, lastName, action, details }) => {
     const { error } = await supabase.from("requests").insert([{
       id: crypto.randomUUID(),

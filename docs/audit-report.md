@@ -134,8 +134,8 @@ Issues discovered during end-to-end testing after the audit was completed.
 | `requestManage` refactored to `request-manage` EF action — `leader_email` never touches client | ✅ Ready — deployed |
 | `getLeaderById` uses `public_leaders` view | ✅ Ready |
 | Self-service UI error state fixed — error stays on send-link step | ✅ Ready |
-| Database backup taken | ❌ **Not Ready** (operational) |
-| End-to-end email flow tested | ⚠️ **In progress** — root cause (Deno KV crash) fixed; re-test pending |
+| Database backup | ✅ Ready — manual CSV export available in Admin → Manage Admin Users → Database Backup; documented in admin-manual.md |
+| End-to-end email flow tested | ✅ Ready — magic link tested for both admin-sent and leader self-service on local |
 | Supabase project access transferred to client | ✅ Ready — client is already on their own Supabase project |
 | GitHub repo transferred to Transform Health GitHub org | ❌ **Not Ready** — transfer steps documented in `transfer-checklist.md §1` |
 | Analytics configured (GA4 / Plausible) | ✅ Documented as future feature — proposal in `docs/01-product-overview.md` |

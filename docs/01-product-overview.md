@@ -162,6 +162,22 @@ User searches directory (by name, expertise, country)
 
 ### Near-term Enhancements
 
+#### Automated Backup Notifications — Scheduled Reminder Emails
+
+**Status:** Future feature — manual CSV export is available today in Admin → Manage Admin Users → Database Backup  
+**Effort:** Small (half a day)
+
+Currently, backups require an admin to remember to export manually. A notification system would remove the human dependency.
+
+**How it would work:**
+
+1. A scheduled Google Apps Script trigger (e.g. monthly on the 1st) sends a reminder email to the admin team: "Your monthly database backup is due — export Leaders and Requests from the admin console."
+2. Alternatively, a Supabase cron job (Pro plan feature) or a GitHub Actions scheduled workflow could trigger the export automatically and email the CSV as an attachment.
+
+**Why not now:** Manual export via the admin console is sufficient for the current scale. A notification is only worth building once the team has established a regular backup rhythm and finds manual triggering impractical.
+
+---
+
 #### Google Analytics 4 (GA4) — Visitor Insights
 
 **Status:** Ready to implement — awaiting client Measurement ID  

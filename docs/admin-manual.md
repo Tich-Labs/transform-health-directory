@@ -347,6 +347,17 @@ Super admins cannot be removed through the console (this prevents accidental loc
 
 Every add and remove action is recorded in the **Admin activity** section at the bottom of the Manage Admin Users tab. Each entry shows what happened, who performed the action, and when. This log is read-only and cannot be edited.
 
+### Database Backup
+
+The **Database Backup** section at the bottom of the Manage Admin Users tab lets you export a CSV snapshot of each table. Two buttons are available:
+
+- **Export Leaders** — downloads a CSV of all leader profiles including all fields (public and private). Filename: `th-leaders-YYYY-MM-DD.csv`
+- **Export Requests** — downloads a CSV of all submissions and requests. Filename: `th-requests-YYYY-MM-DD.csv`
+
+**Why this matters:** The Supabase free tier does not include automatic backups or Point-in-Time Recovery (PITR). If data is accidentally deleted or corrupted, there is no way to restore it without a manual export. Run this backup at least once a month, or before making any bulk changes.
+
+> **Recommended:** Store the exported CSVs in a shared Google Drive folder accessible to the Transform Health team — not just on one person's laptop.
+
 ---
 
 ## Duplicate Detection
