@@ -101,6 +101,29 @@ Both repos are configured to auto-deploy to GitHub Pages via GitHub Actions on e
 
 ---
 
+### Database Separation
+
+Production and staging use **separate Supabase projects** to keep data isolated:
+
+| Environment | Supabase Project | GitHub Secrets |
+|-------------|-----------------|----------------|
+| **Production** | Existing project (`qglymhpdsjzkmdvzizdu`) | Set in `Transform-Health-2/Women-leaders-database` repo |
+| **Staging** | New project (create at supabase.com) | Set in `Tich-Labs/transform-health-directory` repo |
+
+### Setting up a Staging Supabase Project
+
+1. **Create a new project** at [supabase.com](https://supabase.com)
+2. **Run migrations** in `supabase/migrations/` in numeric order (start with `001_schema.sql`)
+3. **Create the `profile-photos` Storage bucket** — public read, authenticated write
+4. **Set Edge Function secrets** in Supabase Dashboard → Settings → Edge Functions → Secrets:
+   - `APPS_SCRIPT_URL` — Google Apps Script Web App URL
+   - `MAGIC_LINK_SECRET` — signing key for magic link tokens
+   - `ADMIN_NOTIFY_EMAIL` — notification email address
+5. **Set GitHub secrets** in the staging repo → Settings → Secrets and variables → Actions:
+   - `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_ADMIN_CC_EMAIL`, `VITE_ADMIN_NOTIFY_EMAIL`
+
+---
+
 ### Step 3: Frontend Environment
 
 ```bash

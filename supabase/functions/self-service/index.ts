@@ -14,6 +14,7 @@ declare namespace Deno {
 
 const ALLOWED_ORIGINS = [
   "https://tich-labs.github.io",
+  "https://transform-health-2.github.io",
   "https://transformhealthcoalition.org",
   "https://transformhealth.rrzdev.co.za",
   "http://localhost:5173",

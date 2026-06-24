@@ -26,8 +26,7 @@ const BAR_COLORS = [
   "#166534",
 ];
 
-const GEO_URL =
-  "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+import geoUrl from "world-atlas/countries-110m.json";
 
 function toTags(expertise) {
   if (!expertise) return [];
@@ -223,7 +222,7 @@ export default function Analytics({ onManageProfile, onGoToDirectory }) {
                 backgroundColor: "transparent",
               }}
             >
-              <Geographies geography={GEO_URL}>
+              <Geographies geography={geoUrl}>
                 {({ geographies }) =>
                   geographies.map((geo) => {
                     const atlasName = geo.properties.name;
