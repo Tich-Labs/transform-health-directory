@@ -268,14 +268,14 @@ const SECTIONS = [
     content: (
       <>
         <P>
-          Use this checklist when reviewing profiles. A profile is ready to approve when all required fields are present and meet quality standards.
+          Use this as your quick reference when reviewing a submission. It covers the <strong>mandatory fields</strong> every profile must pass before approval. Optional fields (photo, LinkedIn, notable items) are a bonus — never reject solely because they are missing.
         </P>
 
-        <H3>Pre-Approval Checklist</H3>
-        <P className="font-semibold text-brand-navy mb-3">
-          Check all of these before clicking Approve:
+        <H3>Required Fields Check</H3>
+        <P className="text-gray-500 text-[1.3rem] mb-3">
+          All of the following must be present and meet the standard before you click Approve:
         </P>
-        <ul className="list-none ml-0 mb-6 space-y-2">
+        <ul className="list-none ml-0 mb-4 space-y-2">
           <CheckItem>
             <strong>Name:</strong> Real name, proper spelling, no titles
           </CheckItem>
@@ -301,6 +301,11 @@ const SECTIONS = [
             <strong>Digital Health Link:</strong> Profile clearly relates to digital health (not just general healthcare)
           </CheckItem>
         </ul>
+
+        <div className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 mb-6 text-[1.3rem] text-gray-600">
+          <strong>Optional fields</strong> — approve even if missing: Photo, LinkedIn URL, Years of experience, Notable items, Countries of work.<br />
+          For the full holistic review process (duplicates, links, appropriateness), see the <strong>Data Quality Standards</strong> document in the Quick Start Hub.
+        </div>
 
         <H3>Common Rejection Reasons</H3>
         <Table
