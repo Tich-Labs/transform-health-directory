@@ -166,8 +166,74 @@ const SECTIONS = [
     content: (
       <>
         <P>
-          Quick access to all documentation. Find answers, understand the product, and learn best practices.
+          Quick access to all project documentation. Each card below opens a document on <strong>GitHub</strong> — this is where the full written guides are stored. GitHub renders them as clean, readable pages (no coding knowledge needed — just click and read).
         </P>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg px-5 py-4 mb-6 text-[1.35rem] text-blue-800 leading-relaxed">
+          <strong>📂 About these links:</strong> All documentation is stored in the project's GitHub repository. When you click a card, GitHub opens the document as a formatted page. You do not need a GitHub account to read them.
+        </div>
+
+        <H3>Start Here — Admin Essentials</H3>
+        <P>If you're new to the admin console, read these two first.</P>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <DocCard
+            icon="🎯"
+            title="Data Quality Standards"
+            description="Profile approval criteria, field requirements, and what makes a publishable profile. You'll use this every time you review a submission."
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/05-data-quality-standards.md"
+          />
+          <DocCard
+            icon="❓"
+            title="Admin FAQ"
+            description="Answers to common admin questions about workflows, approvals, and troubleshooting."
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/04-faq.md#for-everyone"
+          />
+        </div>
+
+        <H3>Understand the Product</H3>
+        <P>Background reading to understand what you're managing and why it was built this way.</P>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <DocCard
+            icon="🚀"
+            title="Product Overview"
+            description="Mission, features, user roles, and business strategy. Read this first to understand the big picture."
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/01-product-overview.md"
+          />
+          <DocCard
+            icon="📋"
+            title="Full Documentation Index"
+            description="Master list of all documents organised by audience and task — useful if you're looking for something specific."
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/00-documentation-index.md"
+          />
+        </div>
+
+        <H3>User Guides (for Admin Context)</H3>
+        <P>These are written for leaders and nominators, but reading them helps you understand what submitters experience — useful when reviewing or troubleshooting.</P>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <DocCard
+            icon="👩‍💼"
+            title="Submit Profile Guide"
+            description="The step-by-step journey a leader goes through to submit their profile."
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/02-submit-profile-guide.md"
+          />
+          <DocCard
+            icon="🤝"
+            title="Nominator Guide"
+            description="How someone nominates a leader — understand the nomination workflow and what to expect on your end."
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/03-nominator-guide.md"
+          />
+        </div>
+
+        <H3>Legal & Privacy</H3>
+        <div className="grid grid-cols-1 gap-4 mb-6">
+          <DocCard
+            icon="🔒"
+            title="Privacy Policy & Data Handling"
+            description="GDPR/CCPA compliance, data retention, and user rights. Reference this when handling sensitive data or responding to data requests."
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/06-privacy-policy.md"
+          />
+        </div>
+
         <H3>What's New</H3>
         <Ul>
           <Li>
@@ -183,71 +249,12 @@ const SECTIONS = [
             appear on tabs where they apply
           </Li>
           <Li>
-            <strong>Tooltips</strong> — hover over any sidebar tab to see its full
-            label
+            <strong>Tooltips</strong> — hover over any sidebar tab to see its full label
           </Li>
         </Ul>
 
-        <H3>Core Resources for Admins</H3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <DocCard
-            icon="🎯"
-            title="Data Quality Standards"
-            description="Profile approval criteria, field requirements, and what makes a publishable profile."
-            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/05-data-quality-standards.md"
-          />
-          <DocCard
-            icon="❓"
-            title="Admin FAQ"
-            description="Answers to common admin questions about workflows, approvals, and troubleshooting."
-            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/04-faq.md#for-everyone"
-          />
-        </div>
-
-        <H3>Understand the Product</H3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <DocCard
-            icon="🚀"
-            title="Product Overview"
-            description="Mission, features, user roles, and business strategy. Read this first to understand the big picture."
-            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/01-product-overview.md"
-          />
-          <DocCard
-            icon="📋"
-            title="Documentation Index"
-            description="Master navigation hub for all documentation organized by audience and task. (External — opens on GitHub)"
-            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/00-documentation-index.md"
-          />
-        </div>
-
-        <H3>For Context: User Guides</H3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <DocCard
-            icon="👩‍💼"
-            title="Submit Profile Guide"
-            description="Understand how leaders submit profiles — helps you review with empathy and catch issues early."
-            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/02-submit-profile-guide.md"
-          />
-          <DocCard
-            icon="🤝"
-            title="Nominator Guide"
-            description="How people nominate leaders — understand the nomination workflow and what to expect."
-            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/03-nominator-guide.md"
-          />
-        </div>
-
-        <H3>Legal & Privacy</H3>
-        <div className="grid grid-cols-1 gap-4 mb-6">
-          <DocCard
-            icon="🔒"
-            title="Privacy Policy & Data Handling"
-            description="GDPR/CCPA compliance, data retention, user rights. Reference when handling sensitive data."
-            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/06-privacy-policy.md"
-          />
-        </div>
-
         <Tip>
-          <strong>Pro tip:</strong> Bookmark the Data Quality Standards — you'll reference it often when reviewing profiles. The FAQ section has common admin questions.
+          <strong>Pro tip:</strong> Bookmark the Data Quality Standards — you'll reference it every time you review a profile.
         </Tip>
       </>
     ),
