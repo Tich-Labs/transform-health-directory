@@ -71,6 +71,36 @@ npm install
 
 ---
 
+## Staging / Production Workflow
+
+This project uses a two-remote workflow:
+
+| Remote | URL | Role |
+|--------|-----|------|
+| `staging` | `github.com/Tich-Labs/transform-health-directory.git` | Internal staging — push here first, verify on GitHub Pages |
+| `origin` | `github.com/Transform-Health-2/Women-leaders-database.git` | Client production — push here after review |
+
+### Workflow
+
+```bash
+# 1. Push to staging, review on staging GitHub Pages
+git push staging main
+
+# 2. After verifying changes, push to production
+git push origin main
+```
+
+Always push to **staging first**, then to **origin** (production). This keeps them in sync — both will always point to the exact same commit.
+
+### GitHub Pages
+
+Both repos are configured to auto-deploy to GitHub Pages via GitHub Actions on every push to `main`. Each has its own URL:
+
+- **Staging:** `https://Tich-Labs.github.io/transform-health-directory/`
+- **Production:** `https://Transform-Health-2.github.io/Women-leaders-database/`
+
+---
+
 ### Step 3: Frontend Environment
 
 ```bash
