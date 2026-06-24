@@ -194,13 +194,13 @@ const SECTIONS = [
             icon="🎯"
             title="Data Quality Standards"
             description="Profile approval criteria, field requirements, and what makes a publishable profile."
-            link="https://github.com/Tich-Labs/transform-health-directory/blob/main/docs/05-data-quality-standards.md"
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/05-data-quality-standards.md"
           />
           <DocCard
             icon="❓"
             title="Admin FAQ"
             description="Answers to common admin questions about workflows, approvals, and troubleshooting."
-            link="https://github.com/Tich-Labs/transform-health-directory/blob/main/docs/04-faq.md#for-everyone"
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/04-faq.md#for-everyone"
           />
         </div>
 
@@ -210,13 +210,13 @@ const SECTIONS = [
             icon="🚀"
             title="Product Overview"
             description="Mission, features, user roles, and business strategy. Read this first to understand the big picture."
-            link="https://github.com/Tich-Labs/transform-health-directory/blob/main/docs/01-product-overview.md"
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/01-product-overview.md"
           />
           <DocCard
             icon="📋"
             title="Documentation Index"
             description="Master navigation hub for all documentation organized by audience and task. (External — opens on GitHub)"
-            link="https://github.com/Tich-Labs/transform-health-directory/blob/main/docs/00-documentation-index.md"
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/00-documentation-index.md"
           />
         </div>
 
@@ -226,13 +226,13 @@ const SECTIONS = [
             icon="👩‍💼"
             title="Submit Profile Guide"
             description="Understand how leaders submit profiles — helps you review with empathy and catch issues early."
-            link="https://github.com/Tich-Labs/transform-health-directory/blob/main/docs/02-submit-profile-guide.md"
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/02-submit-profile-guide.md"
           />
           <DocCard
             icon="🤝"
             title="Nominator Guide"
             description="How people nominate leaders — understand the nomination workflow and what to expect."
-            link="https://github.com/Tich-Labs/transform-health-directory/blob/main/docs/03-nominator-guide.md"
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/03-nominator-guide.md"
           />
         </div>
 
@@ -242,7 +242,7 @@ const SECTIONS = [
             icon="🔒"
             title="Privacy Policy & Data Handling"
             description="GDPR/CCPA compliance, data retention, user rights. Reference when handling sensitive data."
-            link="https://github.com/Tich-Labs/transform-health-directory/blob/main/docs/06-privacy-policy.md"
+            link="https://github.com/Transform-Health-2/Women-leaders-database/blob/main/docs/06-privacy-policy.md"
           />
         </div>
 
