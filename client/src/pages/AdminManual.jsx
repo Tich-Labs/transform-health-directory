@@ -798,6 +798,10 @@ const SECTIONS = [
           resubmit. If you approve incorrectly, use <strong>Delete</strong> to
           permanently remove the record.
         </P>
+        <Img
+          src="screenshots/admin-manual/profile_rejection_modal.png"
+          caption="Rejection confirmation modal — confirm to move profile to rejected"
+        />
 
         <H3>Rejected Submission List</H3>
         <P>
@@ -865,6 +869,10 @@ const SECTIONS = [
           leaders awaiting review. The <strong>Pending</strong> count at the top
           of the Submissions section shows how many profiles need your attention.
         </P>
+        <Img
+          src="screenshots/admin-manual/profile_request.png"
+          caption="Pending profile request — expand to review and approve/reject"
+        />
 
         <H3>Rejected Submissions</H3>
         <P>
@@ -874,6 +882,10 @@ const SECTIONS = [
           submitters can resubmit with corrections, which creates a new pending
           entry.
         </P>
+        <Img
+          src="screenshots/admin-manual/rejected_submissions.png"
+          caption="Rejected submissions list — review past decisions or permanently delete"
+        />
 
         <H3>Updates &amp; Deletions</H3>
         <P>
